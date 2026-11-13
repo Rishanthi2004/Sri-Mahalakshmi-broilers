@@ -1,0 +1,48 @@
+@import "tailwindcss";
+
+:root {
+  --bg-primary: #DDF3DF;
+  --bg-secondary: #FFFFFF;
+  --brand-green: #287A45;
+  --brand-green-dark: #1E5F35;
+  --brand-green-light: #EAF8EC;
+  --text-primary: #26352B;
+  --text-muted: #516357;
+  --border-soft: #C7E4CA;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    color: var(--text-primary);
+    background-color: var(--bg-primary);
+  }
+
+  body {
+    font-family: var(--font-sans), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: #26352B;
+    background-color: #DDF3DF;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* Subtle custom scrollbar for tables and admin panels */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #EDF7EE;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #A9D3B0;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #287A45;
+}
+
