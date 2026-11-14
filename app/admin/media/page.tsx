@@ -45,7 +45,6 @@ export default function AdminMediaPage() {
   const [previewItem, setPreviewItem] = useState<MediaItem | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<MediaItem | null>(null);
   const [protectionWarning, setProtectionWarning] = useState<string | null>(null);
-  const [forceDeleteConfirm, setForceDeleteConfirm] = useState(false);
 
   const uploadInputRef = useRef<HTMLInputElement>(null);
 
@@ -128,7 +127,6 @@ export default function AdminMediaPage() {
       showToast("நீக்கும் செயல்பாடு தோல்வியடைந்தது", { type: "danger" });
     } finally {
       setDeleteTarget(null);
-      setForceDeleteConfirm(false);
     }
   };
 

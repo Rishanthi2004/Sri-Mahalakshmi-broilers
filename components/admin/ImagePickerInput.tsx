@@ -18,7 +18,6 @@ export function ImagePickerInput({
   value,
   onChange,
   helperText,
-  category = "products",
 }: ImagePickerInputProps) {
   const fileRef = useRef<HTMLInputElement>(null);
   const { media } = useMediaItems();
