@@ -8,6 +8,7 @@ import { ImagePickerInput } from "@/components/admin/ImagePickerInput";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { useToast } from "@/components/common/ToastProvider";
 import { DEFAULT_WEBSITE_CONTENT } from "@/data/website-content";
+import { contentService } from "@/services/content-service";
 import { useProducts, useWebsiteContent } from "@/services/use-store-data";
 import { WebsiteContent } from "@/types";
 
@@ -54,19 +55,11 @@ function WebsiteContentInner() {
     e.preventDefault();
     setSaving(true);
     try {
-      const res = await fetch("/api/content", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(draft),
+      contentService.update(draft);
+      showToast("வலைத்தள உள்ளடக்கம் சேமிக்கப்பட்டது", {
+        description: "வாடிக்கையாளர் தளத்தில் மாற்றங்கள் உடனடியாகத் தோன்றும்.",
       });
-      if (res.ok) {
-        showToast("வலைத்தள உள்ளடக்கம் சேமிக்கப்பட்டது", {
-          description: "வாடிக்கையாளர் தளத்தில் மாற்றங்கள் உடனடியாகத் தோன்றும்.",
-        });
-        await reload();
-      } else {
-        showToast("உள்ளடக்கத்தைச் சேமிப்பதில் பிழை", { type: "danger" });
-      }
+      await reload();
     } catch {
       showToast("பிழை ஏற்பட்டது", { type: "danger" });
     } finally {
@@ -75,17 +68,11 @@ function WebsiteContentInner() {
   };
 
   const handleReset = async () => {
+    contentService.reset();
     setDraft(DEFAULT_WEBSITE_CONTENT);
     setResetOpen(false);
-    try {
-      await fetch("/api/content", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(DEFAULT_WEBSITE_CONTENT),
-      });
-      showToast("முன்னிருப்பு உள்ளடக்கத்திற்கு மீட்டமைக்கப்பட்டது", { type: "info" });
-      await reload();
-    } catch {}
+    showToast("முன்னிருப்பு உள்ளடக்கத்திற்கு மீட்டமைக்கப்பட்டது", { type: "info" });
+    await reload();
   };
 
   const toggleFeaturedProduct = (id: string) => {

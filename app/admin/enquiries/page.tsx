@@ -16,6 +16,7 @@ import { AdminShell } from "@/components/admin/AdminShell";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { useToast } from "@/components/common/ToastProvider";
 import { WhatsAppIcon } from "@/components/common/WhatsAppIcon";
+import { enquiryService } from "@/services/media-enquiry-service";
 import { useWebsiteContent } from "@/services/use-store-data";
 import { Enquiry, EnquiryStatus } from "@/types";
 
@@ -31,14 +32,10 @@ export default function AdminEnquiriesPage() {
   const [selectedEnquiry, setSelectedEnquiry] = useState<Enquiry | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Enquiry | null>(null);
 
-  const loadEnquiries = async () => {
+  const loadEnquiries = () => {
+    setLoading(true);
     try {
-      setLoading(true);
-      const res = await fetch("/api/enquiries");
-      if (res.ok) {
-        const data = await res.json();
-        setEnquiries(data);
-      }
+      setEnquiries(enquiryService.getAll());
     } catch (e) {
       console.error("Failed to fetch enquiries", e);
     } finally {
@@ -77,22 +74,14 @@ export default function AdminEnquiriesPage() {
 
   const handleStatusChange = async (id: string, nextStatus: EnquiryStatus) => {
     try {
-      const res = await fetch(`/api/enquiries/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: nextStatus }),
-      });
-      if (res.ok) {
-        setEnquiries((prev) =>
-          prev.map((e) => (e.id === id ? { ...e, status: nextStatus } : e))
-        );
-        if (selectedEnquiry?.id === id) {
-          setSelectedEnquiry({ ...selectedEnquiry, status: nextStatus });
-        }
-        showToast("விசாரணை நிலை மாற்றப்பட்டது", {
-          description: nextStatus === "new" ? "புதியது" : nextStatus === "contacted" ? "தொடர்புகொள்ளப்பட்டது" : "தீர்க்கப்பட்டது",
-        });
+      enquiryService.updateStatus(id, nextStatus);
+      setEnquiries(enquiryService.getAll());
+      if (selectedEnquiry?.id === id) {
+        setSelectedEnquiry({ ...selectedEnquiry, status: nextStatus });
       }
+      showToast("விசாரணை நிலை மாற்றப்பட்டது", {
+        description: nextStatus === "new" ? "புதியது" : nextStatus === "contacted" ? "தொடர்புகொள்ளப்பட்டது" : "தீர்க்கப்பட்டது",
+      });
     } catch {
       showToast("நிலையை மாற்றுவதில் பிழை", { type: "danger" });
     }
@@ -101,11 +90,9 @@ export default function AdminEnquiriesPage() {
   const handleDelete = async () => {
     if (!deleteTarget) return;
     try {
-      const res = await fetch(`/api/enquiries/${deleteTarget.id}`, { method: "DELETE" });
-      if (res.ok) {
-        setEnquiries((prev) => prev.filter((e) => e.id !== deleteTarget.id));
-        showToast("விசாரணை நீக்கப்பட்டது", { type: "info" });
-      }
+      enquiryService.remove(deleteTarget.id);
+      setEnquiries(enquiryService.getAll());
+      showToast("விசாரணை நீக்கப்பட்டது", { type: "info" });
     } catch {
       showToast("விசாரணையை நீக்குவதில் பிழை", { type: "danger" });
     } finally {

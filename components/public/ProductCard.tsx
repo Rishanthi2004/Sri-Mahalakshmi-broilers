@@ -25,7 +25,7 @@ export function ProductCard({
   const isAvailable = product.availability === "available";
   const whatsappUrl = contentService.buildWhatsAppUrl(
     whatsappNumber,
-    `வணக்கம் ${shopName}, நான் பின்வரும் பொருளை ஆர்டர் செய்ய விரும்புகிறேன்:\n• பொருள்: ${product.name}\n• அளவு: ${product.unit}\n• விலை: ₹${product.price}`
+    `வணக்கம் ${shopName}, நான் பின்வரும் பொருளை ஆர்டர் செய்ய விரும்புகிறேன்:\n• பொருள்: ${product.name}\n• அளவு: ${product.unit}`
   );
 
   return (
@@ -75,13 +75,10 @@ export function ProductCard({
           </p>
         )}
 
-        <div className="mt-2.5 sm:mt-3 pt-2.5 sm:pt-3 border-t border-[#EDF7EE] flex items-end justify-between gap-1.5">
+        <div className="mt-2.5 sm:mt-3 pt-2.5 sm:pt-3 border-t border-[#EDF7EE] flex items-center justify-between gap-1.5">
           <div className="min-w-0">
-            <span className="block text-[10px] sm:text-xs font-medium text-[#516357] truncate">
+            <span className="inline-block text-xs sm:text-sm font-semibold text-[#287A45] bg-[#EDF7EE] px-2.5 py-1 rounded-md border border-[#C7E4CA] truncate">
               {product.unit}
-            </span>
-            <span className="text-base sm:text-xl font-bold text-[#26352B]">
-              ₹{product.price}
             </span>
           </div>
 

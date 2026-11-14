@@ -16,6 +16,8 @@ import {
 import { AdminShell } from "@/components/admin/AdminShell";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { useToast } from "@/components/common/ToastProvider";
+import { mediaService } from "@/services/media-enquiry-service";
+import { readFileAsDataUrl } from "@/services/storage";
 import { MediaCategory, MediaItem } from "@/types";
 
 const MEDIA_CATEGORIES: { id: "all" | MediaCategory; label: string }[] = [
@@ -47,14 +49,10 @@ export default function AdminMediaPage() {
 
   const uploadInputRef = useRef<HTMLInputElement>(null);
 
-  const loadMedia = async () => {
+  const loadMedia = () => {
+    setLoading(true);
     try {
-      setLoading(true);
-      const res = await fetch("/api/media");
-      if (res.ok) {
-        const data = await res.json();
-        setMediaList(data);
-      }
+      setMediaList(mediaService.getAll());
     } catch (e) {
       console.error("Failed to load media", e);
     } finally {
@@ -84,28 +82,14 @@ export default function AdminMediaPage() {
     setIsUploading(true);
 
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("category", newCategory);
-      if (newTitle) formData.append("title", newTitle);
-
-      const res = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
-      });
-
-      const data = await res.json();
-      if (!res.ok) {
-        setUploadError(data.error || "பதிவேற்றம் தோல்வியடைந்தது");
-      } else {
-        setUploadedUrl(data.url);
-        if (!newTitle) {
-          setNewTitle(file.name.replace(/\.[^.]+$/, ""));
-        }
-        showToast("புகைப்படம் வெற்றிகரமாகப் பதிவேற்றப்பட்டது", { type: "success" });
+      const dataUrl = await readFileAsDataUrl(file);
+      setUploadedUrl(dataUrl);
+      if (!newTitle) {
+        setNewTitle(file.name.replace(/\.[^.]+$/, ""));
       }
+      showToast("புகைப்படம் வெற்றிகரமாகப் பதிவேற்றப்பட்டது", { type: "success" });
     } catch {
-      setUploadError("பதிவேற்ற நெட்வொர்க் பிழை.");
+      setUploadError("படத்தைப் படிக்க முடியவில்லை.");
     } finally {
       setIsUploading(false);
       if (uploadInputRef.current) uploadInputRef.current.value = "";
@@ -119,35 +103,27 @@ export default function AdminMediaPage() {
       return;
     }
 
+    mediaService.add({
+      title: newTitle.trim(),
+      url: uploadedUrl,
+      category: newCategory,
+    });
+    showToast("ஊடகக் கோப்பு நூலகத்தில் சேர்க்கப்பட்டது");
+
     setUploadModal(false);
     setNewTitle("");
     setUploadedUrl("");
     setUploadError(null);
-    await loadMedia();
+    loadMedia();
   };
 
   const handleDeleteAttempt = async () => {
     if (!deleteTarget) return;
 
     try {
-      const url = forceDeleteConfirm
-        ? `/api/media/${deleteTarget.id}?force=1`
-        : `/api/media/${deleteTarget.id}`;
-
-      const res = await fetch(url, { method: "DELETE" });
-      const data = await res.json();
-
-      if (!res.ok) {
-        if (data.inUse) {
-          setProtectionWarning(data.error);
-          setDeleteTarget(null);
-          return;
-        }
-        showToast(data.error || "ஊடகக் கோப்பை நீக்க முடியவில்லை", { type: "danger" });
-      } else {
-        showToast("கோப்பு நூலகத்திலிருந்து நீக்கப்பட்டது", { description: deleteTarget.title });
-        await loadMedia();
-      }
+      mediaService.remove(deleteTarget.id);
+      showToast("கோப்பு நூலகத்திலிருந்து நீக்கப்பட்டது", { description: deleteTarget.title });
+      loadMedia();
     } catch {
       showToast("நீக்கும் செயல்பாடு தோல்வியடைந்தது", { type: "danger" });
     } finally {

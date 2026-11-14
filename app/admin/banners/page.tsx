@@ -14,6 +14,7 @@ import { AdminShell } from "@/components/admin/AdminShell";
 import { ImagePickerInput } from "@/components/admin/ImagePickerInput";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { useToast } from "@/components/common/ToastProvider";
+import { bannerService } from "@/services/banner-service";
 import { Banner } from "@/types";
 
 interface BannerFormState {
@@ -50,14 +51,10 @@ export default function AdminBannersPage() {
   const [submitting, setSubmitting] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<Banner | null>(null);
 
-  const loadBanners = async () => {
+  const loadBanners = () => {
+    setLoading(true);
     try {
-      setLoading(true);
-      const res = await fetch("/api/banners");
-      if (res.ok) {
-        const data = await res.json();
-        setBanners(data);
-      }
+      setBanners(bannerService.getAll());
     } catch (e) {
       console.error("Failed to fetch banners", e);
     } finally {
@@ -104,25 +101,15 @@ export default function AdminBannersPage() {
 
     try {
       if (editingId) {
-        const res = await fetch(`/api/banners/${editingId}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(form),
-        });
-        if (!res.ok) throw new Error("Failed to update banner");
+        bannerService.update(editingId, form);
         showToast("பேனர் வெற்றிகரமாக புதுப்பிக்கப்பட்டது");
       } else {
-        const res = await fetch("/api/banners", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(form),
-        });
-        if (!res.ok) throw new Error("Failed to create banner");
+        bannerService.create(form);
         showToast("புதிய பேனர் சேர்க்கப்பட்டது");
       }
 
       setModalOpen(false);
-      await loadBanners();
+      loadBanners();
     } catch {
       setFormError("பேனரைச் சேமிப்பதில் பிழை ஏற்பட்டது.");
     } finally {
@@ -133,11 +120,9 @@ export default function AdminBannersPage() {
   const handleDelete = async () => {
     if (!deleteTarget) return;
     try {
-      const res = await fetch(`/api/banners/${deleteTarget.id}`, { method: "DELETE" });
-      if (res.ok) {
-        showToast("பேனர் நீக்கப்பட்டது", { type: "info" });
-        await loadBanners();
-      }
+      bannerService.remove(deleteTarget.id);
+      showToast("பேனர் நீக்கப்பட்டது", { type: "info" });
+      loadBanners();
     } catch {
       showToast("பேனரை நீக்குவதில் பிழை", { type: "danger" });
     } finally {

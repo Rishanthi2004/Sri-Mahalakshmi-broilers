@@ -39,7 +39,7 @@ export function ProductShowcase({
 
   const whatsappUrl = contentService.buildWhatsAppUrl(
     whatsappNumber,
-    `வணக்கம் ${shopName}, நான் பின்வரும் பொருளை ஆர்டர் செய்ய விரும்புகிறேன்:\n• பொருள்: ${selected.name}\n• அளவு: ${selected.unit}\n• விலை: ₹${selected.price}`
+    `வணக்கம் ${shopName}, நான் பின்வரும் பொருளை ஆர்டர் செய்ய விரும்புகிறேன்:\n• பொருள்: ${selected.name}\n• அளவு: ${selected.unit}`
   );
 
   return (
@@ -136,11 +136,10 @@ export function ProductShowcase({
                     <h3 className="text-xl sm:text-2xl font-bold text-[#26352B] leading-tight">
                       {selected.name}
                     </h3>
-                    <div className="flex items-baseline gap-1 shrink-0">
-                      <span className="text-2xl font-extrabold text-[#287A45]">
-                        ₹{selected.price}
+                    <div className="flex items-center gap-1 shrink-0">
+                      <span className="text-xs sm:text-sm font-semibold text-[#287A45] bg-[#EDF7EE] px-2.5 py-1 rounded-md border border-[#C7E4CA]">
+                        {selected.unit}
                       </span>
-                      <span className="text-xs text-[#516357]">/ {selected.unit}</span>
                     </div>
                   </div>
 
@@ -233,7 +232,7 @@ export function ProductShowcase({
                       {item.name}
                     </span>
                     <span className="text-[11px] font-semibold text-[#516357]">
-                      ₹{item.price}
+                      {item.unit}
                     </span>
                     {active && (
                       <motion.div

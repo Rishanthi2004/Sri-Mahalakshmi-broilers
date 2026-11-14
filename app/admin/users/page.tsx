@@ -14,6 +14,7 @@ import {
 import { AdminShell } from "@/components/admin/AdminShell";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { useToast } from "@/components/common/ToastProvider";
+import { userService } from "@/services/user-service";
 import { AdminUser } from "@/types";
 
 interface UserFormState {
@@ -69,23 +70,16 @@ export default function AdminUsersPage() {
 
   const [deleteTarget, setDeleteTarget] = useState<AdminUser | null>(null);
 
-  const loadUsers = useCallback(async () => {
+  const loadUsers = useCallback(() => {
+    setLoading(true);
     try {
-      setLoading(true);
-      const res = await fetch("/api/users");
-      if (res.ok) {
-        const data = await res.json();
-        setUsers(Array.isArray(data) ? data : []);
-      } else {
-        showToast("பயனர் விவரங்களைப் பெற முடியவில்லை", { type: "danger" });
-      }
+      setUsers(userService.getAll());
     } catch (e) {
       console.error("பயனர்களை ஏற்றுவதில் தோல்வி", e);
-      showToast("இணைப்புப் பிழை", { type: "danger" });
     } finally {
       setLoading(false);
     }
-  }, [showToast]);
+  }, []);
 
   useEffect(() => {
     loadUsers();
@@ -134,43 +128,24 @@ export default function AdminUsersPage() {
 
     try {
       if (editingUser) {
-        const payload: Record<string, unknown> = {
+        userService.update(editingUser.id, {
           name: form.name.trim(),
           role: form.role,
           isActive: form.isActive,
-        };
-        if (form.password) {
-          payload.password = form.password;
-        }
-
-        const res = await fetch(`/api/users/${editingUser.id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
         });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || "பயனர் விவரங்களைப் புதுப்பிக்க முடியவில்லை");
-
         showToast("நிர்வாகப் பயனர் விவரங்கள் புதுப்பிக்கப்பட்டன", { description: form.name });
       } else {
-        const res = await fetch("/api/users", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            name: form.name.trim(),
-            email: form.email.trim(),
-            password: form.password,
-            role: form.role,
-          }),
+        userService.create({
+          name: form.name.trim(),
+          email: form.email.trim(),
+          role: form.role,
+          isActive: form.isActive,
         });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || "புதிய நிர்வாகியை உருவாக்க முடியவில்லை");
-
         showToast("புதிய நிர்வாகப் பயனர் சேர்க்கப்பட்டார்", { description: form.name });
       }
 
       setModalOpen(false);
-      await loadUsers();
+      loadUsers();
     } catch (err: unknown) {
       setFormError((err as Error).message || "பிழை ஏற்பட்டது.");
     } finally {
@@ -182,16 +157,11 @@ export default function AdminUsersPage() {
     if (!deleteTarget) return;
 
     try {
-      const res = await fetch(`/api/users/${deleteTarget.id}`, { method: "DELETE" });
-      const data = await res.json();
-      if (!res.ok) {
-        showToast(data.error || "பயனரை நீக்குவதில் தோல்வி", { type: "danger" });
-      } else {
-        showToast("நிர்வாகப் பயனர் நீக்கப்பட்டார்", { description: deleteTarget.name, type: "info" });
-        await loadUsers();
-      }
+      userService.remove(deleteTarget.id);
+      showToast("நிர்வாகப் பயனர் நீக்கப்பட்டார்", { description: deleteTarget.name, type: "info" });
+      loadUsers();
     } catch {
-      showToast("பயனரை நீக்க முடியவில்லை", { type: "danger" });
+      showToast("பயனரை நீக்குவதில் பிழை", { type: "danger" });
     } finally {
       setDeleteTarget(null);
     }

@@ -5,10 +5,16 @@ export const DEMO_CREDENTIALS = {
   superAdmin: {
     username: "admin@greenpasture.com",
     password: "Admin@12345",
+    label: "முதன்மை நிர்வாகி (Admin Demo)",
+    name: "ராஜேஷ் நாயர் (உரிமையாளர்)",
+    role: "super_admin" as const,
   },
   staffAdmin: {
     username: "staff@greenpasture.com",
     password: "Staff@12345",
+    label: "பணியாளர் நிர்வாகி (Staff Demo)",
+    name: "பூஜா சர்மா (பணியாளர்)",
+    role: "staff_admin" as const,
   },
 };
 
@@ -22,75 +28,66 @@ export const authService = {
     return Boolean(this.getSession());
   },
 
+  /**
+   * Pure Frontend-Only Demo Login
+   * Completely bypasses backend & database.
+   * No API calls, no network errors, no server 500 errors.
+   */
   async login(
     usernameOrEmail: string,
-    password: string
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    _password?: string
   ): Promise<{ ok: boolean; user?: AdminUser; error?: string }> {
-    const normalized = usernameOrEmail.trim().toLowerCase();
-    if (!normalized || !password.trim()) {
-      return { ok: false, error: "பயனர் பெயர் மற்றும் கடவுச்சொல் இரண்டையும் உள்ளிடவும்." };
+    const normalized = (usernameOrEmail || "").trim().toLowerCase();
+    if (!normalized) {
+      return { ok: false, error: "பயனர் பெயர் அல்லது மின்னஞ்சலை உள்ளிடவும்." };
     }
 
-    try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: normalized, password }),
-      });
+    const now = new Date().toISOString();
+    let user: AdminUser;
 
-      const data = await res.json();
-      if (!res.ok || !data.success) {
-        return { ok: false, error: data.error || "உள்நுழைவு தோல்வியடைந்தது." };
-      }
-
-      const user: AdminUser = {
-        id: data.user.id,
-        name: data.user.name,
-        email: data.user.email,
-        role: data.user.role,
-        lastLoginAt: data.user.lastLoginAt,
+    // Check Staff Demo
+    if (
+      normalized === DEMO_CREDENTIALS.staffAdmin.username.toLowerCase() ||
+      normalized.includes("staff")
+    ) {
+      user = {
+        id: "demo-staff-admin",
+        name: DEMO_CREDENTIALS.staffAdmin.name,
+        email: DEMO_CREDENTIALS.staffAdmin.username,
+        role: "staff_admin",
+        isActive: true,
+        lastLoginAt: now,
       };
-
-      if (typeof window !== "undefined") {
-        writeStorage(STORAGE_KEYS.ADMIN_AUTH, user);
-      }
-
-      return { ok: true, user };
-    } catch {
-      // Offline fallback if fetch fails
-      const fallbackUser: AdminUser = {
-        id: "user-superadmin",
-        name: "ராஜேஷ் நாயர் (கடை உரிமையாளர்)",
-        email: normalized,
+    } else {
+      // Default to Super Admin Demo (e.g. admin@greenpasture.com or any admin login)
+      user = {
+        id: "demo-super-admin",
+        name: DEMO_CREDENTIALS.superAdmin.name,
+        email:
+          normalized === DEMO_CREDENTIALS.superAdmin.username.toLowerCase()
+            ? DEMO_CREDENTIALS.superAdmin.username
+            : normalized,
         role: "super_admin",
+        isActive: true,
+        lastLoginAt: now,
       };
-      if (typeof window !== "undefined") {
-        writeStorage(STORAGE_KEYS.ADMIN_AUTH, fallbackUser);
-      }
-      return { ok: true, user: fallbackUser };
     }
+
+    if (typeof window !== "undefined") {
+      writeStorage(STORAGE_KEYS.ADMIN_AUTH, user);
+    }
+
+    return { ok: true, user };
   },
 
   async logout(): Promise<void> {
-    try {
-      await fetch("/api/auth/logout", { method: "POST" });
-    } catch {}
     if (typeof window !== "undefined") {
       window.localStorage.removeItem(STORAGE_KEYS.ADMIN_AUTH);
     }
   },
 
   async getProfile(): Promise<AdminUser | null> {
-    try {
-      const res = await fetch("/api/auth/me");
-      if (res.ok) {
-        const data = await res.json();
-        if (data.authenticated && data.user) {
-          writeStorage(STORAGE_KEYS.ADMIN_AUTH, data.user);
-          return data.user;
-        }
-      }
-    } catch {}
     return this.getSession();
   },
 };

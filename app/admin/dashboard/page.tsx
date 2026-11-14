@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import {
   AlertTriangle,
   ArrowRight,
   CheckCircle2,
   FolderTree,
+  ImageIcon,
   MessageSquareText,
   Package,
   PauseCircle,
@@ -16,13 +17,19 @@ import {
   Sparkles,
 } from "lucide-react";
 import { AdminShell } from "@/components/admin/AdminShell";
+import { useToast } from "@/components/common/ToastProvider";
+import { authService } from "@/services/auth-service";
+import { bannerService } from "@/services/banner-service";
+import { categoryService } from "@/services/category-service";
+import { enquiryService, mediaService } from "@/services/media-enquiry-service";
+import { productService } from "@/services/product-service";
+import { AdminUser, Category, Product } from "@/types";
 
 interface DashboardStats {
   totalProducts: number;
   activeProducts: number;
   inactiveProducts: number;
   outOfStock: number;
-  softDeleted: number;
   totalCategories: number;
   totalEnquiries: number;
   newEnquiries: number;
@@ -47,27 +54,66 @@ interface DashboardStats {
 }
 
 export default function AdminDashboardPage() {
+  const { showToast } = useToast();
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<AdminUser | null>(null);
 
-  const loadStats = async () => {
-    try {
-      setLoading(true);
-      const res = await fetch("/api/stats");
-      if (res.ok) {
-        const data = await res.json();
-        setStats(data);
-      }
-    } catch (e) {
-      console.error("Failed to load dashboard stats", e);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const calculateDemoStats = useCallback(() => {
+    const products = productService.getAll().filter((p) => !p.isDeleted);
+    const categories = categoryService.getAll();
+    const enquiries = enquiryService.getAll();
+    const banners = bannerService.getAll();
+    const media = mediaService.getAll();
+
+    const catMap = new Map<string, string>(categories.map((c: Category) => [c.id, c.name]));
+
+    const outOfStockList = products.filter((p: Product) => p.availability === "out_of_stock");
+
+    const newStats: DashboardStats = {
+      totalProducts: products.length,
+      activeProducts: products.length > 0 ? products.filter((p: Product) => p.isActive).length : 0,
+      inactiveProducts: products.length > 0 ? products.filter((p: Product) => !p.isActive).length : 0,
+      outOfStock: outOfStockList.length,
+      totalCategories: categories.length,
+      totalEnquiries: enquiries.length,
+      newEnquiries: enquiries.filter((e) => e.status === "new").length,
+      totalBanners: banners.length,
+      totalMedia: media.length,
+      recentEnquiries: enquiries.slice(0, 5).map((e) => ({
+        id: e.id,
+        customerName: e.customerName,
+        phoneNumber: e.phoneNumber,
+        message: e.message,
+        status: e.status,
+        submittedAt: e.submittedAt,
+      })),
+      outOfStockItems: outOfStockList.map((p: Product) => ({
+        id: p.id,
+        name: p.name,
+        price: p.price,
+        unit: p.unit,
+        image: p.image,
+        categoryName: catMap.get(p.categoryId) || "கோழிக்கறி",
+      })),
+    };
+
+    setStats(newStats);
+    setLoading(false);
+  }, []);
 
   useEffect(() => {
-    loadStats();
-  }, []);
+    setUser(authService.getSession());
+    calculateDemoStats();
+  }, [calculateDemoStats]);
+
+  const handleRefresh = () => {
+    setLoading(true);
+    calculateDemoStats();
+    showToast("புள்ளிவிவரங்கள் புதுப்பிக்கப்பட்டன", { type: "info" });
+  };
+
+  const isStaff = user?.role === "staff_admin";
 
   const statCards = [
     {
@@ -109,7 +155,7 @@ export default function AdminDashboardPage() {
     },
   ];
 
-  const quickActions = [
+  const adminQuickActions = [
     {
       label: "புதிய பொருள் சேர்க்க",
       description: "புதிய கறிக்கட்டு, நெஞ்சுக்கறி அல்லது முட்டை வகை உருவாக்கவும்",
@@ -130,7 +176,7 @@ export default function AdminDashboardPage() {
       icon: Sparkles,
     },
     {
-      label: "கடை விவரங்களைத் திருத்த",
+      label: "கடை அமைப்புகள்",
       description: "தொலைபேசி, வாட்ஸ்அப் மற்றும் வேலை நேரத்தை மாற்றவும்",
       href: "/admin/settings",
       icon: Settings,
@@ -143,16 +189,56 @@ export default function AdminDashboardPage() {
     },
   ];
 
+  const staffQuickActions = [
+    {
+      label: "புதிய பொருள் சேர்க்க",
+      description: "புதிய கறிக்கட்டு, நெஞ்சுக்கறி அல்லது முட்டை வகை உருவாக்கவும்",
+      href: "/admin/products?new=1",
+      icon: Plus,
+      primary: true,
+    },
+    {
+      label: "பொருட்கள் மேலாண்மை",
+      description: "விலைகள், இருப்பு நிலை மற்றும் படங்களை மாற்றவும்",
+      href: "/admin/products",
+      icon: Package,
+    },
+    {
+      label: "விசாரணைகளைக் காண்க",
+      description: "வாடிக்கையாளர் செய்திகள் மற்றும் வாட்ஸ்அப் தொடர்புகள்",
+      href: "/admin/enquiries",
+      icon: MessageSquareText,
+    },
+    {
+      label: "ஊடக நூலகம்",
+      description: "பொருட்கள் மற்றும் கடையின் புகைப்படங்களை பதிவேற்றவும்",
+      href: "/admin/media",
+      icon: ImageIcon,
+    },
+    {
+      label: "பிரிவுகளை நிர்வகிக்க",
+      description: "கோழிக்கறி மற்றும் முட்டை பிரிவுகளை ஒழுங்கமைக்கவும்",
+      href: "/admin/categories",
+      icon: FolderTree,
+    },
+  ];
+
+  const currentQuickActions = isStaff ? staffQuickActions : adminQuickActions;
+
   return (
     <AdminShell
-      title="கட்டுப்பாட்டு அறை"
-      subtitle="நேரலை விற்பனை புள்ளிவிவரங்கள், சரக்கு இருப்பு மற்றும் புதிய விசாரணைகள்"
+      title={isStaff ? "பணியாளர் கட்டுப்பாட்டு அறை (Staff Dashboard)" : "முதன்மை கட்டுப்பாட்டு அறை (Admin Dashboard)"}
+      subtitle={
+        isStaff
+          ? "சரக்கு இருப்பு நிலவரம், பொருட்கள் மேலாண்மை மற்றும் வாடிக்கையாளர் விசாரணைகள்"
+          : "நேரலை விற்பனை புள்ளிவிவரங்கள், சரக்கு இருப்பு மற்றும் கடை மேலாண்மை"
+      }
       actions={
         <button
           type="button"
-          onClick={loadStats}
+          onClick={handleRefresh}
           disabled={loading}
-          className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border border-slate-200 bg-white text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors shadow-2xs"
+          className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border border-slate-200 bg-white text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors shadow-2xs cursor-pointer"
         >
           <RefreshCw className={`w-3.5 h-3.5 text-[#287A45] ${loading ? "animate-spin" : ""}`} />
           <span>புள்ளிவிவரங்களை புதுப்பி</span>
@@ -192,11 +278,16 @@ export default function AdminDashboardPage() {
 
         {/* Quick Action Buttons */}
         <div className="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-xs">
-          <h2 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4">
-            விரைவுச் செயல்பாடுகள்
-          </h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-sm font-bold text-slate-900 uppercase tracking-wider">
+              விரைவுச் செயல்பாடுகள் {isStaff && "(பணியாளர்)"}
+            </h2>
+            <span className="text-xs text-slate-400">
+              {isStaff ? "பணியாளர் அனுமதியுள்ள செயல்பாடுகள்" : "அனைத்து நிர்வாக குறுக்குவழிகள்"}
+            </span>
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
-            {quickActions.map((action) => {
+            {currentQuickActions.map((action) => {
               const Icon = action.icon;
               return (
                 <Link

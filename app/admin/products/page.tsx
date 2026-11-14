@@ -22,6 +22,8 @@ import { AdminShell } from "@/components/admin/AdminShell";
 import { ImagePickerInput } from "@/components/admin/ImagePickerInput";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { useToast } from "@/components/common/ToastProvider";
+import { productService } from "@/services/product-service";
+import { readFileAsDataUrl } from "@/services/storage";
 import { useCategories } from "@/services/use-store-data";
 import { Product, ProductAvailability } from "@/types";
 
@@ -77,22 +79,12 @@ function ProductsManagerContent() {
 
   const extraFileRef = useRef<HTMLInputElement>(null);
 
-  const loadData = async () => {
+  const loadData = () => {
+    setLoading(true);
     try {
-      setLoading(true);
-      const [resCatalog, resTrash] = await Promise.all([
-        fetch("/api/products"),
-        fetch("/api/products?only_deleted=1"),
-      ]);
-
-      if (resCatalog.ok) {
-        const catData = await resCatalog.json();
-        setProducts(catData);
-      }
-      if (resTrash.ok) {
-        const trashData = await resTrash.json();
-        setDeletedProducts(trashData);
-      }
+      const all = productService.getAll();
+      setProducts(all.filter((p) => !p.isDeleted));
+      setDeletedProducts(all.filter((p) => Boolean(p.isDeleted)));
     } catch (e) {
       console.error("Failed to load products", e);
     } finally {
@@ -207,25 +199,15 @@ function ProductsManagerContent() {
       };
 
       if (editingId) {
-        const res = await fetch(`/api/products/${editingId}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-        if (!res.ok) throw new Error("Failed to update product");
+        productService.update(editingId, payload);
         showToast("பொருள் வெற்றிகரமாக புதுப்பிக்கப்பட்டது", { description: form.name });
       } else {
-        const res = await fetch("/api/products", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-        if (!res.ok) throw new Error("Failed to create product");
+        productService.create(payload);
         showToast("பொருள் பட்டியலில் சேர்க்கப்பட்டது", { description: form.name });
       }
 
       setModalOpen(false);
-      await loadData();
+      loadData();
     } catch {
       setFormError("பொருளைச் சேமிப்பதில் பிழை ஏற்பட்டது.");
     } finally {
@@ -236,14 +218,15 @@ function ProductsManagerContent() {
   const handleSoftDelete = async () => {
     if (!deleteTarget) return;
     try {
-      const res = await fetch(`/api/products/${deleteTarget.id}`, { method: "DELETE" });
-      if (res.ok) {
-        showToast("பொருள் குப்பைத் தொட்டிக்கு நகர்த்தப்பட்டது", {
-          description: `${deleteTarget.name} எப்போது வேண்டுமானாலும் மீட்டெடுக்கப்படலாம்.`,
-          type: "info",
-        });
-        await loadData();
-      }
+      productService.update(deleteTarget.id, {
+        isDeleted: true,
+        deletedAt: new Date().toISOString(),
+      });
+      showToast("பொருள் குப்பைத் தொட்டிக்கு நகர்த்தப்பட்டது", {
+        description: `${deleteTarget.name} எப்போது வேண்டுமானாலும் மீட்டெடுக்கப்படலாம்.`,
+        type: "info",
+      });
+      loadData();
     } catch {
       showToast("பொருளை நீக்குவதில் பிழை ஏற்பட்டது", { type: "danger" });
     } finally {
@@ -253,14 +236,15 @@ function ProductsManagerContent() {
 
   const handleRestore = async (p: Product) => {
     try {
-      const res = await fetch(`/api/products/${p.id}/restore`, { method: "POST" });
-      if (res.ok) {
-        showToast("பொருள் மீண்டும் பட்டியலில் சேர்க்கப்பட்டது", {
-          description: p.name,
-          type: "success",
-        });
-        await loadData();
-      }
+      productService.update(p.id, {
+        isDeleted: false,
+        deletedAt: undefined,
+      });
+      showToast("பொருள் மீண்டும் பட்டியலில் சேர்க்கப்பட்டது", {
+        description: p.name,
+        type: "success",
+      });
+      loadData();
     } catch {
       showToast("பொருளை மீட்டெடுப்பதில் பிழை", { type: "danger" });
     }
@@ -269,16 +253,12 @@ function ProductsManagerContent() {
   const handlePermanentDelete = async () => {
     if (!permanentDeleteTarget) return;
     try {
-      const res = await fetch(`/api/products/${permanentDeleteTarget.id}?force=1`, {
-        method: "DELETE",
+      productService.remove(permanentDeleteTarget.id);
+      showToast("பொருள் நிரந்தரமாக நீக்கப்பட்டது", {
+        description: permanentDeleteTarget.name,
+        type: "info",
       });
-      if (res.ok) {
-        showToast("பொருள் நிரந்தரமாக நீக்கப்பட்டது", {
-          description: permanentDeleteTarget.name,
-          type: "info",
-        });
-        await loadData();
-      }
+      loadData();
     } catch {
       showToast("பொருளை நீக்குவதில் பிழை", { type: "danger" });
     } finally {
@@ -296,21 +276,14 @@ function ProductsManagerContent() {
       return;
     }
 
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("category", "products");
-
     try {
-      const res = await fetch("/api/upload", { method: "POST", body: formData });
-      const data = await res.json();
-      if (res.ok && data.url) {
-        setForm((prev) => ({
-          ...prev,
-          galleryImages: [...prev.galleryImages, data.url],
-        }));
-      }
+      const dataUrl = await readFileAsDataUrl(file);
+      setForm((prev) => ({
+        ...prev,
+        galleryImages: [...prev.galleryImages, dataUrl],
+      }));
     } catch {
-      setFormError("புகைப்படத்தைப் பதிவேற்ற முடியவில்லை.");
+      setFormError("புகைப்படத்தைப் படிக்க முடியவில்லை.");
     } finally {
       if (extraFileRef.current) extraFileRef.current.value = "";
     }

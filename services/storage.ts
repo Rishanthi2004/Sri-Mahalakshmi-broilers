@@ -4,6 +4,8 @@ export const STORAGE_KEYS = {
   CONTENT: "gp_poultry_content_v1",
   MEDIA: "gp_poultry_media_v1",
   ENQUIRIES: "gp_poultry_enquiries_v1",
+  BANNERS: "gp_poultry_banners_v1",
+  USERS: "gp_poultry_users_v1",
   ADMIN_AUTH: "gp_poultry_admin_session_v1",
 } as const;
 
@@ -58,4 +60,3 @@ export function readFileAsDataUrl(file: File): Promise<string> {
     reader.readAsDataURL(file);
   });
 }
-

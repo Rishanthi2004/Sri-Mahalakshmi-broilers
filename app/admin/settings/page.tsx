@@ -15,6 +15,7 @@ import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { useToast } from "@/components/common/ToastProvider";
 import { WhatsAppIcon } from "@/components/common/WhatsAppIcon";
 import { DEFAULT_WEBSITE_CONTENT } from "@/data/website-content";
+import { contentService } from "@/services/content-service";
 import { useWebsiteContent } from "@/services/use-store-data";
 import { WebsiteContent } from "@/types";
 
@@ -39,39 +40,24 @@ export default function AdminSettingsPage() {
 
     setSaving(true);
     try {
-      const res = await fetch("/api/settings", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(draft),
+      contentService.update(draft);
+      showToast("அமைப்புகள் வெற்றிகரமாக சேமிக்கப்பட்டன", {
+        description: "தொடர்பு விவரங்கள், வேலை நேரம் மற்றும் வாட்ஸ்அப் ஆர்டர் எண் புதுப்பிக்கப்பட்டது.",
       });
-
-      if (res.ok) {
-        showToast("அமைப்புகள் தரவுத்தளத்தில் சேமிக்கப்பட்டன", {
-          description: "தொடர்பு விவரங்கள், வேலை நேரம் மற்றும் வாட்ஸ்அப் ஆர்டர் எண் புதுப்பிக்கப்பட்டது.",
-        });
-        await reload();
-      } else {
-        showToast("அமைப்புகளைச் சேமிப்பதில் தோல்வி", { type: "danger" });
-      }
+      await reload();
     } catch {
-      showToast("அமைப்புகளைச் சேமிப்பதில் பிணையப் பிழை", { type: "danger" });
+      showToast("அமைப்புகளைச் சேமிப்பதில் பிழை ஏற்பட்டது", { type: "danger" });
     } finally {
       setSaving(false);
     }
   };
 
   const handleReset = async () => {
+    contentService.reset();
     setDraft(DEFAULT_WEBSITE_CONTENT);
     setResetOpen(false);
-    try {
-      await fetch("/api/settings", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(DEFAULT_WEBSITE_CONTENT),
-      });
-      showToast("அமைப்புகள் இயல்பு நிலைக்கு மீட்டமைக்கப்பட்டன", { type: "info" });
-      await reload();
-    } catch {}
+    showToast("அமைப்புகள் இயல்பு நிலைக்கு மீட்டமைக்கப்பட்டன", { type: "info" });
+    await reload();
   };
 
   const cleanWhatsapp = draft.contact.whatsappNumber.replace(/[^0-9]/g, "");

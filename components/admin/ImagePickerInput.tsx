@@ -2,6 +2,7 @@
 
 import React, { useRef, useState } from "react";
 import { Image as ImageIcon, Loader2, Upload, X } from "lucide-react";
+import { readFileAsDataUrl } from "@/services/storage";
 import { useMediaItems } from "@/services/use-store-data";
 
 interface ImagePickerInputProps {
@@ -39,23 +40,10 @@ export function ImagePickerInput({
     setIsUploading(true);
 
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("category", category);
-
-      const res = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
-      });
-
-      const data = await res.json();
-      if (!res.ok || !data.success) {
-        setUploadError(data.error || "பதிவேற்றம் தோல்வியடைந்தது");
-      } else {
-        onChange(data.url);
-      }
+      const dataUrl = await readFileAsDataUrl(file);
+      onChange(dataUrl);
     } catch {
-      setUploadError("நெட்வொர்க் பிழை ஏற்பட்டது");
+      setUploadError("படத்தைப் படிக்க முடியவில்லை");
     } finally {
       setIsUploading(false);
       if (fileRef.current) fileRef.current.value = "";

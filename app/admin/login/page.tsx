@@ -13,6 +13,7 @@ import {
   Lock,
   LogIn,
   ShieldCheck,
+  Sparkles,
   User,
   X,
 } from "lucide-react";
@@ -38,38 +39,34 @@ export default function AdminLoginPage() {
     }
   }, [router]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handlePerformLogin = async (loginUser: string, loginPass: string) => {
     setError("");
     setIsLoading(true);
 
-    try {
-      const res = await authService.login(username, password);
-      if (!res.ok) {
-        setError(res.error ?? "தவறான நிர்வாகி சான்றுகள்.");
-        setIsLoading(false);
-        return;
-      }
-      showToast("நிர்வாக போர்டலில் உள்நுழைந்தீர்கள்", {
-        description: `நல்வரவு, ${res.user?.name}.`,
-      });
-      router.replace("/admin/dashboard");
-    } catch {
-      setError("எதிர்பாராத அங்கீகாரப் பிழை ஏற்பட்டது.");
+    const res = await authService.login(loginUser, loginPass);
+    if (!res.ok) {
+      setError(res.error ?? "தவறான நிர்வாகி சான்றுகள்.");
       setIsLoading(false);
+      return;
     }
+
+    const isSuper = res.user?.role === "super_admin";
+    showToast("நிர்வாக போர்டலில் உள்நுழைந்தீர்கள் (டெமோ முறை)", {
+      description: `நல்வரவு, ${res.user?.name} [${isSuper ? "முதன்மை நிர்வாகி" : "பணியாளர் நிர்வாகி"}].`,
+    });
+    router.replace("/admin/dashboard");
   };
 
-  const fillSuperAdmin = () => {
-    setUsername(DEMO_CREDENTIALS.superAdmin.username);
-    setPassword(DEMO_CREDENTIALS.superAdmin.password);
-    setError("");
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await handlePerformLogin(username, password);
   };
 
-  const fillStaffAdmin = () => {
-    setUsername(DEMO_CREDENTIALS.staffAdmin.username);
-    setPassword(DEMO_CREDENTIALS.staffAdmin.password);
-    setError("");
+  const quickLoginAs = async (role: "superAdmin" | "staffAdmin") => {
+    const creds = DEMO_CREDENTIALS[role];
+    setUsername(creds.username);
+    setPassword(creds.password);
+    await handlePerformLogin(creds.username, creds.password);
   };
 
   return (
@@ -97,10 +94,21 @@ export default function AdminLoginPage() {
           transition={{ duration: 0.25 }}
           className="bg-white rounded-3xl border border-[#C7E4CA] shadow-xl shadow-emerald-950/5 p-7 sm:p-8"
         >
+          {/* DEMO MODE Pill Indicator */}
+          <div className="mb-4 flex items-center justify-between gap-2 px-3 py-1.5 rounded-xl bg-amber-50 border border-amber-300 text-amber-900 text-xs font-bold">
+            <div className="flex items-center gap-1.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse" />
+              <span>டெமோ பயன்முறை • DEMO MODE</span>
+            </div>
+            <span className="text-[10px] px-2 py-0.5 rounded-md bg-amber-200/70 font-semibold text-amber-950">
+              முன்முனை மாதிரி
+            </span>
+          </div>
+
           <div className="space-y-1.5 border-b border-slate-100 pb-5">
             <div className="flex items-center gap-1.5 text-xs font-semibold text-[#287A45] bg-[#EDF7EE] w-fit px-2.5 py-1 rounded-md border border-[#C7E4CA]">
               <ShieldCheck className="w-3.5 h-3.5" />
-              பாதுகாப்பான நிர்வாக உள்நுழைவு
+              நேரடி டெமோ நிர்வாக அணுகல்
             </div>
             <h1 className="text-2xl font-bold text-[#26352B] pt-1">நிர்வாகி உள்நுழைவு</h1>
             <p className="text-xs sm:text-sm text-slate-500">
@@ -150,7 +158,7 @@ export default function AdminLoginPage() {
                   onClick={() => setForgotModalOpen(true)}
                   className="text-xs font-semibold text-[#287A45] hover:text-[#1E5F35] transition-colors"
                 >
-                  கடவுச்சொல் மறந்துவிட்டதா?
+                  கடவுச்சொல் உதவி
                 </button>
               </div>
               <div className="relative">
@@ -158,7 +166,6 @@ export default function AdminLoginPage() {
                 <input
                   id="admin-password"
                   type={showPassword ? "text" : "password"}
-                  required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••••••"
@@ -183,7 +190,7 @@ export default function AdminLoginPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full mt-2 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-[#287A45] hover:bg-[#1E5F35] disabled:opacity-60 text-white font-semibold text-sm shadow-md shadow-[#287A45]/25 transition-all"
+              className="w-full mt-2 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-[#287A45] hover:bg-[#1E5F35] disabled:opacity-60 text-white font-semibold text-sm shadow-md shadow-[#287A45]/25 transition-all cursor-pointer"
             >
               {isLoading ? (
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -194,38 +201,56 @@ export default function AdminLoginPage() {
             </button>
           </form>
 
-          {/* Quick Demo Credentials Autofill */}
+          {/* Quick Demo Credentials 1-Click Login */}
           <div className="mt-6 pt-5 border-t border-slate-100">
-            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2.5">
-              விரைவு உள்நுழைவு தேர்வுகள்
-            </p>
+            <div className="flex items-center justify-between mb-2.5">
+              <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1">
+                <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                <span>விரைவு டெமோ உள்நுழைவு (1-கிளிக்)</span>
+              </p>
+              <span className="text-[10px] text-slate-400">கிளிக் செய்து நுழையலாம்</span>
+            </div>
             <div className="grid grid-cols-2 gap-2">
               <button
                 type="button"
-                onClick={fillSuperAdmin}
-                className="p-2.5 rounded-xl border border-[#C7E4CA] bg-[#EDF7EE] hover:bg-[#DDF3DF] text-left transition-colors"
+                onClick={() => quickLoginAs("superAdmin")}
+                disabled={isLoading}
+                className="p-2.5 rounded-xl border border-[#C7E4CA] bg-[#EDF7EE] hover:bg-[#DDF3DF] text-left transition-all hover:scale-[1.01] active:scale-[0.99] cursor-pointer group"
               >
-                <div className="flex items-center gap-1 text-[11px] font-bold text-[#287A45]">
-                  <KeyRound className="w-3 h-3 text-[#287A45]" />
-                  முதன்மை நிர்வாகி
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1 text-[11px] font-bold text-[#287A45]">
+                    <KeyRound className="w-3 h-3 text-[#287A45]" />
+                    முதன்மை நிர்வாகி
+                  </div>
+                  <span className="text-[9px] font-bold uppercase bg-[#287A45] text-white px-1.5 py-0.2 rounded group-hover:bg-[#1E5F35]">
+                    Admin
+                  </span>
                 </div>
-                <div className="text-[10px] text-slate-600 font-mono mt-0.5 truncate">
+                <div className="text-[11px] text-slate-700 font-mono mt-1 font-semibold truncate">
                   admin@greenpasture.com
                 </div>
+                <div className="text-[10px] text-emerald-700 mt-0.5">முழு நிர்வாக அணுகல்</div>
               </button>
 
               <button
                 type="button"
-                onClick={fillStaffAdmin}
-                className="p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-left transition-colors"
+                onClick={() => quickLoginAs("staffAdmin")}
+                disabled={isLoading}
+                className="p-2.5 rounded-xl border border-blue-200 bg-blue-50/70 hover:bg-blue-100/70 text-left transition-all hover:scale-[1.01] active:scale-[0.99] cursor-pointer group"
               >
-                <div className="flex items-center gap-1 text-[11px] font-bold text-slate-800">
-                  <KeyRound className="w-3 h-3 text-slate-600" />
-                  பணியாளர் நிர்வாகி
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1 text-[11px] font-bold text-blue-800">
+                    <KeyRound className="w-3 h-3 text-blue-600" />
+                    பணியாளர் நிர்வாகி
+                  </div>
+                  <span className="text-[9px] font-bold uppercase bg-blue-600 text-white px-1.5 py-0.2 rounded group-hover:bg-blue-700">
+                    Staff
+                  </span>
                 </div>
-                <div className="text-[10px] text-slate-500 font-mono mt-0.5 truncate">
+                <div className="text-[11px] text-slate-700 font-mono mt-1 font-semibold truncate">
                   staff@greenpasture.com
                 </div>
+                <div className="text-[10px] text-blue-700 mt-0.5">பொருட்கள் & விசாரணைகள்</div>
               </button>
             </div>
           </div>
@@ -243,7 +268,7 @@ export default function AdminLoginPage() {
         </div>
       </div>
 
-      {/* Forgot Password Modal */}
+      {/* Forgot Password / Demo Modal */}
       <AnimatePresence>
         {forgotModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -266,8 +291,8 @@ export default function AdminLoginPage() {
                     <HelpCircle className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="text-base font-bold text-slate-900">கடவுச்சொல் மீட்பு</h3>
-                    <p className="text-xs text-slate-500">நிர்வாக கணக்கு உதவி</p>
+                    <h3 className="text-base font-bold text-slate-900">டெமோ உள்நுழைவு வழிகாட்டி</h3>
+                    <p className="text-xs text-slate-500">முன்முனை காட்சி முறை சான்றுகள்</p>
                   </div>
                 </div>
                 <button
@@ -281,17 +306,17 @@ export default function AdminLoginPage() {
 
               <div className="mt-4 space-y-3 text-xs sm:text-sm text-slate-600">
                 <p>
-                  நிர்வாகி கடவுச்சொல்லை மீட்டமைக்க, முதன்மை நிர்வாகி உள்நுழைந்து உங்கள் கணக்கு கடவுச்சொல்லை மாற்றலாம்:
+                  இது ஒரு முன்முனை டெமோ பதிப்பு. சேவையகம் அல்லது தரவுத்தள இணைப்பு தேவையின்றி உடனடி அணுகல் வழங்கப்பட்டுள்ளது.
                 </p>
-                <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 font-mono text-xs text-[#287A45]">
-                  /admin/users → பயனர் திருத்து → கடவுச்சொல் மாற்று
-                </div>
-                <p>
-                  முதன்மை நிர்வாகி கடவுச்சொல் மறந்துவிட்டால், ஆரம்ப முன்னிருப்பு சான்றுகளைப் பயன்படுத்தலாம்:
-                </p>
-                <div className="p-3 rounded-xl bg-[#EDF7EE] border border-[#C7E4CA] text-xs text-[#26352B] space-y-1">
+                <div className="p-3 rounded-xl bg-[#EDF7EE] border border-[#C7E4CA] text-xs text-[#26352B] space-y-2">
+                  <div className="font-bold text-[#287A45]">முதன்மை நிர்வாகி (Super Admin):</div>
                   <div><strong>மின்னஞ்சல்:</strong> admin@greenpasture.com</div>
-                  <div><strong>கடவுச்சொல்:</strong> Admin@12345</div>
+                  <div><strong>அணுகல்:</strong> முழு கட்டுப்பாட்டு அறை, அமைப்புகள் &amp; பயனர்கள்</div>
+                </div>
+                <div className="p-3 rounded-xl bg-blue-50 border border-blue-200 text-xs text-blue-950 space-y-2">
+                  <div className="font-bold text-blue-800">பணியாளர் நிர்வாகி (Staff Admin):</div>
+                  <div><strong>மின்னஞ்சல்:</strong> staff@greenpasture.com</div>
+                  <div><strong>அணுகல்:</strong> பொருட்கள், பிரிவுகள், பேனர்கள் &amp; விசாரணைகள்</div>
                 </div>
               </div>
 
@@ -301,7 +326,7 @@ export default function AdminLoginPage() {
                   onClick={() => setForgotModalOpen(false)}
                   className="px-4 py-2 rounded-xl bg-[#287A45] text-white text-xs font-semibold hover:bg-[#1E5F35]"
                 >
-                  சரி
+                  புரிந்தது
                 </button>
               </div>
             </motion.div>

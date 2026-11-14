@@ -1,10 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { DEFAULT_BANNERS } from "@/data/banners";
 import { DEFAULT_CATEGORIES } from "@/data/categories";
 import { DEFAULT_ENQUIRIES, DEFAULT_MEDIA } from "@/data/enquiries";
 import { DEFAULT_PRODUCTS } from "@/data/products";
 import { DEFAULT_WEBSITE_CONTENT } from "@/data/website-content";
+import { bannerService } from "./banner-service";
 import { categoryService } from "./category-service";
 import { contentService } from "./content-service";
 import { enquiryService, mediaService } from "./media-enquiry-service";
@@ -175,22 +177,23 @@ export function useEnquiries() {
 }
 
 export function useBanners() {
-  const [banners, setBanners] = useState<Banner[]>([]);
+  const [banners, setBanners] = useState<Banner[]>(DEFAULT_BANNERS);
   const [ready, setReady] = useState(false);
 
-  const reload = useCallback(async () => {
-    try {
-      const res = await fetch("/api/banners");
-      if (res.ok) {
-        const live = await res.json();
-        setBanners(live);
-      }
-    } catch {}
+  const reload = useCallback(() => {
+    setBanners(bannerService.getAll());
     setReady(true);
   }, []);
 
   useEffect(() => {
     reload();
+    const handler = () => reload();
+    window.addEventListener(STORE_UPDATE_EVENT, handler);
+    window.addEventListener("storage", handler);
+    return () => {
+      window.removeEventListener(STORE_UPDATE_EVENT, handler);
+      window.removeEventListener("storage", handler);
+    };
   }, [reload]);
 
   return { banners, ready, reload };

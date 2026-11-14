@@ -16,6 +16,8 @@ import { AdminShell } from "@/components/admin/AdminShell";
 import { ImagePickerInput } from "@/components/admin/ImagePickerInput";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { useToast } from "@/components/common/ToastProvider";
+import { categoryService } from "@/services/category-service";
+import { productService } from "@/services/product-service";
 import { Category } from "@/types";
 
 interface ExtendedCategory extends Category {
@@ -39,14 +41,16 @@ export default function AdminCategoriesPage() {
   const [deleteTarget, setDeleteTarget] = useState<ExtendedCategory | null>(null);
   const [dependencyError, setDependencyError] = useState<string | null>(null);
 
-  const loadCategories = async () => {
+  const loadCategories = () => {
+    setLoading(true);
     try {
-      setLoading(true);
-      const res = await fetch("/api/categories");
-      if (res.ok) {
-        const data = await res.json();
-        setCategories(data);
-      }
+      const cats = categoryService.getAll();
+      const prods = productService.getAll().filter((p) => !p.isDeleted);
+      const withCounts: ExtendedCategory[] = cats.map((c) => ({
+        ...c,
+        productCount: prods.filter((p) => p.categoryId === c.id).length,
+      }));
+      setCategories(withCounts);
     } catch (e) {
       console.error("Failed to load categories", e);
     } finally {
@@ -101,25 +105,15 @@ export default function AdminCategoriesPage() {
       };
 
       if (editing) {
-        const res = await fetch(`/api/categories/${editing.id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-        if (!res.ok) throw new Error("Failed to update category");
+        categoryService.update(editing.id, payload);
         showToast("பிரிவு புதுப்பிக்கப்பட்டது", { description: name.trim() });
       } else {
-        const res = await fetch("/api/categories", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-        if (!res.ok) throw new Error("Failed to create category");
+        categoryService.create(payload);
         showToast("புதிய பிரிவு உருவாக்கப்பட்டது", { description: name.trim() });
       }
 
       setModalOpen(false);
-      await loadCategories();
+      loadCategories();
     } catch {
       setError("பிரிவைச் சேமிப்பதில் பிழை ஏற்பட்டது.");
     } finally {
@@ -141,14 +135,9 @@ export default function AdminCategoriesPage() {
   const handleConfirmDelete = async () => {
     if (!deleteTarget) return;
     try {
-      const res = await fetch(`/api/categories/${deleteTarget.id}`, { method: "DELETE" });
-      const data = await res.json();
-      if (!res.ok) {
-        setDependencyError(data.error || "பொருட்கள் உள்ள பிரிவை நீக்க முடியாது.");
-      } else {
-        showToast("பிரிவு நீக்கப்பட்டது", { description: deleteTarget.name, type: "info" });
-        await loadCategories();
-      }
+      categoryService.remove(deleteTarget.id);
+      showToast("பிரிவு நீக்கப்பட்டது", { description: deleteTarget.name, type: "info" });
+      loadCategories();
     } catch {
       showToast("பிரிவை நீக்குவதில் பிழை", { type: "danger" });
     } finally {
@@ -160,35 +149,10 @@ export default function AdminCategoriesPage() {
     const targetIdx = direction === "up" ? index - 1 : index + 1;
     if (targetIdx < 0 || targetIdx >= categories.length) return;
 
-    const copy = [...categories];
-    const current = copy[index];
-    const other = copy[targetIdx];
-
-    const currentSort = current.sortOrder;
-    current.sortOrder = other.sortOrder;
-    other.sortOrder = currentSort;
-
-    copy[index] = other;
-    copy[targetIdx] = current;
-    setCategories(copy);
-
-    try {
-      await Promise.all([
-        fetch(`/api/categories/${current.id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ sortOrder: current.sortOrder }),
-        }),
-        fetch(`/api/categories/${other.id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ sortOrder: other.sortOrder }),
-        }),
-      ]);
-      showToast("பிரிவு வரிசை மாற்றப்பட்டது", { type: "info" });
-    } catch {
-      await loadCategories();
-    }
+    const current = categories[index];
+    categoryService.move(current.id, direction);
+    showToast("பிரிவு வரிசை மாற்றப்பட்டது", { type: "info" });
+    loadCategories();
   };
 
   return (
