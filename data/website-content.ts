@@ -61,8 +61,8 @@ export const DEFAULT_WEBSITE_CONTENT: WebsiteContent = {
     businessInfoTitle: "Over 20 Years of Poultry Excellence & 20+ Stores",
     businessInfoBody:
       "With over 20 years of experience in the poultry industry and a growing network of 20+ chicken shops, our journey has always been built on one foundation — Trust and Quality.",
-    ownerName: "Sri Mahalakshmi Broilers",
-    ownerDesignation: "20+ Years Experience • 20+ Outlets",
+    ownerName: "Paramasivam Masanaicker",
+    ownerDesignation: "Founder, Sri Mahalakshmi Broilers",
     ownerPhoto: "/images/founder.jpg",
     ownerBio:
       "With over 20 years of experience in the poultry industry and a growing network of 20+ chicken shops, our journey has always been built on one foundation — Trust and Quality.\n\nYour trust is our strength, and serving you better is our commitment.\n\nThank you for being part of our journey.",
@@ -76,11 +76,11 @@ export const DEFAULT_WEBSITE_CONTENT: WebsiteContent = {
   contact: {
     phone: "+91 94872 03778",
     whatsappNumber: "919487203778",
-    email: "orders@greenpasturepoultry.example",
-    address: "Shop No. 14, Maple Arcade, M.G. Road, Indiranagar, Bengaluru 560038",
-    googleMapsUrl: "https://maps.google.com/?q=Indiranagar+Bengaluru+560038",
+    email: "contact@srimahalakshmibroilers.com",
+    address: "EB Colony Bus stop, Paramathi Road, Namakkal",
+    googleMapsUrl: "https://maps.google.com/?q=EB+Colony+Bus+stop+Paramathi+Road+Namakkal",
     googleMapsEmbedPlaceholder:
-      "Maple Arcade, M.G. Road, Indiranagar — 15 minutes free customer parking available right in front of the store.",
+      "EB Colony Bus stop, Paramathi Road, Namakkal — Customer parking available.",
     openingHours: [
       { day: "Monday – Friday", hours: "7:00 AM – 8:30 PM" },
       { day: "Saturday", hours: "6:30 AM – 9:00 PM" },

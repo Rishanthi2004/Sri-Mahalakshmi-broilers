@@ -157,7 +157,9 @@ export function PublicFooter() {
               </li>
               <li className="flex items-start gap-2">
                 <MapPin className="w-3.5 h-3.5 text-[#287A45] shrink-0 mt-0.5" />
-                <span className="leading-snug line-clamp-2">{content.contact.address}</span>
+                <span className="leading-snug line-clamp-2">
+                  {language === "ta" ? t("contactStoreAddress") : content.contact.address}
+                </span>
               </li>
             </ul>
           </div>

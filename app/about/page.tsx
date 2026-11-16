@@ -5,6 +5,8 @@ import Link from "next/link";
 import {
   Award,
   HeartHandshake,
+  MapPin,
+  Phone,
   ShieldCheck,
 } from "lucide-react";
 import { WhatsAppIcon } from "@/components/common/WhatsAppIcon";
@@ -101,7 +103,7 @@ export default function AboutPage() {
           {/* Business Info */}
           <FadeInSection>
             <div className="bg-white rounded-2xl border border-[#C7E4CA] p-5 sm:p-8 shadow-xs">
-              <div className="max-w-3xl space-y-2">
+              <div className="max-w-3xl space-y-3">
                 <span className="text-[11px] font-bold uppercase tracking-widest text-[#287A45]">
                   {t("businessInfoTag")}
                 </span>
@@ -111,6 +113,32 @@ export default function AboutPage() {
                 <p className="text-xs sm:text-base text-[#516357] leading-relaxed">
                   {businessInfoBody}
                 </p>
+
+                <div className="pt-3 border-t border-[#EDF7EE] flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 text-xs sm:text-sm">
+                  <div className="flex items-start gap-2 text-[#26352B]">
+                    <MapPin className="w-4 h-4 text-[#287A45] shrink-0 mt-0.5" />
+                    <div>
+                      <span className="block text-[10px] font-bold uppercase tracking-wider text-[#516357]">
+                        {language === "ta" ? "அலுவலக முகவரி" : "Office Address"}
+                      </span>
+                      <span className="font-semibold">
+                        EB Colony Bus stop, Paramathi Road, Namakkal
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-2 text-[#26352B]">
+                    <Phone className="w-4 h-4 text-[#287A45] shrink-0 mt-0.5" />
+                    <div>
+                      <span className="block text-[10px] font-bold uppercase tracking-wider text-[#516357]">
+                        {language === "ta" ? "தொடர்பு எண்" : "Contact No"}
+                      </span>
+                      <a href="tel:+919487203778" className="font-semibold hover:text-[#287A45] transition-colors">
+                        +91 94872 03778
+                      </a>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </FadeInSection>
@@ -122,7 +150,7 @@ export default function AboutPage() {
                 <div className="md:col-span-5 h-72 sm:h-96 md:h-full min-h-[340px] bg-[#EDF7EE] relative">
                   <img
                     src="/images/founder.jpg"
-                    alt="Sri Mahalakshmi Broilers"
+                    alt="Paramasivam Masanaicker, Founder - Sri Mahalakshmi Broilers"
                     className="w-full h-full object-cover object-center"
                   />
                 </div>
@@ -142,10 +170,15 @@ export default function AboutPage() {
                         ? "நம்பிக்கை மற்றும் தரம் — எங்கள் 20+ வருட பயணம்"
                         : "Trust & Quality — Our 20+ Year Journey"}
                     </h2>
-                    <p className="text-xs sm:text-sm font-semibold text-[#287A45] mt-0.5">
+                    <p className="text-sm sm:text-base font-bold text-[#287A45] mt-1">
                       {language === "ta"
-                        ? "ஸ்ரீ மகாலட்சுமி பிராய்லர்ஸ் • 20+ கிளைகள்"
-                        : "Sri Mahalakshmi Broilers • 20+ Outlets"}
+                        ? "பரமசிவம் மாசாநாயக்கர்"
+                        : "Paramasivam Masanaicker"}
+                      <span className="font-normal text-xs sm:text-sm text-[#516357] ml-2">
+                        {language === "ta"
+                          ? "(நிறுவனர், ஸ்ரீ மகாலட்சுமி பிராய்லர்ஸ்)"
+                          : "(Founder, Sri Mahalakshmi Broilers)"}
+                      </span>
                     </p>
                   </div>
 
@@ -167,9 +200,14 @@ export default function AboutPage() {
                     </p>
                   </div>
 
-                  <p className="text-xs sm:text-sm font-bold text-[#287A45]">
-                    {language === "ta" ? "— ஸ்ரீ மகாலட்சுமி பிராய்லர்ஸ்" : "— Sri Mahalakshmi Broilers"}
-                  </p>
+                  <div className="pt-0.5">
+                    <p className="text-sm sm:text-base font-bold text-[#26352B]">
+                      {language === "ta" ? "— பரமசிவம் மாசாநாயக்கர்" : "— Paramasivam Masanaicker"}
+                    </p>
+                    <p className="text-xs sm:text-sm font-semibold text-[#287A45]">
+                      {language === "ta" ? "நிறுவனர், ஸ்ரீ மகாலட்சுமி பிராய்லர்ஸ்" : "Founder, Sri Mahalakshmi Broilers"}
+                    </p>
+                  </div>
 
                   <div className="pt-1 flex flex-wrap gap-2.5">
                     <Link
