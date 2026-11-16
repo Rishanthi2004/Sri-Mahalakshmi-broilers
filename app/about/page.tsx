@@ -1,23 +1,44 @@
 "use client";
 
-import React from "react";
+import React, { useMemo } from "react";
 import Link from "next/link";
 import {
+  ArrowRight,
   Award,
   HeartHandshake,
   ShieldCheck,
 } from "lucide-react";
+import { ProductCard } from "@/components/public/ProductCard";
 import { WhatsAppIcon } from "@/components/common/WhatsAppIcon";
 import { FadeInSection } from "@/components/common/MotionPrimitives";
 import { PublicShell } from "@/components/public/PublicShell";
 import { useLanguage } from "@/context/LanguageContext";
 import { contentService } from "@/services/content-service";
-import { useWebsiteContent } from "@/services/use-store-data";
+import { useCategories, useProducts, useWebsiteContent } from "@/services/use-store-data";
 
 export default function AboutPage() {
   const { content } = useWebsiteContent();
+  const { products } = useProducts();
+  const { categories } = useCategories();
   const { about } = content;
   const { language, t } = useLanguage();
+
+  const categoryMap = useMemo(
+    () => new Map((categories || []).map((c) => [c.id, c.name])),
+    [categories]
+  );
+
+  const activeProducts = useMemo(
+    () => (products || []).filter((p) => p?.isActive),
+    [products]
+  );
+
+  const selectedFeatured = useMemo(() => {
+    const list = (content?.featuredProductIds || [])
+      .map((id) => activeProducts.find((p) => p.id === id))
+      .filter((p): p is NonNullable<typeof p> => Boolean(p));
+    return list.length > 0 ? list : activeProducts.slice(0, 6);
+  }, [activeProducts, content?.featuredProductIds]);
 
   const whatsappMessage =
     language === "ta"
@@ -203,6 +224,56 @@ export default function AboutPage() {
                 </p>
               </div>
             </FadeInSection>
+          </div>
+        </div>
+      </section>
+
+      {/* Our Products Section */}
+      <section className="py-10 sm:py-16 bg-white border-t border-[#C7E4CA]">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-6 sm:mb-8">
+            <div>
+              <span className="text-[11px] font-bold uppercase tracking-widest text-[#287A45]">
+                {language === "ta" ? "எங்கள் புதிய தயாரிப்புகள்" : "Signature Farm Cuts"}
+              </span>
+              <h2 className="text-xl sm:text-3xl font-extrabold tracking-tight text-[#26352B] mt-0.5">
+                {t("products")}
+              </h2>
+              <p className="text-xs sm:text-sm text-[#516357] mt-1 max-w-xl">
+                {language === "ta"
+                  ? "ஸ்ரீ மகாலட்சுமி பிராய்லர்ஸின் தினசரி புதிய, சுகாதாரமாக வெட்டப்பட்ட பண்ணைக் கோழிக்கறி மற்றும் பண்ணை முட்டைகள்."
+                  : "Explore our range of hospital-grade hygienically prepped farm chicken and fresh eggs."}
+              </p>
+            </div>
+            <Link
+              href="/products"
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#287A45] hover:bg-[#1E5F35] text-white text-xs sm:text-sm font-semibold transition-colors shrink-0 self-start sm:self-auto shadow-xs"
+            >
+              <span>{t("showcaseAllCuts")}</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-3 sm:gap-6">
+            {selectedFeatured.slice(0, 6).map((product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                categoryName={categoryMap.get(product.categoryId)}
+                whatsappNumber={content.contact.whatsappNumber}
+                shopName={content.shopName}
+              />
+            ))}
+          </div>
+
+          <div className="mt-8 text-center sm:hidden">
+            <Link
+              href="/products"
+              className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-[#287A45] text-white text-xs font-semibold"
+            >
+              <span>{t("showcaseAllCuts")}</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
           </div>
         </div>
       </section>
