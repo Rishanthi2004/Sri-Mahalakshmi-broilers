@@ -22,11 +22,13 @@ export function readStorage<T>(key: string, fallback: T): T {
   }
 }
 
-export function writeStorage<T>(key: string, value: T): void {
+export function writeStorage<T>(key: string, value: T, notify = true): void {
   if (typeof window === "undefined") return;
   try {
     window.localStorage.setItem(key, JSON.stringify(value));
-    window.dispatchEvent(new CustomEvent(STORE_UPDATE_EVENT, { detail: { key } }));
+    if (notify) {
+      window.dispatchEvent(new CustomEvent(STORE_UPDATE_EVENT, { detail: { key } }));
+    }
   } catch (err) {
     // Handle LocalStorage quota exceeded gracefully for large demo uploads
     console.warn("LocalStorage write failed:", err);

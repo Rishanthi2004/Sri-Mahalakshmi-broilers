@@ -20,7 +20,8 @@ export function useWebsiteContent() {
 
   const reload = useCallback(async () => {
     // 1. Immediate sync from local storage / cache
-    setContent(contentService.get());
+    const cached = contentService.get();
+    setContent(cached);
     setReady(true);
 
     // 2. Fetch from backend API
@@ -28,8 +29,10 @@ export function useWebsiteContent() {
       const res = await fetch("/api/content");
       if (res.ok) {
         const live = await res.json();
-        setContent(live);
-        writeStorage(STORAGE_KEYS.CONTENT, live);
+        if (JSON.stringify(live) !== JSON.stringify(cached)) {
+          setContent(live);
+        }
+        writeStorage(STORAGE_KEYS.CONTENT, live, false);
       }
     } catch {}
   }, []);
@@ -53,15 +56,18 @@ export function useProducts() {
   const [ready, setReady] = useState(false);
 
   const reload = useCallback(async () => {
-    setProducts(productService.getAll());
+    const cached = productService.getAll();
+    setProducts(cached);
     setReady(true);
 
     try {
       const res = await fetch("/api/products");
       if (res.ok) {
         const live = await res.json();
-        setProducts(live);
-        writeStorage(STORAGE_KEYS.PRODUCTS, live);
+        if (JSON.stringify(live) !== JSON.stringify(cached)) {
+          setProducts(live);
+        }
+        writeStorage(STORAGE_KEYS.PRODUCTS, live, false);
       }
     } catch {}
   }, []);
@@ -85,15 +91,18 @@ export function useCategories() {
   const [ready, setReady] = useState(false);
 
   const reload = useCallback(async () => {
-    setCategories(categoryService.getAll());
+    const cached = categoryService.getAll();
+    setCategories(cached);
     setReady(true);
 
     try {
       const res = await fetch("/api/categories");
       if (res.ok) {
         const live = await res.json();
-        setCategories(live);
-        writeStorage(STORAGE_KEYS.CATEGORIES, live);
+        if (JSON.stringify(live) !== JSON.stringify(cached)) {
+          setCategories(live);
+        }
+        writeStorage(STORAGE_KEYS.CATEGORIES, live, false);
       }
     } catch {}
   }, []);
@@ -117,15 +126,18 @@ export function useMediaItems() {
   const [ready, setReady] = useState(false);
 
   const reload = useCallback(async () => {
-    setMedia(mediaService.getAll());
+    const cached = mediaService.getAll();
+    setMedia(cached);
     setReady(true);
 
     try {
       const res = await fetch("/api/media");
       if (res.ok) {
         const live = await res.json();
-        setMedia(live);
-        writeStorage(STORAGE_KEYS.MEDIA, live);
+        if (JSON.stringify(live) !== JSON.stringify(cached)) {
+          setMedia(live);
+        }
+        writeStorage(STORAGE_KEYS.MEDIA, live, false);
       }
     } catch {}
   }, []);
@@ -149,15 +161,18 @@ export function useEnquiries() {
   const [ready, setReady] = useState(false);
 
   const reload = useCallback(async () => {
-    setEnquiries(enquiryService.getAll());
+    const cached = enquiryService.getAll();
+    setEnquiries(cached);
     setReady(true);
 
     try {
       const res = await fetch("/api/enquiries");
       if (res.ok) {
         const live = await res.json();
-        setEnquiries(live);
-        writeStorage(STORAGE_KEYS.ENQUIRIES, live);
+        if (JSON.stringify(live) !== JSON.stringify(cached)) {
+          setEnquiries(live);
+        }
+        writeStorage(STORAGE_KEYS.ENQUIRIES, live, false);
       }
     } catch {}
   }, []);

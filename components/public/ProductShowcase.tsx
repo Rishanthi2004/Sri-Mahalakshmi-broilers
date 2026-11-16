@@ -3,7 +3,13 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowRight, CheckCircle2, XCircle } from "lucide-react";
+import {
+  ArrowRight,
+  CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
+  XCircle,
+} from "lucide-react";
 import { WhatsAppIcon } from "@/components/common/WhatsAppIcon";
 import { useLanguage } from "@/context/LanguageContext";
 import { contentService } from "@/services/content-service";
@@ -33,22 +39,21 @@ export function ProductShowcase({
   // Up to 7 items (matching the 7 floating cuts)
   const showcaseItems = products.slice(0, 7);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
-    if (activeIndex >= showcaseItems.length) {
+    if (activeIndex >= showcaseItems.length && showcaseItems.length > 0) {
       setActiveIndex(0);
     }
   }, [activeIndex, showcaseItems.length]);
 
-  // Auto-run cuts rotation smoothly every 3.5 seconds (pauses on hover)
+  // Auto-run cuts rotation smoothly every 3 seconds without freezing
   useEffect(() => {
-    if (isPaused || showcaseItems.length <= 1) return;
+    if (showcaseItems.length <= 1) return;
     const timer = setInterval(() => {
       setActiveIndex((prev) => (prev + 1) % showcaseItems.length);
-    }, 3500);
+    }, 3000);
     return () => clearInterval(timer);
-  }, [isPaused, showcaseItems.length]);
+  }, [showcaseItems.length]);
 
   if (showcaseItems.length === 0) return null;
 
@@ -72,13 +77,7 @@ export function ProductShowcase({
   return (
     <section className="py-6 sm:py-12 lg:py-16 bg-white border-y border-[#C7E4CA]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div
-          onMouseEnter={() => setIsPaused(true)}
-          onMouseLeave={() => setIsPaused(false)}
-          onTouchStart={() => setIsPaused(true)}
-          onTouchEnd={() => setIsPaused(false)}
-          className="rounded-2xl bg-gradient-to-br from-[#F5FAF6] via-white to-[#EAF6ED] border border-[#C7E4CA] shadow-sm p-4 sm:p-8 lg:p-10"
-        >
+        <div className="rounded-2xl bg-gradient-to-br from-[#F5FAF6] via-white to-[#EAF6ED] border border-[#C7E4CA] shadow-sm p-4 sm:p-8 lg:p-10">
           
           {/* Main Showcase Stage */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-8 items-center">
@@ -108,9 +107,35 @@ export function ProductShowcase({
               </div>
             </div>
 
-            {/* Center: FLOATING PRODUCT CUTOUT WITH SOFT SHADOW */}
+            {/* Center: FLOATING PRODUCT CUTOUT WITH SOFT SHADOW & NAV ARROWS */}
             <div className="lg:col-span-5 flex flex-col items-center justify-center py-2 sm:py-4">
-              <div className="relative flex flex-col items-center justify-center">
+              <div className="relative flex flex-col items-center justify-center w-full max-w-sm">
+                
+                {/* Quick Prev / Next Arrows */}
+                <button
+                  type="button"
+                  onClick={() =>
+                    setActiveIndex(
+                      (prev) => (prev - 1 + showcaseItems.length) % showcaseItems.length
+                    )
+                  }
+                  className="absolute left-0 sm:-left-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-white/90 hover:bg-white border border-[#C7E4CA] text-[#287A45] flex items-center justify-center shadow-xs transition-transform hover:scale-110 cursor-pointer"
+                  aria-label="Previous cut"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setActiveIndex((prev) => (prev + 1) % showcaseItems.length)
+                  }
+                  className="absolute right-0 sm:-right-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-white/90 hover:bg-white border border-[#C7E4CA] text-[#287A45] flex items-center justify-center shadow-xs transition-transform hover:scale-110 cursor-pointer"
+                  aria-label="Next cut"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+
                 {/* Floating animation container */}
                 <AnimatePresence mode="wait">
                   <motion.div
