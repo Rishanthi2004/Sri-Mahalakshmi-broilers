@@ -113,6 +113,14 @@ export function PublicFooter() {
               </li>
               <li>
                 <Link
+                  href="/founder"
+                  className="text-[#516357] hover:text-[#287A45] transition-colors"
+                >
+                  {t("meetOurFounder")}
+                </Link>
+              </li>
+              <li>
+                <Link
                   href="/contact"
                   className="text-[#516357] hover:text-[#287A45] transition-colors"
                 >

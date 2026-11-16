@@ -550,6 +550,42 @@ function WebsiteContentInner() {
                   }
                   category="about"
                 />
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                    நிறுவனர் அனுபவம் &amp; கிளைகள் (Founder Experience)
+                  </label>
+                  <input
+                    type="text"
+                    value={draft.about.founderExperience || ""}
+                    placeholder="20+ Years in Poultry & Farming • 20+ Retail Outlets"
+                    onChange={(e) =>
+                      setDraft({
+                        ...draft,
+                        about: { ...draft.about, founderExperience: e.target.value },
+                      })
+                    }
+                    className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                    நிறுவனரின் தொலைநோக்கு பார்வை (Founder Vision)
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={draft.about.founderVision || ""}
+                    placeholder="Providing hospital-grade cleanliness, 100% daily farm freshness..."
+                    onChange={(e) =>
+                      setDraft({
+                        ...draft,
+                        about: { ...draft.about, founderVision: e.target.value },
+                      })
+                    }
+                    className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-sm"
+                  />
+                </div>
               </div>
 
               <div className="pt-4 border-t border-slate-100 space-y-4">

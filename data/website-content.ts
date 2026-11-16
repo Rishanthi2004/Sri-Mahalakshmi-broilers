@@ -66,6 +66,9 @@ export const DEFAULT_WEBSITE_CONTENT: WebsiteContent = {
     ownerPhoto: "/images/founder.jpg",
     ownerBio:
       "With over 20 years of experience in the poultry industry and a growing network of 20+ chicken shops, our journey has always been built on one foundation — Trust and Quality.\n\nYour trust is our strength, and serving you better is our commitment.\n\nThank you for being part of our journey.",
+    founderExperience: "20+ Years in Poultry & Farming • 20+ Retail Outlets",
+    founderVision:
+      "To provide hospital-grade cleanliness, 100% daily farm freshness, and ethical poultry care to every neighborhood family at fair prices.",
     qualityCommitment:
       "Every cut is inspected prior to weighing. Excess skin, bone splinters, and unwanted fat are trimmed away cleanly so you pay only for prime, usable meat.",
     hygienePractices:

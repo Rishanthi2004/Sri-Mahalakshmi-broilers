@@ -94,6 +94,8 @@ export interface WebsiteContent {
     ownerDesignation: string;
     ownerPhoto: string;
     ownerBio: string;
+    founderExperience?: string;
+    founderVision?: string;
     qualityCommitment: string;
     hygienePractices: string;
     customerSatisfaction: string;

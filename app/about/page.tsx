@@ -12,6 +12,7 @@ import {
 import { WhatsAppIcon } from "@/components/common/WhatsAppIcon";
 import { AnimatedCard, FadeInSection } from "@/components/common/MotionPrimitives";
 import { PublicShell } from "@/components/public/PublicShell";
+import { MeetFounderSection } from "@/components/founder/MeetFounderSection";
 import { useLanguage } from "@/context/LanguageContext";
 import { contentService } from "@/services/content-service";
 import { useWebsiteContent } from "@/services/use-store-data";
@@ -96,6 +97,9 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
+
+      {/* Meet Our Founder - Dedicated Professional Showcase */}
+      <MeetFounderSection />
 
       {/* Business Information & Owner Profile */}
       <section className="py-8 sm:py-14 bg-[#DDF3DF]">

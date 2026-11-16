@@ -10,7 +10,7 @@ import {
   Phone,
   Send,
 } from "lucide-react";
-import { AnimatedCard, FadeInSection } from "@/components/common/MotionPrimitives";
+import { AnimatedCard } from "@/components/common/MotionPrimitives";
 import { WhatsAppIcon } from "@/components/common/WhatsAppIcon";
 import { useToast } from "@/components/common/ToastProvider";
 import { PublicShell } from "@/components/public/PublicShell";

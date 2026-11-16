@@ -119,6 +119,41 @@ export const TRANSLATIONS = {
     aboutSatisfactionText:
       "வார weekdays நாட்களில் சமைக்க 250 கிராம் பொடியாக வெட்டிய கீமாவாக இருந்தாலும், குடும்ப விசேஷங்களுக்கு 10 கிலோ கறிக்கட்டாக இருந்தாலும், ஒவ்வொரு ஆர்டரும் ஒரே உயர்ந்த தரத்துடன் கவனிக்கப்படுகிறது.",
 
+    // Meet Our Founder & Profile
+    meetOurFounder: "எங்கள் நிறுவனரைச் சந்தியுங்கள்",
+    meetOurFounderBadge: "தலைமை & தொலைநோக்கு",
+    meetOurFounderSubtitle: "ஸ்ரீ மகாலட்சுமி பிராய்லர்ஸின் 20+ வருட வளர்ச்சி மற்றும் தரத்தின் பின்னணியில் உள்ள தொலைநோக்கு",
+    founderDesignationDefault: "நிறுவனர், ஸ்ரீ மகாலட்சுமி பிராய்லர்ஸ்",
+    founderExperienceDefault: "கோழிப்பண்ணைத் துறையில் 20+ வருட அனுபவம் • 20+ கிளைகள்",
+    founderVisionTitle: "நிறுவனரின் தொலைநோக்கு பார்வை",
+    founderVisionDefault:
+      "ஒவ்வொரு குடும்பத்திற்கும் தூய்மையான, மருத்துவமனை அளவிலான சுகாதாரத்துடன் கூடிய பண்ணைக் கோழிக்கறியை நேர்மையான விலையில் தினசரி வழங்குவதே எங்கள் இலக்கு.",
+    founderBioDefault:
+      "கோழிப்பண்ணைத் துறையில் 20 ஆண்டுகளுக்கும் மேலான அனுபவத்துடனும், 20-க்கும் மேற்பட்ட கிளைகளின் விரிவான வலையமைப்புடனும் எங்கள் பயணம் எப்போதும் ஒரு வலுவான அடித்தளத்தின் மீதே கட்டமைக்கப்பட்டுள்ளது — நம்பிக்கை மற்றும் தரம். உங்கள் நம்பிக்கையே எங்கள் பலம், உங்களுக்கு இன்னும் சிறப்பாகச் சேவையாற்றுவதே எங்கள் உறுதிப்பாடு. எங்கள் பயணத்தின் ஒரு பகுதியாக இருப்பதற்கு நன்றி.",
+    shareFounderProfile: "நிறுவனர் சுயவிவரத்தைப் பகிரவும்",
+    shareFounderModalTitle: "நிறுவனர் சுயவிவரத்தைப் பகிருங்கள்",
+    shareFounderModalDesc: "ஸ்ரீ மகாலட்சுமி பிராய்லர்ஸ் நிறுவனர் திரு. பரமசிவம் மாசாநாயக்கர் அவர்களின் சுயவிவரத்தை வாட்ஸ்அப் அல்லது சமூக வலைத்தளங்களில் பகிருங்கள்.",
+    shareViaWhatsApp: "வாட்ஸ்அப்பில் பகிர்க",
+    copyFounderLink: "சுயவிவர இணைப்பை நகலெடு",
+    founderLinkCopied: "இணைப்பு நகலெடுக்கப்பட்டது!",
+    nativeShareBtn: "பிற வழிகளில் பகிர்க",
+    nativeShareFallbackNotice: "இந்த உலாவியில் நேரடி பகிர்வு இல்லை. இணைப்பு நகலெடுக்கப்பட்டது!",
+    viewFullFounderProfile: "முழு சுயவிவரப் பக்கம்",
+    backToAbout: "எங்களைப் பற்றி பக்கத்திற்குத் திரும்புக",
+    founderBreadcrumb: "நிறுவனர் சுயவிவரம்",
+    founderCorePrinciples: "முக்கிய வழிகாட்டும் கோட்பாடுகள்",
+    founderPrinciple1Title: "சமரசம் இல்லாத சுகாதாரம்",
+    founderPrinciple1Desc: "அனைத்து கடைகளிலும் நவீன ஸ்டெயின்லெஸ் ஸ்டீல் வெட்டும் தளங்கள் மற்றும் RO நீரினால் சுத்திகரிக்கப்படுகிறது.",
+    founderPrinciple2Title: "தினசரி புதிய பண்ணை வரவு",
+    founderPrinciple2Desc: "நேரடியாக பண்ணையிலிருந்து அதிகாலையில் வரும் ஆரோக்கியமான கோழிகள் மட்டுமே விற்பனைக்கு வைக்கப்படுகின்றன.",
+    founderPrinciple3Title: "நேர்மையான எடை & சேவை",
+    founderPrinciple3Desc: "துல்லியமான டிஜிட்டல் எடை மற்றும் வாடிக்கையாளர் விருப்பத்திற்கேற்ப பிரத்யேக கறிக்கட்டுகள்.",
+    founderPrinciple4Title: "வாடிக்கையாளர் நம்பிக்கை",
+    founderPrinciple4Desc: "20 ஆண்டுகளுக்கும் மேலாக ஆயிரக்கணக்கான குடும்பங்களின் நம்பிக்கையைப் பெற்ற நற்பெயர்.",
+    founderBioLabel: "வாழ்க்கை வரலாறு & பயணம்",
+    founderOfficeAddress: "அலுவலக முகவரி",
+    founderContactNo: "தொடர்பு எண்",
+
     // Contact Page
     contactBadge: "நேரடி தொடர்பு & கடை அமைவிடம்",
     contactTitle: "தொடர்பு கொள்ள",
@@ -288,6 +323,41 @@ export const TRANSLATIONS = {
       "Our stainless steel cutting tables are sanitized every two hours. All handlers wear food-grade hairnets, aprons, and sanitized gloves.",
     aboutSatisfactionText:
       "Whether it is a 250g finely minced keema for weekday dinner or 10kg party cuts for family celebrations, every single order is treated with identical high care.",
+
+    // Meet Our Founder & Profile
+    meetOurFounder: "Meet Our Founder",
+    meetOurFounderBadge: "Leadership & Vision",
+    meetOurFounderSubtitle: "The vision, integrity, and dedication driving over two decades of poultry excellence",
+    founderDesignationDefault: "Founder, Sri Mahalakshmi Broilers",
+    founderExperienceDefault: "20+ Years in Poultry & Farming • 20+ Retail Outlets",
+    founderVisionTitle: "Founder's Vision",
+    founderVisionDefault:
+      "To provide hospital-grade cleanliness, 100% daily farm freshness, and ethical poultry care to every neighborhood family at fair prices.",
+    founderBioDefault:
+      "With over 20 years of experience in the poultry industry and a growing network of 20+ chicken shops, our journey has always been built on one foundation — Trust and Quality. Your trust is our strength, and serving you better is our commitment. Thank you for being part of our journey.",
+    shareFounderProfile: "Share Founder Profile",
+    shareFounderModalTitle: "Share Founder Profile",
+    shareFounderModalDesc: "Share the profile of Paramasivam Masanaicker, Founder of Sri Mahalakshmi Broilers, across WhatsApp and social platforms.",
+    shareViaWhatsApp: "Share on WhatsApp",
+    copyFounderLink: "Copy Profile Link",
+    founderLinkCopied: "Link Copied!",
+    nativeShareBtn: "More Share Options",
+    nativeShareFallbackNotice: "Native share unavailable on this device. Link copied to clipboard!",
+    viewFullFounderProfile: "View Full Profile",
+    backToAbout: "Back to About Us",
+    founderBreadcrumb: "Founder Profile",
+    founderCorePrinciples: "Core Guiding Principles",
+    founderPrinciple1Title: "Uncompromising Hygiene",
+    founderPrinciple1Desc: "Food-grade stainless steel preparation tables, sterile knives, and RO purified water washing in every outlet.",
+    founderPrinciple2Title: "Daily Morning Farm Supply",
+    founderPrinciple2Desc: "Direct farm sourcing every dawn, strictly chilled between 0°C–4°C and never carried over.",
+    founderPrinciple3Title: "Honest Weighing & Custom Cuts",
+    founderPrinciple3Desc: "Accurate digital scales and precision cuts tailored to your family's favorite recipes.",
+    founderPrinciple4Title: "Deep Community Trust",
+    founderPrinciple4Desc: "Built on 20+ years of relentless customer care, family relationships, and reliable service.",
+    founderBioLabel: "Biography & Journey",
+    founderOfficeAddress: "Office Address",
+    founderContactNo: "Contact No",
 
     // Contact Page
     contactBadge: "Direct Contact & Location",
