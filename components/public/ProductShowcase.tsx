@@ -33,12 +33,22 @@ export function ProductShowcase({
   // Up to 7 items (matching the 7 floating cuts)
   const showcaseItems = products.slice(0, 7);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
     if (activeIndex >= showcaseItems.length) {
       setActiveIndex(0);
     }
   }, [activeIndex, showcaseItems.length]);
+
+  // Auto-run cuts rotation smoothly every 3.5 seconds (pauses on hover)
+  useEffect(() => {
+    if (isPaused || showcaseItems.length <= 1) return;
+    const timer = setInterval(() => {
+      setActiveIndex((prev) => (prev + 1) % showcaseItems.length);
+    }, 3500);
+    return () => clearInterval(timer);
+  }, [isPaused, showcaseItems.length]);
 
   if (showcaseItems.length === 0) return null;
 
@@ -62,7 +72,13 @@ export function ProductShowcase({
   return (
     <section className="py-6 sm:py-12 lg:py-16 bg-white border-y border-[#C7E4CA]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="rounded-2xl bg-gradient-to-br from-[#F5FAF6] via-white to-[#EAF6ED] border border-[#C7E4CA] shadow-sm p-4 sm:p-8 lg:p-10">
+        <div
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+          onTouchStart={() => setIsPaused(true)}
+          onTouchEnd={() => setIsPaused(false)}
+          className="rounded-2xl bg-gradient-to-br from-[#F5FAF6] via-white to-[#EAF6ED] border border-[#C7E4CA] shadow-sm p-4 sm:p-8 lg:p-10"
+        >
           
           {/* Main Showcase Stage */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-8 items-center">
