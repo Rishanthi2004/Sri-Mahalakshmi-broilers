@@ -140,12 +140,14 @@ export function AdminShell({
       {/* Brand Header */}
       <div className="p-5 border-b border-slate-100 flex items-center justify-between">
         <Link href="/admin/dashboard" onClick={() => setSidebarOpen(false)} className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-[#287A45] flex items-center justify-center text-white shadow-sm shadow-[#287A45]/20 font-bold text-lg">
-            🍗
-          </div>
+          <img
+            src={content.logoUrl || "/images/logo.png"}
+            alt={content.shopName}
+            className="w-10 h-10 rounded-full object-cover border border-slate-200 shadow-xs bg-white shrink-0"
+          />
           <div className="min-w-0">
             <span className="text-sm font-bold text-slate-900 block truncate">
-              {content.shopName || "ஸ்ரீ மகாலட்சுமி பிராய்லர்ஸ்"}
+              {content.shopName || "Sri Mahalakshmi Broilers"}
             </span>
             <span className="text-[11px] font-bold text-[#287A45] uppercase tracking-wider block">
               {isSuperAdmin

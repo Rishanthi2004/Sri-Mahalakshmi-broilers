@@ -93,12 +93,14 @@ export default function AdminLoginPage() {
       <div className="w-full max-w-md space-y-5">
         {/* Header Icon & Brand */}
         <div className="flex flex-col items-center text-center space-y-2">
-          <div className="w-14 h-14 rounded-2xl bg-[#287A45] flex items-center justify-center text-white shadow-lg shadow-[#287A45]/25 text-2xl font-bold">
-            🍗
-          </div>
+          <img
+            src={content.logoUrl || "/images/logo.png"}
+            alt={content.shopName || "Sri Mahalakshmi Broilers"}
+            className="w-16 h-16 rounded-full object-cover border-2 border-[#287A45] shadow-lg shadow-[#287A45]/25 bg-white shrink-0"
+          />
           <div>
             <h2 className="text-xl font-bold text-[#26352B]">
-              {content.shopName || "ஸ்ரீ மகாலட்சுமி பிராய்லர்ஸ்"}
+              {content.shopName || "Sri Mahalakshmi Broilers"}
             </h2>
             <p className="text-xs font-bold text-[#287A45] uppercase tracking-widest mt-0.5">
               {language === "ta" ? "நிர்வாக கட்டுப்பாட்டு மையம்" : "Admin Operations Portal"}

@@ -3,8 +3,8 @@ import { WebsiteContent } from "@/types";
 export const DEFAULT_WEBSITE_CONTENT: WebsiteContent = {
   shopName: "Sri Mahalakshmi Broilers",
   tagline: "Daily Fresh, Hygienically Cut Farm Chicken & Eggs",
-  logoUrl: "",
-  faviconUrl: "/favicon.ico",
+  logoUrl: "/images/logo.png",
+  faviconUrl: "/images/logo.png",
   hero: {
     badge: "100% Daily Fresh Farm Supply",
     headline: "Freshly & Hygienically Cut Farm Chicken Every Morning",
@@ -57,15 +57,15 @@ export const DEFAULT_WEBSITE_CONTENT: WebsiteContent = {
     introDescription:
       "Sri Mahalakshmi Broilers was founded on a simple promise: providing every family with hospital-grade cleanliness, transparent sourcing, and genuine care in every cut.",
     shopImage: "/images/about-shop.jpg",
-    businessExperienceYears: "15+ Years",
-    businessInfoTitle: "Direct Farm Sourcing to Kitchens Since 2011",
+    businessExperienceYears: "20+ Years",
+    businessInfoTitle: "Over 20 Years of Poultry Excellence & 20+ Stores",
     businessInfoBody:
-      "We partner directly with certified regional farms following natural grain feed and antibiotic-free standards. Birds arrive early morning, undergo strict quality checks, and are prepped hygienically in chilled rooms.",
-    ownerName: "Rajesh Nair",
-    ownerDesignation: "Founder & Master Butcher",
-    ownerPhoto: "/images/owner-portrait.jpg",
+      "With over 20 years of experience in the poultry industry and a growing network of 20+ chicken shops, our journey has always been built on one foundation — Trust and Quality.",
+    ownerName: "Founder",
+    ownerDesignation: "Founder, Sri Mahalakshmi Broilers",
+    ownerPhoto: "/images/founder.jpg",
     ownerBio:
-      "With over 15 years of hands-on expertise in hygienic poultry butchery and cold-chain standards, Rajesh founded Sri Mahalakshmi Broilers as a pristine, transparent alternative to crowded markets.",
+      "With over 20 years of experience in the poultry industry and a growing network of 20+ chicken shops, our journey has always been built on one foundation — Trust and Quality.\n\nYour trust is our strength, and serving you better is our commitment.\n\nThank you for being part of our journey.",
     qualityCommitment:
       "Every cut is inspected prior to weighing. Excess skin, bone splinters, and unwanted fat are trimmed away cleanly so you pay only for prime, usable meat.",
     hygienePractices:

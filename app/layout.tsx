@@ -7,6 +7,11 @@ export const metadata: Metadata = {
   title: "Sri Mahalakshmi Broilers | Fresh Farm Chicken & Eggs",
   description:
     "Freshly and hygienically cut farm chicken, boneless breast, curry cuts and healthy farm eggs every morning.",
+  icons: {
+    icon: "/images/logo.png",
+    shortcut: "/images/logo.png",
+    apple: "/images/logo.png",
+  },
 };
 
 export default function RootLayout({
