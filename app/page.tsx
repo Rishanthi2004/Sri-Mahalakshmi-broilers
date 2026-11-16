@@ -136,10 +136,9 @@ export default function HomePage() {
                   <img
                     src={content?.hero?.bannerImage || "/images/hero-banner.jpg"}
                     alt={`${content?.shopName || "ஸ்ரீ மகாலட்சுமி பிராய்லர்ஸ்"} புதிய பண்ணை கோழிக்கறி வரவு`}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover object-center"
                   />
                 </picture>
-                <div className="absolute inset-0 bg-gradient-to-t from-[#26352B]/20 via-transparent to-transparent lg:bg-gradient-to-r lg:from-white/20 lg:via-transparent lg:to-transparent pointer-events-none" />
               </motion.div>
             </div>
           </div>
