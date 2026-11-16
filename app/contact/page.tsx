@@ -10,6 +10,7 @@ import {
   Phone,
   Send,
 } from "lucide-react";
+import { AnimatedCard, FadeInSection } from "@/components/common/MotionPrimitives";
 import { WhatsAppIcon } from "@/components/common/WhatsAppIcon";
 import { useToast } from "@/components/common/ToastProvider";
 import { PublicShell } from "@/components/public/PublicShell";
@@ -140,7 +141,8 @@ export default function ContactPage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             {/* Left: Shop Contact Details & Map Placeholder */}
             <div className="lg:col-span-5 space-y-4 sm:space-y-6">
-              <div className="bg-white rounded-2xl border border-[#C7E4CA] p-4 sm:p-6 shadow-xs space-y-3.5 sm:space-y-4">
+              <AnimatedCard hoverLift={false}>
+                <div className="bg-white rounded-2xl border border-[#C7E4CA] p-4 sm:p-6 shadow-xs hover:shadow-md transition-shadow space-y-3.5 sm:space-y-4">
                 <div>
                   <h2 className="text-base sm:text-lg font-bold text-[#26352B]">
                     {content.shopName}
@@ -255,9 +257,11 @@ export default function ContactPage() {
                   </a>
                 </div>
               </div>
+            </AnimatedCard>
 
-              {/* Google Maps Landmark Preview Card */}
-              <div className="bg-white rounded-2xl border border-[#C7E4CA] overflow-hidden shadow-xs">
+            {/* Google Maps Landmark Preview Card */}
+            <AnimatedCard delay={0.05} hoverLift={false}>
+              <div className="bg-white rounded-2xl border border-[#C7E4CA] overflow-hidden shadow-xs hover:shadow-md transition-shadow">
                 <div className="bg-[#EDF7EE] p-4 flex flex-col items-center justify-center text-center border-b border-[#C7E4CA]">
                   <div className="w-10 h-10 rounded-full bg-white border border-[#C7E4CA] text-[#287A45] flex items-center justify-center mb-2 shadow-xs">
                     <MapPin className="w-5 h-5" />
@@ -272,18 +276,20 @@ export default function ContactPage() {
                     href={content.contact.googleMapsUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="mt-3 inline-flex items-center gap-1 px-3.5 py-1.5 rounded-lg bg-[#287A45] hover:bg-[#1E5F35] text-white text-xs font-semibold transition-colors"
+                    className="mt-3 inline-flex items-center gap-1 px-3.5 py-1.5 rounded-lg bg-[#287A45] hover:bg-[#1E5F35] text-white text-xs font-semibold transition-colors shadow-xs"
                   >
                     <span>{language === "ta" ? "வரைபடத்தில் திறக்க" : "Open in Google Maps"}</span>
                     <ExternalLink className="w-3 h-3" />
                   </a>
                 </div>
               </div>
-            </div>
+            </AnimatedCard>
+          </div>
 
-            {/* Right: Contact Form */}
-            <div className="lg:col-span-7">
-              <div className="bg-white rounded-2xl border border-[#C7E4CA] p-5 sm:p-7 shadow-xs">
+          {/* Right: Contact Form */}
+          <div className="lg:col-span-7">
+            <AnimatedCard delay={0.06} hoverLift={false}>
+              <div className="bg-white rounded-2xl border border-[#C7E4CA] p-5 sm:p-7 shadow-xs hover:shadow-md transition-shadow">
                 <h2 className="text-lg sm:text-2xl font-bold text-[#26352B]">
                   {t("sendEnquiryTitle")}
                 </h2>
@@ -401,7 +407,8 @@ export default function ContactPage() {
                   </div>
                 </form>
               </div>
-            </div>
+            </AnimatedCard>
+          </div>
           </div>
         </div>
       </section>

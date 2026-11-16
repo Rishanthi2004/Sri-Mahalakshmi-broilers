@@ -10,7 +10,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { WhatsAppIcon } from "@/components/common/WhatsAppIcon";
-import { FadeInSection } from "@/components/common/MotionPrimitives";
+import { AnimatedCard, FadeInSection } from "@/components/common/MotionPrimitives";
 import { PublicShell } from "@/components/public/PublicShell";
 import { useLanguage } from "@/context/LanguageContext";
 import { contentService } from "@/services/content-service";
@@ -101,8 +101,8 @@ export default function AboutPage() {
       <section className="py-8 sm:py-14 bg-[#DDF3DF]">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-6 sm:space-y-10">
           {/* Business Info */}
-          <FadeInSection>
-            <div className="bg-white rounded-2xl border border-[#C7E4CA] p-5 sm:p-8 shadow-xs">
+          <AnimatedCard hoverLift={false}>
+            <div className="bg-white rounded-2xl border border-[#C7E4CA] p-5 sm:p-8 shadow-xs hover:shadow-md transition-shadow">
               <div className="max-w-3xl space-y-3">
                 <span className="text-[11px] font-bold uppercase tracking-widest text-[#287A45]">
                   {t("businessInfoTag")}
@@ -141,10 +141,10 @@ export default function AboutPage() {
                 </div>
               </div>
             </div>
-          </FadeInSection>
+          </AnimatedCard>
 
           {/* Trust & Heritage Spotlight */}
-          <FadeInSection>
+          <AnimatedCard hoverLift={false}>
             <div className="bg-white rounded-2xl border border-[#C7E4CA] overflow-hidden shadow-sm">
               <div className="grid grid-cols-1 md:grid-cols-12 items-center">
                 <div className="md:col-span-5 h-72 sm:h-96 md:h-full min-h-[340px] bg-[#EDF7EE] relative">
@@ -229,12 +229,12 @@ export default function AboutPage() {
                 </div>
               </div>
             </div>
-          </FadeInSection>
+          </AnimatedCard>
 
-          {/* 3 Editorial Pillars */}
+          {/* 3 Editorial Pillars with animated interactive hover */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-5">
-            <FadeInSection delay={0.03}>
-              <div className="bg-white rounded-xl border border-[#C7E4CA] p-4 sm:p-6 shadow-xs h-full">
+            <AnimatedCard delay={0.03}>
+              <div className="bg-white rounded-xl border border-[#C7E4CA] hover:border-[#287A45]/50 p-4 sm:p-6 shadow-xs hover:shadow-md transition-all h-full cursor-pointer select-none">
                 <div className="w-9 h-9 rounded-lg bg-[#DDF3DF] text-[#287A45] flex items-center justify-center mb-2.5">
                   <Award className="w-5 h-5" />
                 </div>
@@ -243,10 +243,10 @@ export default function AboutPage() {
                   {qualityCommitment}
                 </p>
               </div>
-            </FadeInSection>
+            </AnimatedCard>
 
-            <FadeInSection delay={0.06}>
-              <div className="bg-white rounded-xl border border-[#C7E4CA] p-4 sm:p-6 shadow-xs h-full">
+            <AnimatedCard delay={0.06}>
+              <div className="bg-white rounded-xl border border-[#C7E4CA] hover:border-[#287A45]/50 p-4 sm:p-6 shadow-xs hover:shadow-md transition-all h-full cursor-pointer select-none">
                 <div className="w-9 h-9 rounded-lg bg-[#DDF3DF] text-[#287A45] flex items-center justify-center mb-2.5">
                   <ShieldCheck className="w-5 h-5" />
                 </div>
@@ -255,10 +255,10 @@ export default function AboutPage() {
                   {hygienePractices}
                 </p>
               </div>
-            </FadeInSection>
+            </AnimatedCard>
 
-            <FadeInSection delay={0.09}>
-              <div className="bg-white rounded-xl border border-[#C7E4CA] p-4 sm:p-6 shadow-xs h-full">
+            <AnimatedCard delay={0.09}>
+              <div className="bg-white rounded-xl border border-[#C7E4CA] hover:border-[#287A45]/50 p-4 sm:p-6 shadow-xs hover:shadow-md transition-all h-full cursor-pointer select-none">
                 <div className="w-9 h-9 rounded-lg bg-[#DDF3DF] text-[#287A45] flex items-center justify-center mb-2.5">
                   <HeartHandshake className="w-5 h-5" />
                 </div>
@@ -267,7 +267,7 @@ export default function AboutPage() {
                   {customerSatisfaction}
                 </p>
               </div>
-            </FadeInSection>
+            </AnimatedCard>
           </div>
         </div>
       </section>

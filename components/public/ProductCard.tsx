@@ -47,16 +47,26 @@ export function ProductCard({
 
   return (
     <motion.article
-      whileHover={{ y: -3 }}
-      transition={{ duration: 0.2 }}
-      className="group bg-white rounded-xl border border-[#C7E4CA] shadow-sm hover:shadow-md transition-shadow overflow-hidden flex flex-col h-full"
+      layout
+      initial={{ opacity: 0, y: 16, scale: 0.98 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.96 }}
+      whileHover={{
+        y: -6,
+        scale: 1.015,
+        boxShadow: "0 16px 32px -8px rgba(40,122,69,0.2), 0 4px 12px -2px rgba(0,0,0,0.06)",
+        transition: { duration: 0.22, ease: "easeOut" },
+      }}
+      whileTap={{ scale: 0.985 }}
+      transition={{ duration: 0.25, ease: "easeOut" }}
+      className="group bg-white rounded-xl border border-[#C7E4CA] hover:border-[#287A45]/60 shadow-sm transition-colors overflow-hidden flex flex-col h-full cursor-pointer select-none"
     >
       {/* Floating Image Showcase */}
       <div className="relative aspect-square sm:aspect-[4/3] w-full overflow-hidden bg-gradient-to-b from-[#F4FAF5] to-white flex items-center justify-center p-3 sm:p-4">
         <img
           src={product.image}
           alt={displayName}
-          className={`max-w-full max-h-full object-contain filter drop-shadow-[0_8px_12px_rgba(0,0,0,0.08)] transition-transform duration-300 group-hover:scale-105 ${
+          className={`max-w-full max-h-full object-contain filter drop-shadow-[0_8px_14px_rgba(0,0,0,0.1)] transition-transform duration-300 group-hover:scale-110 group-hover:-translate-y-1 ${
             !isAvailable ? "opacity-75 grayscale-[25%]" : ""
           }`}
         />

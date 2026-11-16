@@ -12,7 +12,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { WhatsAppIcon } from "@/components/common/WhatsAppIcon";
-import { FadeInSection } from "@/components/common/MotionPrimitives";
+import { AnimatedCard, FadeInSection } from "@/components/common/MotionPrimitives";
 import { ProductShowcase } from "@/components/public/ProductShowcase";
 import { PublicShell } from "@/components/public/PublicShell";
 import { useLanguage } from "@/context/LanguageContext";
@@ -168,13 +168,13 @@ export default function HomePage() {
             </p>
           </FadeInSection>
 
-          {/* 2 columns on mobile */}
+          {/* 2 columns on mobile, 4 on desktop with interactive card animation */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-5">
             {(content?.whyChooseUs || []).map((item, idx) => {
               const localized = getWhyItem(idx, item);
               return (
-                <FadeInSection key={item.id} delay={idx * 0.05}>
-                  <div className="bg-white rounded-xl border border-[#C7E4CA] p-3.5 sm:p-5 shadow-xs hover:shadow-sm transition-shadow h-full flex flex-col justify-between">
+                <AnimatedCard key={item.id} delay={idx * 0.05} className="h-full">
+                  <div className="bg-white rounded-xl sm:rounded-2xl border border-[#C7E4CA] hover:border-[#287A45]/50 p-3.5 sm:p-5 shadow-xs hover:shadow-md transition-all h-full flex flex-col justify-between cursor-pointer select-none">
                     <div>
                       <div className="w-8 h-8 sm:w-11 sm:h-11 rounded-lg bg-[#DDF3DF] flex items-center justify-center mb-2.5 sm:mb-3">
                         {WHY_ICONS[item.iconName] || <Sparkles className="w-5 h-5 text-[#287A45]" />}
@@ -187,7 +187,7 @@ export default function HomePage() {
                       </p>
                     </div>
                   </div>
-                </FadeInSection>
+                </AnimatedCard>
               );
             })}
           </div>

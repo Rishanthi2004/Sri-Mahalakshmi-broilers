@@ -1,6 +1,8 @@
 "use client";
 
 import React from "react";
+import { motion } from "framer-motion";
+import { usePathname } from "next/navigation";
 import { PublicFooter } from "./PublicFooter";
 import { PublicHeader } from "./PublicHeader";
 import { WhatsAppIcon } from "@/components/common/WhatsAppIcon";
@@ -9,6 +11,7 @@ import { contentService } from "@/services/content-service";
 import { useWebsiteContent } from "@/services/use-store-data";
 
 export function PublicShell({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
   const { content } = useWebsiteContent();
   const { language, t } = useLanguage();
 
@@ -25,7 +28,15 @@ export function PublicShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen flex flex-col bg-[#DDF3DF] text-[#26352B]">
       <PublicHeader />
-      <main className="flex-1">{children}</main>
+      <motion.main
+        key={pathname}
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.28, ease: "easeOut" }}
+        className="flex-1"
+      >
+        {children}
+      </motion.main>
       <PublicFooter />
 
       {/* Floating Quick WhatsApp Click-to-Chat Button */}

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { Filter, Search, X } from "lucide-react";
 import { ProductCard } from "@/components/public/ProductCard";
 import { PublicShell } from "@/components/public/PublicShell";
@@ -128,12 +129,19 @@ export default function ProductsPage() {
             <button
               type="button"
               onClick={() => setSelectedCategoryId("all")}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors shrink-0 ${
+              className={`relative px-3.5 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors shrink-0 z-0 cursor-pointer ${
                 selectedCategoryId === "all"
-                  ? "bg-[#287A45] text-white shadow-xs"
+                  ? "text-white shadow-xs"
                   : "bg-[#EDF7EE] text-[#26352B] hover:bg-[#DDF3DF]"
               }`}
             >
+              {selectedCategoryId === "all" && (
+                <motion.div
+                  layoutId="activeCategoryPill"
+                  className="absolute inset-0 bg-[#287A45] rounded-lg -z-10 shadow-xs"
+                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                />
+              )}
               {t("allCategories")} ({activeProducts.length})
             </button>
             {activeCategories.map((cat) => {
@@ -145,12 +153,19 @@ export default function ProductsPage() {
                   key={cat.id}
                   type="button"
                   onClick={() => setSelectedCategoryId(cat.id)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors shrink-0 ${
+                  className={`relative px-3.5 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors shrink-0 z-0 cursor-pointer ${
                     isSelected
-                      ? "bg-[#287A45] text-white font-semibold shadow-xs"
+                      ? "text-white font-semibold shadow-xs"
                       : "bg-[#EDF7EE] text-[#26352B] hover:bg-[#DDF3DF]"
                   }`}
                 >
+                  {isSelected && (
+                    <motion.div
+                      layoutId="activeCategoryPill"
+                      className="absolute inset-0 bg-[#287A45] rounded-lg -z-10 shadow-xs"
+                      transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                    />
+                  )}
                   {catTitle} ({count})
                 </button>
               );
@@ -210,17 +225,22 @@ export default function ProductsPage() {
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2.5 sm:gap-5">
-              {filteredProducts.map((product) => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  categoryName={categoryNameMap.get(product.categoryId)}
-                  whatsappNumber={content.contact.whatsappNumber}
-                  shopName={content.shopName}
-                />
-              ))}
-            </div>
+            <motion.div
+              layout
+              className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2.5 sm:gap-5"
+            >
+              <AnimatePresence mode="popLayout">
+                {filteredProducts.map((product) => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    categoryName={categoryNameMap.get(product.categoryId)}
+                    whatsappNumber={content.contact.whatsappNumber}
+                    shopName={content.shopName}
+                  />
+                ))}
+              </AnimatePresence>
+            </motion.div>
           )}
         </div>
       </section>
