@@ -129,14 +129,17 @@ export default function HomePage() {
                 initial={{ opacity: 0, scale: 0.98 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.4, delay: 0.08 }}
-                className="lg:col-span-6 h-48 sm:h-64 lg:h-[420px] relative bg-[#EDF7EE]"
+                className="lg:col-span-6 h-48 sm:h-64 lg:h-[420px] relative bg-[#EDF7EE] overflow-hidden"
               >
-                <img
-                  src={content?.hero?.bannerImage || "/images/hero-banner.jpg"}
-                  alt={`${content?.shopName || "ஸ்ரீ மகாலட்சுமி பிராய்லர்ஸ்"} புதிய கோழிக்கறி கவுண்டர்`}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#26352B]/20 via-transparent to-transparent lg:bg-gradient-to-r lg:from-white/20 lg:via-transparent lg:to-transparent" />
+                <picture className="w-full h-full block">
+                  <source srcSet="/images/hero-banner.avif" type="image/avif" />
+                  <img
+                    src={content?.hero?.bannerImage || "/images/hero-banner.jpg"}
+                    alt={`${content?.shopName || "ஸ்ரீ மகாலட்சுமி பிராய்லர்ஸ்"} புதிய பண்ணை கோழிக்கறி வரவு`}
+                    className="w-full h-full object-cover"
+                  />
+                </picture>
+                <div className="absolute inset-0 bg-gradient-to-t from-[#26352B]/20 via-transparent to-transparent lg:bg-gradient-to-r lg:from-white/20 lg:via-transparent lg:to-transparent pointer-events-none" />
               </motion.div>
             </div>
           </div>
