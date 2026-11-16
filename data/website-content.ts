@@ -1,90 +1,90 @@
 import { WebsiteContent } from "@/types";
 
 export const DEFAULT_WEBSITE_CONTENT: WebsiteContent = {
-  shopName: "ஸ்ரீ மகாலட்சுமி பிராய்லர்ஸ்",
-  tagline: "தினசரி புதிய, சுகாதாரமாக வெட்டப்பட்ட பண்ணை சிக்கன் & முட்டைகள்",
+  shopName: "Sri Mahalakshmi Broilers",
+  tagline: "Daily Fresh, Hygienically Cut Farm Chicken & Eggs",
   logoUrl: "",
   faviconUrl: "/favicon.ico",
   hero: {
-    badge: "100% தினசரி புதிய பண்ணை வரவு",
-    headline: "தினமும் காலையில் சுகாதாரமாக வெட்டப்பட்ட புதிய கோழிக்கறி",
+    badge: "100% Daily Fresh Farm Supply",
+    headline: "Freshly & Hygienically Cut Farm Chicken Every Morning",
     subheadline:
-      "மென்மையான கறிக்கட், கொழுப்பற்ற எலும்பில்லா நெஞ்சுக்கறி முதல் பண்ணை பிரவுன் முட்டைகள் வரை — ஆண்டிபயாடிக் இல்லாத நம்பகமான பண்ணைகளிலிருந்து நேரடியாக உங்கள் ஆர்டருக்கேற்ப வெட்டித் தருகிறோம்.",
+      "Tender curry cuts, lean boneless breast, whole chicken, and farm-fresh eggs — antibiotic-free, cleanly trimmed, and prepped fresh to your exact recipe preference.",
     bannerImage: "/images/hero-banner.jpg",
-    primaryCtaText: "பொருட்களைப் பார்க்க",
-    secondaryCtaText: "வாட்ஸ்அப்பில் ஆர்டர்",
+    primaryCtaText: "Explore Our Cuts",
+    secondaryCtaText: "Order on WhatsApp",
   },
   featuredProductIds: ["prod-1", "prod-2", "prod-3", "prod-4", "prod-6", "prod-7"],
   whyChooseUs: [
     {
       id: "why-1",
-      title: "புதிய தரம் (Fresh Quality)",
+      title: "Fresh Quality",
       description:
-        "தினமும் காலையில் பண்ணையிலிருந்து வரும் கோழிகள் உடனே 0°C முதல் 4°C வரை குளிரூட்டப்படுகிறது — ஒருபோதும் உறைநிலையில் வைப்பதோ மறுநாள் விற்பதோ இல்லை.",
+        "Birds arrive fresh from certified regional farms every morning and are chilled between 0°C to 4°C — never frozen, never carried over.",
       iconName: "Sparkles",
     },
     {
       id: "why-2",
-      title: "சுகாதாரமான கையாளுதல் (Hygiene)",
+      title: "Hygienic Handling",
       description:
-        "உணவுத் தரம் கொண்ட துருப்பிடிக்காத ஸ்டெயின்லெஸ் ஸ்டீல் மேஜைகள், சுத்திகரிக்கப்பட்ட கத்திகள், கையுறைகள் மற்றும் RO நீரினால் கழுவப்பட்டு சுத்தம் செய்யப்படுகிறது.",
+        "Food-grade stainless steel cutting tables, sterilized knives, clean gloves, and RO purified water washing ensure pristine cleanliness.",
       iconName: "ShieldCheck",
     },
     {
       id: "why-3",
-      title: "தரமான சேவை (Quality Service)",
+      title: "Custom Precision Cuts",
       description:
-        "உங்கள் சமையல் முறைக்கேற்ப விரும்பிய துண்டுகளாக வெட்டி, துல்லியமாக எடைபோட்டு, பாதுகாப்பான லீக்-ப்ரூஃப் டிரேயில் பேக் செய்து தருகிறோம்.",
+        "Cut precisely to your cooking preference (biryani, curry, fry), accurately weighed, and packed safely in leak-proof sealed trays.",
       iconName: "Award",
     },
     {
       id: "why-4",
-      title: "வாடிக்கையாளர் திருப்தி (Trust)",
+      title: "Trusted by Families",
       description:
-        "நூற்றுக்கணக்கான குடும்பங்கள், வீட்டு சமையலறைகள் மற்றும் உணவகங்கள் எங்கள் நேர்மையான விலை மற்றும் தரமான சேவையை முழுமையாக நம்புகின்றன.",
+        "Hundreds of neighborhood families, home chefs, and caterers rely on our honest weighing, transparent service, and daily freshness.",
       iconName: "HeartHandshake",
     },
   ],
   ctaBanner: {
-    headline: "நீங்கள் வருவதற்கு முன்பே கறி வெட்டித் தயார் செய்து வைக்க வேண்டுமா?",
+    headline: "Want your fresh chicken cuts prepped before you arrive?",
     description:
-      "உங்களுக்குத் தேவையான கறிக்கட்டு வகை மற்றும் எடையை வாட்ஸ்அப்பில் அனுப்புங்கள் — உடனே சுத்தமாக வெட்டி பேக் செய்து தயார் நிலையில் வைத்திருப்போம்.",
-    buttonText: "வாட்ஸ்அப்பில் உடனே ஆர்டர் செய்க",
+      "Send your preferred cut and quantity on WhatsApp — we will have it cleanly prepped, packed, and ready for instant pickup or fast delivery.",
+    buttonText: "Order Instantly on WhatsApp",
   },
   about: {
-    introBadge: "எங்கள் பாரம்பரியமும் தரமும்",
-    introTitle: "தூய்மை மற்றும் நம்பிக்கையின் அடிப்படையில் உருவான பகுதி கோழி அங்காடி",
+    introBadge: "Traditional Quality & Trust",
+    introTitle: "A Neighborhood Poultry Butcher Built on Cleanliness & Trust",
     introDescription:
-      "ஸ்ரீ மகாலட்சுமி பிராய்லர்ஸ் ஒரு எளிய வாக்குறுதியுடன் தொடங்கப்பட்டது: ஒவ்வொரு குடும்பத்திற்கும் மருத்துவமனை அளவிலான தூய்மை, வெளிப்படையான கொள்முதல் மற்றும் உண்மையான கவனிப்புடன் கோழிக்கறி கிடைக்க வேண்டும்.",
+      "Sri Mahalakshmi Broilers was founded on a simple promise: providing every family with hospital-grade cleanliness, transparent sourcing, and genuine care in every cut.",
     shopImage: "/images/about-shop.jpg",
-    businessExperienceYears: "15+ ஆண்டுகள்",
-    businessInfoTitle: "2011 முதல் பண்ணையிலிருந்து நேரடியாக வாடிக்கையாளர்களுக்கு",
+    businessExperienceYears: "15+ Years",
+    businessInfoTitle: "Direct Farm Sourcing to Kitchens Since 2011",
     businessInfoBody:
-      "இயற்கையான தானிய உணவு மற்றும் ஆண்டிபயாடிக் இல்லாத நெறிமுறைகளைப் பின்பற்றும் சான்றளிக்கப்பட்ட பிராந்திய பண்ணைகளுடன் நாங்கள் நேரடியாக இணைந்துள்ளோம். தினசரி அதிகாலையில் கோழிகள் வரவழைக்கப்பட்டு, தரப் பரிசோதனைக்குப் பின் குளிரூட்டப்பட்ட அறையில் சுகாதாரமாக தயார் செய்யப்படுகின்றன.",
-    ownerName: "ராஜேஷ் நாயர்",
-    ownerDesignation: "நிறுவனர் & முதன்மை கறிக்கலைஞர்",
+      "We partner directly with certified regional farms following natural grain feed and antibiotic-free standards. Birds arrive early morning, undergo strict quality checks, and are prepped hygienically in chilled rooms.",
+    ownerName: "Rajesh Nair",
+    ownerDesignation: "Founder & Master Butcher",
     ownerPhoto: "/images/owner-portrait.jpg",
     ownerBio:
-      "சுகாதாரமான கோழிக்கறி சில்லறை வர்த்தகம் மற்றும் கோல்ட்-செயின் உணவு கையாளுதலில் 15 ஆண்டுகளுக்கும் மேலான அனுபவம் கொண்ட ராஜேஷ், அவசர நெரிசல் நிறைந்த சந்தைகளுக்கு மாற்றாக சுத்தமான, வெளிப்படையான, வாடிக்கையாளரை முதன்மையாகக் கொண்ட ஸ்ரீ மகாலட்சுமி பிராய்லர்ஸ் அங்காடியை நிறுவினார்.",
+      "With over 15 years of hands-on expertise in hygienic poultry butchery and cold-chain standards, Rajesh founded Sri Mahalakshmi Broilers as a pristine, transparent alternative to crowded markets.",
     qualityCommitment:
-      "எடை போடுவதற்கு முன்பே ஒவ்வொரு துண்டும் பரிசோதிக்கப்படுகிறது. அதிகப்படியான தோல், எலும்பு விளிம்புகள் மற்றும் தேவையற்ற கொழுப்புகளை நீக்கி, நீங்கள் செலுத்தும் பணத்திற்கு முழுமையான சதைப்பற்றான புதிய கறியை மட்டுமே வழங்குகிறோம்.",
+      "Every cut is inspected prior to weighing. Excess skin, bone splinters, and unwanted fat are trimmed away cleanly so you pay only for prime, usable meat.",
     hygienePractices:
-      "எங்கள் ஸ்டெயின்லெஸ் ஸ்டீல் வெட்டும் மேஜைகள் இரண்டு மணி நேரத்திற்கு ஒருமுறை கிருமிநாசினி கொண்டு தூய்மைப்படுத்தப்படுகின்றன. ஊழியர்கள் அனைவரும் தலைக்கவசம், ஏப்ரன் மற்றும் கையுறைகளை அணிகின்றனர்.",
+      "Our stainless steel cutting tables are sanitized every two hours. All handlers wear food-grade hairnets, aprons, and sanitized gloves.",
     customerSatisfaction:
-      "வார நாட்களில் சமைக்க 250 கிராம் பொடியாக வெட்டிய கீமாவாக இருந்தாலும், குடும்ப விசேஷங்களுக்கு 10 கிலோ கறிக்கட்டாக இருந்தாலும், ஒவ்வொரு ஆர்டரும் ஒரே உயர்ந்த தரத்துடன் கவனிக்கப்படுகிறது.",
+      "Whether it is a 250g finely minced keema for weekday dinner or 10kg party cuts for family celebrations, every single order is treated with identical high care.",
   },
   contact: {
     phone: "+91 98765 43210",
     whatsappNumber: "919876543210",
     email: "orders@greenpasturepoultry.example",
-    address: "கடை எண் 14, மேப்பிள் ஆர்கேட், எம்.ஜி. சாலை, இந்திராநகர், பெங்களூரு 560038",
+    address: "Shop No. 14, Maple Arcade, M.G. Road, Indiranagar, Bengaluru 560038",
     googleMapsUrl: "https://maps.google.com/?q=Indiranagar+Bengaluru+560038",
     googleMapsEmbedPlaceholder:
-      "மேப்பிள் ஆர்கேட், எம்.ஜி. சாலை, இந்திராநகர் — கடை முன்பாக வாடிக்கையாளர்கள் வாகனம் நிறுத்த 15 நிமிட இலவச பார்க்கிங் வசதி உள்ளது.",
+      "Maple Arcade, M.G. Road, Indiranagar — 15 minutes free customer parking available right in front of the store.",
     openingHours: [
-      { day: "திங்கள் – வெள்ளி", hours: "காலை 7:00 – இரவு 8:30" },
-      { day: "சனிக்கிழமை", hours: "காலை 6:30 – இரவு 9:00" },
-      { day: "ஞாயிற்றுக்கிழமை", hours: "காலை 6:30 – மதியம் 2:30" },
+      { day: "Monday – Friday", hours: "7:00 AM – 8:30 PM" },
+      { day: "Saturday", hours: "6:30 AM – 9:00 PM" },
+      { day: "Sunday", hours: "6:30 AM – 2:30 PM" },
     ],
   },
   socialLinks: {
@@ -94,7 +94,7 @@ export const DEFAULT_WEBSITE_CONTENT: WebsiteContent = {
   },
   footer: {
     description:
-      "தினசரி புதிய பண்ணை சிக்கன் கறிக்கட்டுகள், கொழுப்பற்ற நெஞ்சுக்கறி, மற்றும் நாட்டுக்கோழி & பண்ணை முட்டைகளுக்கான உங்கள் நம்பகமான அங்காடி.",
-    copyrightText: "© 2026 ஸ்ரீ மகாலட்சுமி பிராய்லர்ஸ். அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை.",
+      "Your trusted neighborhood destination for daily fresh farm chicken, hygienic customized cuts, and healthy eggs.",
+    copyrightText: "© 2026 Sri Mahalakshmi Broilers. All rights reserved.",
   },
 };

@@ -4,9 +4,9 @@ import { ToastProvider } from "@/components/common/ToastProvider";
 import { LanguageProvider } from "@/context/LanguageContext";
 
 export const metadata: Metadata = {
-  title: "ஸ்ரீ மகாலட்சுமி பிராய்லர்ஸ் | Sri Mahalakshmi Broilers",
+  title: "Sri Mahalakshmi Broilers | Fresh Farm Chicken & Eggs",
   description:
-    "தினசரி பண்ணையிலிருந்து பெறப்படும் புதிய கோழிக்கறி, எலும்பில்லா நெஞ்சுக்கறி, கறிக்கட் மற்றும் ஆரோக்கியமான முட்டைகள். Farm fresh chicken and eggs.",
+    "Freshly and hygienically cut farm chicken, boneless breast, curry cuts and healthy farm eggs every morning.",
 };
 
 export default function RootLayout({
@@ -15,7 +15,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ta">
+    <html lang="en">
       <body className="min-h-screen bg-[#DDF3DF] text-[#26352B] antialiased selection:bg-[#287A45] selection:text-white">
         <LanguageProvider>
           <ToastProvider>{children}</ToastProvider>

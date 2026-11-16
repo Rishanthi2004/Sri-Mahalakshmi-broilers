@@ -448,12 +448,37 @@ const PRODUCT_DESCRIPTION_TRANSLATIONS: Record<string, string> = {
     "Weekend special marinated wings tossed in aromatic herbs and cracked pepper blend.",
 };
 
+const CATEGORY_EN_TO_TA: Record<string, string> = {
+  "Whole Chicken": "முழு கோழி",
+  "Curry Cut Chicken": "கறிக்கட் சிக்கன்",
+  "Boneless Chicken": "எலும்பில்லா சிக்கன்",
+  "Chicken Breast": "சிக்கன் பிரஸ்ட்",
+  "Chicken Leg Pieces": "சிக்கன் லெக் பீஸ்",
+  "Chicken Wings": "சிக்கன் விங்ஸ்",
+  "Farm Fresh Eggs": "பண்ணை முட்டைகள்",
+  "Farm Fresh Country Eggs": "நாட்டுக்கோழி முட்டை",
+  "Fresh Farm Chicken": "புதிய கோழிக்கறி",
+  "Other Cuts & Organs": "இதர பாகங்கள்",
+};
+
+const PRODUCT_EN_TO_TA: Record<string, string> = Object.fromEntries(
+  Object.entries(PRODUCT_TRANSLATIONS).map(([ta, en]) => [en, ta])
+);
+
+const UNIT_EN_TO_TA: Record<string, string> = Object.fromEntries(
+  Object.entries(UNIT_TRANSLATIONS).map(([ta, en]) => [en, ta])
+);
+
+const PRODUCT_DESCRIPTION_EN_TO_TA: Record<string, string> = Object.fromEntries(
+  Object.entries(PRODUCT_DESCRIPTION_TRANSLATIONS).map(([ta, en]) => [en, ta])
+);
+
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
-const STORAGE_LANG_KEY = "gp_poultry_lang_v1";
+const STORAGE_LANG_KEY = "gp_poultry_lang_v2";
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLangState] = useState<Language>("ta");
+  const [language, setLangState] = useState<Language>("en");
 
   useEffect(() => {
     try {
@@ -461,6 +486,9 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
       if (saved === "en" || saved === "ta") {
         setLangState(saved);
         document.documentElement.lang = saved;
+      } else {
+        setLangState("en");
+        document.documentElement.lang = "en";
       }
     } catch {}
   }, []);
@@ -478,65 +506,109 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   };
 
   const t = (key: keyof typeof TRANSLATIONS["ta"]): string => {
-    return TRANSLATIONS[language]?.[key] || TRANSLATIONS.ta[key] || "";
+    return TRANSLATIONS[language]?.[key] || TRANSLATIONS.en[key] || TRANSLATIONS.ta[key] || "";
   };
 
   const localizeCategoryName = (name: string): string => {
     if (!name) return "";
-    if (language === "ta") return name;
     const trimmed = name.trim();
-    if (CATEGORY_TRANSLATIONS[trimmed]) return CATEGORY_TRANSLATIONS[trimmed];
-    // If it contains parentheses with English, extract the English
-    const match = trimmed.match(/\(([^)]+)\)/);
-    if (match && match[1]) return match[1].trim();
-    return trimmed;
+    if (language === "en") {
+      if (CATEGORY_TRANSLATIONS[trimmed]) return CATEGORY_TRANSLATIONS[trimmed];
+      const match = trimmed.match(/\(([^)]+)\)/);
+      if (match && match[1]) return match[1].trim();
+      return trimmed;
+    } else {
+      if (CATEGORY_EN_TO_TA[trimmed]) return CATEGORY_EN_TO_TA[trimmed];
+      for (const [enKey, taVal] of Object.entries(CATEGORY_EN_TO_TA)) {
+        if (trimmed.toLowerCase().includes(enKey.toLowerCase())) {
+          return taVal;
+        }
+      }
+      return trimmed;
+    }
   };
 
   const localizeProductName = (name: string): string => {
     if (!name) return "";
-    if (language === "ta") return name;
     const trimmed = name.trim();
-    if (PRODUCT_TRANSLATIONS[trimmed]) return PRODUCT_TRANSLATIONS[trimmed];
-    for (const [taKey, enVal] of Object.entries(PRODUCT_TRANSLATIONS)) {
-      if (trimmed.includes(taKey) || taKey.includes(trimmed)) {
-        return enVal;
+    if (language === "en") {
+      if (PRODUCT_TRANSLATIONS[trimmed]) return PRODUCT_TRANSLATIONS[trimmed];
+      for (const [taKey, enVal] of Object.entries(PRODUCT_TRANSLATIONS)) {
+        if (trimmed.includes(taKey) || taKey.includes(trimmed)) {
+          return enVal;
+        }
       }
+      return trimmed;
+    } else {
+      if (PRODUCT_EN_TO_TA[trimmed]) return PRODUCT_EN_TO_TA[trimmed];
+      for (const [enKey, taVal] of Object.entries(PRODUCT_EN_TO_TA)) {
+        if (trimmed.toLowerCase().includes(enKey.toLowerCase()) || enKey.toLowerCase().includes(trimmed.toLowerCase())) {
+          return taVal;
+        }
+      }
+      return trimmed;
     }
-    return trimmed;
   };
 
   const localizeUnit = (unit: string): string => {
     if (!unit) return "";
-    if (language === "ta") return unit;
     const trimmed = unit.trim();
-    if (UNIT_TRANSLATIONS[trimmed]) return UNIT_TRANSLATIONS[trimmed];
-    // Fallback dictionary for dynamic units
-    const en = trimmed
-      .replace(/கிலோ/g, "Kg")
-      .replace(/கிராம்/g, "g")
-      .replace(/சுமார்/g, "Approx")
-      .replace(/துண்டுகள்/g, "Pieces")
-      .replace(/முட்டைகள்/g, "Eggs")
-      .replace(/பேக்/g, "Pack")
-      .replace(/ட்ரே/g, "Tray")
-      .replace(/தட்டு/g, "Tray");
-    return en;
+    if (language === "en") {
+      if (UNIT_TRANSLATIONS[trimmed]) return UNIT_TRANSLATIONS[trimmed];
+      return trimmed
+        .replace(/கிலோ/g, "Kg")
+        .replace(/கிராம்/g, "g")
+        .replace(/சுமார்/g, "Approx")
+        .replace(/துண்டுகள்/g, "Pieces")
+        .replace(/முட்டைகள்/g, "Eggs")
+        .replace(/பேக்/g, "Pack")
+        .replace(/ட்ரே/g, "Tray")
+        .replace(/தட்டு/g, "Tray");
+    } else {
+      if (UNIT_EN_TO_TA[trimmed]) return UNIT_EN_TO_TA[trimmed];
+      return trimmed
+        .replace(/Approx/gi, "சுமார்")
+        .replace(/Kg/gi, "கிலோ")
+        .replace(/Pack of 6 Eggs/gi, "6 முட்டைகள் பேக்")
+        .replace(/Pack of 12 Eggs/gi, "12 முட்டைகள் பேக்")
+        .replace(/Tray of 30/gi, "30 முட்டைகள் ட்ரே")
+        .replace(/Tray/gi, "ட்ரே")
+        .replace(/Pieces|pcs/gi, "துண்டுகள்")
+        .replace(/g/g, "கிராம்");
+    }
   };
 
   const localizeDescription = (taText: string, enText?: string): string => {
     if (!taText) return "";
-    if (language === "ta") return taText;
-    if (enText) return enText;
     const trimmed = taText.trim();
-    if (PRODUCT_DESCRIPTION_TRANSLATIONS[trimmed]) {
-      return PRODUCT_DESCRIPTION_TRANSLATIONS[trimmed];
-    }
-    for (const [taKey, enVal] of Object.entries(PRODUCT_DESCRIPTION_TRANSLATIONS)) {
-      if (trimmed.includes(taKey.slice(0, 18)) || taKey.includes(trimmed.slice(0, 18))) {
-        return enVal;
+    if (language === "en") {
+      if (enText) return enText;
+      if (/^[A-Za-z0-9\s.,!?:;'"()\–\-–%°C–]+$/.test(trimmed)) {
+        return trimmed;
       }
+      if (PRODUCT_DESCRIPTION_TRANSLATIONS[trimmed]) {
+        return PRODUCT_DESCRIPTION_TRANSLATIONS[trimmed];
+      }
+      for (const [taKey, enVal] of Object.entries(PRODUCT_DESCRIPTION_TRANSLATIONS)) {
+        if (trimmed.includes(taKey.slice(0, 15)) || taKey.includes(trimmed.slice(0, 15))) {
+          return enVal;
+        }
+      }
+      return trimmed;
+    } else {
+      if (PRODUCT_DESCRIPTION_EN_TO_TA[trimmed]) {
+        return PRODUCT_DESCRIPTION_EN_TO_TA[trimmed];
+      }
+      for (const [enKey, taVal] of Object.entries(PRODUCT_DESCRIPTION_EN_TO_TA)) {
+        if (
+          trimmed.toLowerCase().includes(enKey.slice(0, 15).toLowerCase()) ||
+          enKey.toLowerCase().includes(trimmed.slice(0, 15).toLowerCase())
+        ) {
+          return taVal;
+        }
+      }
+      return trimmed;
     }
-    return taText;
   };
 
   return (

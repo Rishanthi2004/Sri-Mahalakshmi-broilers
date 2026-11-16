@@ -146,7 +146,7 @@ export default function ContactPage() {
                     {content.shopName}
                   </h2>
                   <p className="text-xs text-[#516357]">
-                    {language === "ta" ? content.tagline : t("contactTagline")}
+                    {t("contactTagline")}
                   </p>
                 </div>
 
@@ -196,7 +196,7 @@ export default function ContactPage() {
                         {t("contactAddressLabel")}
                       </span>
                       <p className="font-medium text-[#26352B] leading-snug">
-                        {language === "ta" ? content.contact.address : t("contactStoreAddress")}
+                        {t("contactStoreAddress")}
                       </p>
                     </div>
                   </div>

@@ -35,8 +35,8 @@ export function PublicFooter() {
             />
             <p className="text-xs sm:text-sm text-[#516357] leading-relaxed line-clamp-3 sm:line-clamp-none">
               {language === "en"
-                ? "Daily fresh farm-sourced chicken, hygienic customised cuts, and healthy eggs. 100% natural, antibiotic-free quality assurance."
-                : content.footer.description}
+                ? (content.footer.description || "Daily fresh farm-sourced chicken, hygienic customised cuts, and healthy eggs. 100% natural, antibiotic-free quality assurance.")
+                : t("footerTagline")}
             </p>
 
             {/* Language Switcher in Footer */}

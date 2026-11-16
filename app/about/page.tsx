@@ -29,14 +29,14 @@ export default function AboutPage() {
     whatsappMessage
   );
 
-  const introTitle = language === "ta" ? about.introTitle : t("aboutIntroTitle");
-  const introDescription = language === "ta" ? about.introDescription : t("aboutIntroDesc");
-  const businessInfoTitle = language === "ta" ? about.businessInfoTitle : t("aboutBusinessTitle");
-  const businessInfoBody = language === "ta" ? about.businessInfoBody : t("aboutBusinessBody");
-  const ownerBio = language === "ta" ? about.ownerBio : t("aboutOwnerBio");
-  const qualityCommitment = language === "ta" ? about.qualityCommitment : t("aboutQualityCommitmentText");
-  const hygienePractices = language === "ta" ? about.hygienePractices : t("aboutHygieneText");
-  const customerSatisfaction = language === "ta" ? about.customerSatisfaction : t("aboutSatisfactionText");
+  const introTitle = t("aboutIntroTitle");
+  const introDescription = t("aboutIntroDesc");
+  const businessInfoTitle = t("aboutBusinessTitle");
+  const businessInfoBody = t("aboutBusinessBody");
+  const ownerBio = t("aboutOwnerBio");
+  const qualityCommitment = t("aboutQualityCommitmentText");
+  const hygienePractices = t("aboutHygieneText");
+  const customerSatisfaction = t("aboutSatisfactionText");
 
   return (
     <PublicShell>

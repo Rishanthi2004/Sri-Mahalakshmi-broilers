@@ -71,7 +71,6 @@ export default function HomePage() {
   );
 
   const getWhyItem = (idx: number, item: WhyChooseUsItem) => {
-    if (language === "ta") return { title: item.title, description: item.description };
     if (idx === 0) return { title: t("whyFreshTitle"), description: t("whyFreshDesc") };
     if (idx === 1) return { title: t("whyHygieneTitle"), description: t("whyHygieneDesc") };
     if (idx === 2) return { title: t("whyServiceTitle"), description: t("whyServiceDesc") };
@@ -94,15 +93,15 @@ export default function HomePage() {
               >
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#DDF3DF] text-[#287A45] text-[11px] sm:text-xs font-semibold tracking-wide">
                   <CheckCircle2 className="w-3.5 h-3.5" />
-                  {language === "ta" ? (content?.hero?.badge || t("heroBadge")) : t("heroBadge")}
+                  {t("heroBadge")}
                 </span>
 
                 <h1 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-[#26352B] leading-tight">
-                  {language === "ta" ? (content?.hero?.headline || t("heroHeadline")) : t("heroHeadline")}
+                  {t("heroHeadline")}
                 </h1>
 
                 <p className="text-xs sm:text-base lg:text-lg text-[#516357] leading-relaxed max-w-xl">
-                  {language === "ta" ? (content?.hero?.subheadline || t("heroSubheadline")) : t("heroSubheadline")}
+                  {t("heroSubheadline")}
                 </p>
 
                 <div className="flex flex-row flex-wrap items-center gap-2.5 pt-1">
@@ -110,7 +109,7 @@ export default function HomePage() {
                     href="/products"
                     className="inline-flex items-center justify-center gap-1.5 px-4 sm:px-6 py-2.5 sm:py-3.5 rounded-xl bg-[#287A45] hover:bg-[#1E5F35] text-white font-semibold text-xs sm:text-sm shadow-sm transition-all duration-200"
                   >
-                    <span>{language === "ta" ? (content?.hero?.primaryCtaText || t("heroPrimaryCta")) : t("heroPrimaryCta")}</span>
+                    <span>{t("heroPrimaryCta")}</span>
                     <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   </Link>
 
@@ -200,10 +199,10 @@ export default function HomePage() {
             <div className="bg-[#287A45] rounded-2xl p-5 sm:p-8 lg:p-10 text-white shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6">
               <div className="max-w-xl space-y-1.5">
                 <h2 className="text-lg sm:text-2xl font-bold tracking-tight leading-snug">
-                  {language === "ta" ? (content?.ctaBanner?.headline || t("ctaHeadline")) : t("ctaHeadline")}
+                  {t("ctaHeadline")}
                 </h2>
                 <p className="text-xs sm:text-sm text-white/90 leading-relaxed">
-                  {language === "ta" ? (content?.ctaBanner?.description || t("ctaDesc")) : t("ctaDesc")}
+                  {t("ctaDesc")}
                 </p>
               </div>
               <a
@@ -213,7 +212,7 @@ export default function HomePage() {
                 className="inline-flex items-center justify-center gap-2 px-5 py-2.5 sm:py-3.5 rounded-xl bg-white text-[#287A45] hover:bg-[#EDF7EE] font-bold text-xs sm:text-sm shadow-sm transition-all duration-200 shrink-0 w-full sm:w-auto"
               >
                 <WhatsAppIcon className="w-5 h-5 rounded" />
-                <span>{language === "ta" ? (content?.ctaBanner?.buttonText || t("ctaButton")) : t("ctaButton")}</span>
+                <span>{t("ctaButton")}</span>
               </a>
             </div>
           </FadeInSection>

@@ -1,12 +1,12 @@
 export const STORAGE_KEYS = {
-  PRODUCTS: "gp_poultry_products_v1",
-  CATEGORIES: "gp_poultry_categories_v1",
-  CONTENT: "gp_poultry_content_v1",
-  MEDIA: "gp_poultry_media_v1",
-  ENQUIRIES: "gp_poultry_enquiries_v1",
-  BANNERS: "gp_poultry_banners_v1",
-  USERS: "gp_poultry_users_v1",
-  ADMIN_AUTH: "gp_poultry_admin_session_v1",
+  PRODUCTS: "gp_poultry_products_v2",
+  CATEGORIES: "gp_poultry_categories_v2",
+  CONTENT: "gp_poultry_content_v2",
+  MEDIA: "gp_poultry_media_v2",
+  ENQUIRIES: "gp_poultry_enquiries_v2",
+  BANNERS: "gp_poultry_banners_v2",
+  USERS: "gp_poultry_users_v2",
+  ADMIN_AUTH: "gp_poultry_admin_session_v2",
 } as const;
 
 export const STORE_UPDATE_EVENT = "chickenshop:store-updated";
