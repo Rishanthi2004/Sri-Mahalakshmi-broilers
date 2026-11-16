@@ -62,7 +62,7 @@ export function PublicHeader() {
               <BrandLogo
                 shopName="ஸ்ரீ மகாலட்சுமி"
                 logoUrl={content.logoUrl}
-                subtitle={t("dailyFreshSubtitle")}
+                subtitle="பிராய்லர்ஸ்"
               />
             </Link>
           </div>
