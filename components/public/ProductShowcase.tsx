@@ -210,14 +210,19 @@ export function ProductShowcase({
             </div>
           </div>
 
-          {/* Bottom Interactive Floating Selector Strip (Horizontal scroll on mobile, clean row on desktop) */}
+          {/* Bottom Interactive Floating Selector Strip (Horizontal scroll on mobile, equal grid on desktop) */}
           <div className="mt-5 sm:mt-8 pt-4 sm:pt-6 border-t border-[#C7E4CA]">
             <div className="flex items-center justify-between mb-2 sm:hidden text-[11px] text-[#516357]">
               <span>{t("showcaseTouchToView")}</span>
               <span>{activeIndex + 1} / {showcaseItems.length}</span>
             </div>
 
-            <div className="flex sm:grid sm:grid-cols-4 lg:grid-cols-7 gap-2 sm:gap-2.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
+            <div
+              className="flex sm:grid gap-2 sm:gap-3 overflow-x-auto pb-1 sm:pb-0 scrollbar-none w-full"
+              style={{
+                gridTemplateColumns: `repeat(${showcaseItems.length}, minmax(0, 1fr))`,
+              }}
+            >
               {showcaseItems.map((item, idx) => {
                 const active = idx === activeIndex;
                 const itemName = localizeProductName(item.name);
@@ -227,10 +232,10 @@ export function ProductShowcase({
                     key={item.id}
                     type="button"
                     onClick={() => setActiveIndex(idx)}
-                    className={`group shrink-0 w-24 sm:w-auto relative flex flex-col items-center text-center p-2 rounded-xl transition-all ${
+                    className={`group shrink-0 w-24 sm:w-full relative flex flex-col items-center justify-between text-center p-2.5 rounded-xl transition-all cursor-pointer ${
                       active
-                        ? "bg-white border border-[#287A45] shadow-sm"
-                        : "bg-white/60 hover:bg-white border border-[#C7E4CA]/60"
+                        ? "bg-white border-2 border-[#287A45] shadow-sm"
+                        : "bg-white/70 hover:bg-white border border-[#C7E4CA] hover:border-[#287A45]/40"
                     }`}
                   >
                     {/* Floating mini item */}
@@ -244,7 +249,7 @@ export function ProductShowcase({
                       />
                     </div>
                     <span
-                      className={`mt-1 text-[11px] sm:text-xs font-bold truncate w-full ${
+                      className={`mt-1.5 text-[11px] sm:text-xs font-bold truncate w-full px-1 ${
                         active ? "text-[#287A45]" : "text-[#26352B]"
                       }`}
                     >
@@ -253,11 +258,13 @@ export function ProductShowcase({
                     <span className="text-[11px] font-semibold text-[#516357]">
                       {itemUnit}
                     </span>
-                    {active && (
+                    {active ? (
                       <motion.div
                         layoutId="featured-showcase-bar"
-                        className="mt-1 h-0.5 w-8 rounded-full bg-[#287A45]"
+                        className="mt-1.5 h-1 w-10 rounded-full bg-[#287A45]"
                       />
+                    ) : (
+                      <div className="mt-1.5 h-1 w-10 opacity-0" />
                     )}
                   </button>
                 );
