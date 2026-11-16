@@ -74,8 +74,8 @@ export const DEFAULT_WEBSITE_CONTENT: WebsiteContent = {
       "Whether it is a 250g finely minced keema for weekday dinner or 10kg party cuts for family celebrations, every single order is treated with identical high care.",
   },
   contact: {
-    phone: "+91 98765 43210",
-    whatsappNumber: "919876543210",
+    phone: "+91 94872 03778",
+    whatsappNumber: "919487203778",
     email: "orders@greenpasturepoultry.example",
     address: "Shop No. 14, Maple Arcade, M.G. Road, Indiranagar, Bengaluru 560038",
     googleMapsUrl: "https://maps.google.com/?q=Indiranagar+Bengaluru+560038",

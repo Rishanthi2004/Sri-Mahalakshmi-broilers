@@ -83,11 +83,11 @@ export default function AboutPage() {
             </FadeInSection>
 
             <FadeInSection delay={0.08} className="lg:col-span-6">
-              <div className="rounded-2xl overflow-hidden border border-[#C7E4CA] shadow-xs bg-[#EDF7EE] aspect-[16/9] sm:aspect-[4/3]">
+              <div className="rounded-2xl overflow-hidden border border-[#C7E4CA] shadow-xs bg-[#EDF7EE] aspect-[4/3]">
                 <img
                   src={about.shopImage}
-                  alt={`${content.shopName} சுகாதாரமான விற்பனை அரங்கு`}
-                  className="w-full h-full object-cover"
+                  alt={`${content.shopName} கடை முகப்பு`}
+                  className="w-full h-full object-cover object-top"
                 />
               </div>
             </FadeInSection>
