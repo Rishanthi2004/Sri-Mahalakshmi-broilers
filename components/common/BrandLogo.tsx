@@ -10,7 +10,7 @@ interface BrandLogoProps {
 }
 
 export function BrandLogo({
-  shopName = "Sri Mahalakshmi Broilers",
+  shopName = "ஸ்ரீ மகாலட்சுமி",
   logoUrl = "/images/logo.png",
   subtitle = "Daily Fresh Farm Cuts",
   size = "md",

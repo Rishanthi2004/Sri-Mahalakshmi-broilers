@@ -42,7 +42,7 @@ export function PublicHeader() {
           {/* Logo & Brand */}
           <Link href="/" className="shrink-0" onClick={() => setMobileOpen(false)}>
             <BrandLogo
-              shopName={content.shopName}
+              shopName="ஸ்ரீ மகாலட்சுமி"
               logoUrl={content.logoUrl}
               subtitle={t("dailyFreshSubtitle")}
             />
