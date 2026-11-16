@@ -4,6 +4,7 @@ import React, { useMemo, useState } from "react";
 import { Filter, Search, X } from "lucide-react";
 import { ProductCard } from "@/components/public/ProductCard";
 import { PublicShell } from "@/components/public/PublicShell";
+import { useLanguage } from "@/context/LanguageContext";
 import {
   useCategories,
   useProducts,
@@ -14,6 +15,7 @@ export default function ProductsPage() {
   const { products } = useProducts();
   const { categories } = useCategories();
   const { content } = useWebsiteContent();
+  const { language, t, localizeCategoryName, localizeProductName } = useLanguage();
 
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -44,16 +46,20 @@ export default function ProductsPage() {
         return false;
       }
       if (query) {
-        const catName = (categoryNameMap.get(product.categoryId) ?? "").toLowerCase();
+        const rawCat = categoryNameMap.get(product.categoryId) ?? "";
+        const localizedCat = localizeCategoryName(rawCat).toLowerCase();
+        const localizedProd = localizeProductName(product.name).toLowerCase();
         return (
           product.name.toLowerCase().includes(query) ||
+          localizedProd.includes(query) ||
           product.description.toLowerCase().includes(query) ||
-          catName.includes(query)
+          rawCat.toLowerCase().includes(query) ||
+          localizedCat.includes(query)
         );
       }
       return true;
     });
-  }, [activeProducts, categoryNameMap, onlyAvailable, searchQuery, selectedCategoryId]);
+  }, [activeProducts, categoryNameMap, localizeCategoryName, localizeProductName, onlyAvailable, searchQuery, selectedCategoryId]);
 
   const resetFilters = () => {
     setSelectedCategoryId("all");
@@ -69,13 +75,13 @@ export default function ProductsPage() {
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
             <div>
               <span className="text-[11px] font-bold uppercase tracking-widest text-[#287A45]">
-                புதிய பொருட்கள் பட்டியல்
+                {t("productsCatalogBadge")}
               </span>
               <h1 className="text-xl sm:text-3xl font-extrabold tracking-tight text-[#26352B] mt-0.5">
-                புதிய கோழிக்கறி &amp; பண்ணை முட்டைகள்
+                {t("productsPageTitle")}
               </h1>
               <p className="text-xs sm:text-sm text-[#516357] mt-0.5 hidden sm:block max-w-xl">
-                சுகாதாரமாக வெட்டப்பட்ட அனைத்து கறிக்கட்டுகள் மற்றும் பண்ணை முட்டைகளைப் பார்வையிடுங்கள். பிரிவு வாரியாக வடிகட்டி, வாட்ஸ்அப்பில் எளிதாக ஆர்டர் செய்யுங்கள்.
+                {t("productsPageDesc")}
               </p>
             </div>
           </div>
@@ -88,7 +94,7 @@ export default function ProductsPage() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="கறிக்கட்டுகளைத் தேடுங்கள்..."
+                placeholder={t("searchPlaceholder")}
                 className="w-full pl-9 pr-8 py-2 rounded-xl border border-[#C7E4CA] bg-[#EDF7EE]/50 text-xs sm:text-sm text-[#26352B] placeholder:text-[#516357]/70 focus:outline-none focus:ring-2 focus:ring-[#287A45] focus:bg-white"
               />
               {searchQuery && (
@@ -96,7 +102,7 @@ export default function ProductsPage() {
                   type="button"
                   onClick={() => setSearchQuery("")}
                   className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#516357] hover:text-[#26352B]"
-                  aria-label="தேடலை அழிக்க"
+                  aria-label={t("clearFilters")}
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
@@ -113,7 +119,7 @@ export default function ProductsPage() {
               }`}
             >
               <Filter className="w-3.5 h-3.5" />
-              <span>இருப்பில் உள்ளவை</span>
+              <span>{t("inStockOnly")}</span>
             </button>
           </div>
 
@@ -128,11 +134,12 @@ export default function ProductsPage() {
                   : "bg-[#EDF7EE] text-[#26352B] hover:bg-[#DDF3DF]"
               }`}
             >
-              அனைத்தும் ({activeProducts.length})
+              {t("allCategories")} ({activeProducts.length})
             </button>
             {activeCategories.map((cat) => {
               const count = activeProducts.filter((p) => p.categoryId === cat.id).length;
               const isSelected = selectedCategoryId === cat.id;
+              const catTitle = localizeCategoryName(cat.name);
               return (
                 <button
                   key={cat.id}
@@ -144,7 +151,7 @@ export default function ProductsPage() {
                       : "bg-[#EDF7EE] text-[#26352B] hover:bg-[#DDF3DF]"
                   }`}
                 >
-                  {cat.name} ({count})
+                  {catTitle} ({count})
                 </button>
               );
             })}
@@ -157,13 +164,21 @@ export default function ProductsPage() {
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-3.5 sm:mb-5 text-xs sm:text-sm text-[#516357]">
             <p>
-              மொத்தம் <span className="font-semibold text-[#26352B]">{filteredProducts.length}</span> பொருட்கள் காட்டப்படுகின்றன
+              {language === "ta" ? (
+                <>
+                  மொத்தம் <span className="font-semibold text-[#26352B]">{filteredProducts.length}</span> பொருட்கள் காட்டப்படுகின்றன
+                </>
+              ) : (
+                <>
+                  Showing <span className="font-semibold text-[#26352B]">{filteredProducts.length}</span> {t("totalProductsShown")}
+                </>
+              )}
               {selectedCategoryId !== "all" && (
                 <>
                   {" "}
-                  (பிரிவு:{" "}
+                  ({t("categoryLabel")}:{" "}
                   <span className="font-semibold text-[#287A45]">
-                    {categoryNameMap.get(selectedCategoryId)}
+                    {localizeCategoryName(categoryNameMap.get(selectedCategoryId) || "")}
                   </span>
                   )
                 </>
@@ -175,23 +190,23 @@ export default function ProductsPage() {
                 onClick={resetFilters}
                 className="text-[#287A45] font-semibold hover:underline"
               >
-                மீட்டமை
+                {t("resetFilter")}
               </button>
             )}
           </div>
 
           {filteredProducts.length === 0 ? (
             <div className="bg-white rounded-2xl border border-[#C7E4CA] p-8 text-center max-w-sm mx-auto">
-              <p className="text-sm font-bold text-[#26352B]">பொருட்கள் எதுவும் கிடைக்கவில்லை</p>
+              <p className="text-sm font-bold text-[#26352B]">{t("noProductsFound")}</p>
               <p className="text-xs text-[#516357] mt-1">
-                தேடல் வார்த்தையை மாற்றவும் அல்லது வேறு பிரிவைத் தேர்ந்தெடுக்கவும்.
+                {t("changeSearchOrCategory")}
               </p>
               <button
                 type="button"
                 onClick={resetFilters}
                 className="mt-3.5 px-4 py-2 rounded-lg bg-[#287A45] text-white text-xs font-semibold"
               >
-                அனைத்தையும் காட்டு
+                {t("showAll")}
               </button>
             </div>
           ) : (

@@ -13,6 +13,7 @@ import {
 import { WhatsAppIcon } from "@/components/common/WhatsAppIcon";
 import { useToast } from "@/components/common/ToastProvider";
 import { PublicShell } from "@/components/public/PublicShell";
+import { useLanguage } from "@/context/LanguageContext";
 import { contentService } from "@/services/content-service";
 import { enquiryService } from "@/services/media-enquiry-service";
 import { useWebsiteContent } from "@/services/use-store-data";
@@ -20,6 +21,7 @@ import { useWebsiteContent } from "@/services/use-store-data";
 export default function ContactPage() {
   const { content } = useWebsiteContent();
   const { showToast } = useToast();
+  const { language, t } = useLanguage();
 
   const [customerName, setCustomerName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -31,9 +33,14 @@ export default function ContactPage() {
   }>({});
   const [submittedDemo, setSubmittedDemo] = useState(false);
 
+  const whatsappMessage =
+    language === "ta"
+      ? `வணக்கம் ${content.shopName}, எனக்கு ஒரு தகவல் தேவைப்படுகிறது.`
+      : `Hello ${content.shopName}, I would like to make an enquiry regarding your products.`;
+
   const whatsappUrl = contentService.buildWhatsAppUrl(
     content.contact.whatsappNumber,
-    `வணக்கம் ${content.shopName}, எனக்கு ஒரு தகவல் தேவைப்படுகிறது.`
+    whatsappMessage
   );
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -41,14 +48,14 @@ export default function ContactPage() {
     const nextErrors: typeof errors = {};
 
     if (!customerName.trim() || customerName.trim().length < 2) {
-      nextErrors.customerName = "உங்கள் முழு பெயரை உள்ளிடவும்.";
+      nextErrors.customerName = t("contactNameRequired");
     }
     const digits = phoneNumber.replace(/[^0-9]/g, "");
     if (digits.length < 8 || digits.length > 15) {
-      nextErrors.phoneNumber = "சரியான அலைபேசி எண்ணை உள்ளிடவும் (8–15 இலக்கங்கள்).";
+      nextErrors.phoneNumber = t("contactPhoneRequired");
     }
     if (!message.trim() || message.trim().length < 6) {
-      nextErrors.message = "தயவுசெய்து உங்கள் செய்தி அல்லது ஆர்டர் விவரங்களை உள்ளிடவும்.";
+      nextErrors.message = t("contactMessageRequired");
     }
 
     setErrors(nextErrors);
@@ -76,8 +83,8 @@ export default function ContactPage() {
     setCustomerName("");
     setPhoneNumber("");
     setMessage("");
-    showToast("விசாரணை வெற்றிகரமாக சமர்ப்பிக்கப்பட்டது!", {
-      description: "எங்கள் கடை ஊழியர்கள் விரைவில் உங்களைத் தொடர்புகொள்வார்கள்.",
+    showToast(t("contactEnquirySubmitted"), {
+      description: t("contactStaffWillContact"),
       type: "success",
     });
   };
@@ -88,13 +95,13 @@ export default function ContactPage() {
       <section className="bg-white border-b border-[#C7E4CA] py-5 sm:py-10">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
           <span className="text-[11px] font-bold uppercase tracking-widest text-[#287A45]">
-            தொடர்பு கொள்ள
+            {t("contactBadge")}
           </span>
           <h1 className="text-xl sm:text-3xl font-extrabold tracking-tight text-[#26352B] mt-0.5">
-            தொடர்பு: {content.shopName}
+            {language === "ta" ? `தொடர்பு: ${content.shopName}` : `Contact: ${content.shopName}`}
           </h1>
           <p className="text-xs sm:text-sm text-[#516357] mt-0.5 hidden sm:block max-w-xl">
-            தினசரி புதிய இறைச்சி பெற எங்கள் கடைக்கு நேரில் வரலாம், அழைத்துப் பேசலாம் அல்லது வாட்ஸ்அப் மூலம் உடனடியாக ஆர்டர் செய்யலாம்.
+            {t("contactQuickMsg")}
           </p>
 
           {/* Quick Action Buttons directly in header on mobile */}
@@ -104,7 +111,7 @@ export default function ContactPage() {
               className="flex-1 inline-flex items-center justify-center gap-1 px-3 py-2 rounded-lg bg-[#287A45] text-white text-xs font-semibold"
             >
               <Phone className="w-3.5 h-3.5" />
-              <span>அழைக்க</span>
+              <span>{t("contactCallShort")}</span>
             </a>
             <a
               href={whatsappUrl}
@@ -113,7 +120,7 @@ export default function ContactPage() {
               className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[#25D366] text-white text-xs font-semibold shadow-2xs"
             >
               <WhatsAppIcon className="w-4 h-4 rounded" />
-              <span>வாட்ஸ்அப்</span>
+              <span>{t("orderWhatsApp")}</span>
             </a>
             <a
               href={content.contact.googleMapsUrl}
@@ -122,7 +129,7 @@ export default function ContactPage() {
               className="flex-1 inline-flex items-center justify-center gap-1 px-3 py-2 rounded-lg border border-[#C7E4CA] text-[#26352B] text-xs font-semibold"
             >
               <Navigation className="w-3.5 h-3.5 text-[#287A45]" />
-              <span>வழித்தடம்</span>
+              <span>{t("contactDirections")}</span>
             </a>
           </div>
         </div>
@@ -138,7 +145,9 @@ export default function ContactPage() {
                   <h2 className="text-base sm:text-lg font-bold text-[#26352B]">
                     {content.shopName}
                   </h2>
-                  <p className="text-xs text-[#516357]">{content.tagline}</p>
+                  <p className="text-xs text-[#516357]">
+                    {language === "ta" ? content.tagline : t("contactTagline")}
+                  </p>
                 </div>
 
                 <div className="space-y-3 text-xs sm:text-sm">
@@ -148,7 +157,7 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <span className="block text-[10px] sm:text-xs font-semibold uppercase tracking-wide text-[#516357]">
-                        தொலைபேசி
+                        {t("contactPhoneLabel")}
                       </span>
                       <a
                         href={`tel:${content.contact.phone.replace(/\s+/g, "")}`}
@@ -165,7 +174,7 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <span className="block text-[10px] sm:text-xs font-semibold uppercase tracking-wide text-[#516357]">
-                        வாட்ஸ்அப்
+                        {t("contactWhatsAppLabel")}
                       </span>
                       <a
                         href={whatsappUrl}
@@ -184,10 +193,10 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <span className="block text-[10px] sm:text-xs font-semibold uppercase tracking-wide text-[#516357]">
-                        முகவரி
+                        {t("contactAddressLabel")}
                       </span>
                       <p className="font-medium text-[#26352B] leading-snug">
-                        {content.contact.address}
+                        {language === "ta" ? content.contact.address : t("contactStoreAddress")}
                       </p>
                     </div>
                   </div>
@@ -198,7 +207,7 @@ export default function ContactPage() {
                     </div>
                     <div className="flex-1">
                       <span className="block text-[10px] sm:text-xs font-semibold uppercase tracking-wide text-[#516357] mb-0.5">
-                        வேலை நேரம்
+                        {t("openingHoursTitle")}
                       </span>
                       <div className="space-y-0.5 text-xs">
                         {content.contact.openingHours.map((item) => (
@@ -208,7 +217,7 @@ export default function ContactPage() {
                           >
                             <span className="font-medium text-[#26352B]">{item.day}</span>
                             <span className="text-[#516357]">
-                              {item.isClosed ? "விடுமுறை" : item.hours}
+                              {item.isClosed ? t("contactClosed") : item.hours}
                             </span>
                           </div>
                         ))}
@@ -224,7 +233,7 @@ export default function ContactPage() {
                     className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[#287A45] hover:bg-[#1E5F35] text-white text-xs font-semibold transition-colors"
                   >
                     <Phone className="w-3.5 h-3.5" />
-                    <span>உடனே அழைக்க</span>
+                    <span>{t("contactCallNow")}</span>
                   </a>
                   <a
                     href={whatsappUrl}
@@ -233,7 +242,7 @@ export default function ContactPage() {
                     className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[#25D366] hover:bg-[#20ba59] text-white text-xs font-semibold shadow-2xs transition-colors"
                   >
                     <WhatsAppIcon className="w-4 h-4 rounded" />
-                    <span>வாட்ஸ்அப்</span>
+                    <span>{t("orderWhatsApp")}</span>
                   </a>
                   <a
                     href={content.contact.googleMapsUrl}
@@ -242,7 +251,7 @@ export default function ContactPage() {
                     className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-[#C7E4CA] hover:bg-[#EDF7EE] text-[#26352B] text-xs font-semibold transition-colors"
                   >
                     <Navigation className="w-3.5 h-3.5 text-[#287A45]" />
-                    <span>வழித்தடம்</span>
+                    <span>{t("contactDirections")}</span>
                   </a>
                 </div>
               </div>
@@ -254,7 +263,7 @@ export default function ContactPage() {
                     <MapPin className="w-5 h-5" />
                   </div>
                   <p className="text-xs sm:text-sm font-bold text-[#26352B]">
-                    கடை அமைவிடம் &amp; வழித்தடம்
+                    {language === "ta" ? "கடை அமைவிடம் & வழித்தடம்" : "Store Location & Directions"}
                   </p>
                   <p className="text-[11px] text-[#516357] mt-0.5 max-w-xs leading-relaxed">
                     {content.contact.googleMapsEmbedPlaceholder}
@@ -265,7 +274,7 @@ export default function ContactPage() {
                     rel="noopener noreferrer"
                     className="mt-3 inline-flex items-center gap-1 px-3.5 py-1.5 rounded-lg bg-[#287A45] hover:bg-[#1E5F35] text-white text-xs font-semibold transition-colors"
                   >
-                    <span>வரைபடத்தில் திறக்க</span>
+                    <span>{language === "ta" ? "வரைபடத்தில் திறக்க" : "Open in Google Maps"}</span>
                     <ExternalLink className="w-3 h-3" />
                   </a>
                 </div>
@@ -276,19 +285,19 @@ export default function ContactPage() {
             <div className="lg:col-span-7">
               <div className="bg-white rounded-2xl border border-[#C7E4CA] p-5 sm:p-7 shadow-xs">
                 <h2 className="text-lg sm:text-2xl font-bold text-[#26352B]">
-                  உங்கள் விசாரணையை அனுப்புங்கள்
+                  {t("sendEnquiryTitle")}
                 </h2>
                 <p className="text-xs sm:text-sm text-[#516357] mt-0.5">
-                  விருப்பமான கறிக்கட்டுகள் அல்லது மொத்த ஆர்டர்களுக்கு கீழே உள்ள படிவத்தைப் பூர்த்தி செய்யவும்.
+                  {t("sendEnquirySubtitle")}
                 </p>
 
                 {submittedDemo && (
                   <div className="mt-4 p-3 rounded-xl bg-[#DDF3DF] border border-[#A9D3B0] flex items-start gap-2.5">
                     <CheckCircle2 className="w-4 h-4 text-[#287A45] shrink-0 mt-0.5" />
                     <div className="text-xs text-[#26352B]">
-                      <p className="font-bold">உங்கள் தகவல் பெறப்பட்டது.</p>
+                      <p className="font-bold">{t("enquirySuccessTitle")}</p>
                       <p className="text-[#516357] mt-0.5">
-                        நிர்வாக பலகையில் சேமிக்கப்பட்டுள்ளது. உடனடி ஆர்டர்களுக்கு மேலே உள்ள வாட்ஸ்அப் பட்டனை அழுத்தவும்.
+                        {t("enquirySuccessDesc")}
                       </p>
                     </div>
                   </div>
@@ -300,7 +309,7 @@ export default function ContactPage() {
                       htmlFor="customerName"
                       className="block text-xs sm:text-sm font-semibold text-[#26352B] mb-1"
                     >
-                      வாடிக்கையாளர் பெயர் <span className="text-red-600">*</span>
+                      {t("fullNameLabel")} <span className="text-red-600">*</span>
                     </label>
                     <input
                       id="customerName"
@@ -312,7 +321,7 @@ export default function ContactPage() {
                           setErrors((prev) => ({ ...prev, customerName: undefined }));
                         }
                       }}
-                      placeholder="எ.கா: அனன்யா சர்மா"
+                      placeholder={t("fullNamePlaceholder")}
                       className={`w-full px-3.5 py-2 rounded-xl border text-xs sm:text-sm text-[#26352B] bg-[#EDF7EE]/40 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#287A45] transition-all ${
                         errors.customerName ? "border-red-500" : "border-[#C7E4CA]"
                       }`}
@@ -327,7 +336,7 @@ export default function ContactPage() {
                       htmlFor="phoneNumber"
                       className="block text-xs sm:text-sm font-semibold text-[#26352B] mb-1"
                     >
-                      அலைபேசி எண் <span className="text-red-600">*</span>
+                      {t("phoneLabel")} <span className="text-red-600">*</span>
                     </label>
                     <input
                       id="phoneNumber"
@@ -339,7 +348,7 @@ export default function ContactPage() {
                           setErrors((prev) => ({ ...prev, phoneNumber: undefined }));
                         }
                       }}
-                      placeholder="எ.கா: +91 98765 43210"
+                      placeholder={t("phonePlaceholder")}
                       className={`w-full px-3.5 py-2 rounded-xl border text-xs sm:text-sm text-[#26352B] bg-[#EDF7EE]/40 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#287A45] transition-all ${
                         errors.phoneNumber ? "border-red-500" : "border-[#C7E4CA]"
                       }`}
@@ -354,7 +363,7 @@ export default function ContactPage() {
                       htmlFor="message"
                       className="block text-xs sm:text-sm font-semibold text-[#26352B] mb-1"
                     >
-                      செய்தி / தேவைப்படும் பொருட்கள் <span className="text-red-600">*</span>
+                      {t("messageLabel")} <span className="text-red-600">*</span>
                     </label>
                     <textarea
                       id="message"
@@ -366,7 +375,7 @@ export default function ContactPage() {
                           setErrors((prev) => ({ ...prev, message: undefined }));
                         }
                       }}
-                      placeholder="உங்களுக்குத் தேவையான கறி வகைகள் மற்றும் அளவைக் குறிப்பிடவும்..."
+                      placeholder={t("messagePlaceholder")}
                       className={`w-full px-3.5 py-2 rounded-xl border text-xs sm:text-sm text-[#26352B] bg-[#EDF7EE]/40 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#287A45] transition-all resize-y ${
                         errors.message ? "border-red-500" : "border-[#C7E4CA]"
                       }`}
@@ -378,14 +387,16 @@ export default function ContactPage() {
 
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
                     <p className="text-[11px] text-[#516357]">
-                      டெமோ முறை: நிர்வாக மையம் → விசாரணைகளில் பதிவு செய்யப்படும்.
+                      {language === "ta"
+                        ? "டெமோ முறை: நிர்வாக மையம் → விசாரணைகளில் பதிவு செய்யப்படும்."
+                        : "Demo Mode: Automatically recorded in Admin Portal → Enquiries."}
                     </p>
                     <button
                       type="submit"
                       className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[#287A45] hover:bg-[#1E5F35] text-white text-xs sm:text-sm font-semibold shadow-xs transition-colors"
                     >
                       <Send className="w-3.5 h-3.5" />
-                      <span>விசாரணையை அனுப்புக</span>
+                      <span>{t("sendMessageBtn")}</span>
                     </button>
                   </div>
                 </form>

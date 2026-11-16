@@ -13,10 +13,13 @@ import {
   Youtube,
 } from "lucide-react";
 import { BrandLogo } from "@/components/common/BrandLogo";
+import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
+import { useLanguage } from "@/context/LanguageContext";
 import { useWebsiteContent } from "@/services/use-store-data";
 
 export function PublicFooter() {
   const { content } = useWebsiteContent();
+  const { t, language } = useLanguage();
 
   return (
     <footer className="bg-white border-t border-[#C7E4CA] text-[#26352B]">
@@ -27,12 +30,23 @@ export function PublicFooter() {
             <BrandLogo
               shopName={content.shopName}
               logoUrl={content.logoUrl}
-              subtitle="தினசரி புதிய கோழிக்கறி"
+              subtitle={t("dailyFreshSubtitle")}
               size="sm"
             />
             <p className="text-xs sm:text-sm text-[#516357] leading-relaxed line-clamp-3 sm:line-clamp-none">
-              {content.footer.description}
+              {language === "en"
+                ? "Daily fresh farm-sourced chicken, hygienic customised cuts, and healthy eggs. 100% natural, antibiotic-free quality assurance."
+                : content.footer.description}
             </p>
+
+            {/* Language Switcher in Footer */}
+            <div className="pt-2 flex items-center gap-2">
+              <span className="text-xs font-semibold text-[#516357]">
+                {t("languageChoice")}:
+              </span>
+              <LanguageSwitcher />
+            </div>
+
             <div className="flex items-center gap-2 pt-1">
               {content.socialLinks.facebook && (
                 <a
@@ -73,12 +87,12 @@ export function PublicFooter() {
           {/* Navigation */}
           <div>
             <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[#26352B] mb-2.5 sm:mb-3">
-              தள வழிகாட்டி
+              {t("quickLinks")}
             </h3>
             <ul className="grid grid-cols-2 sm:grid-cols-1 gap-2 text-xs sm:text-sm">
               <li>
                 <Link href="/" className="text-[#516357] hover:text-[#287A45] transition-colors">
-                  முகப்பு
+                  {t("home")}
                 </Link>
               </li>
               <li>
@@ -86,7 +100,7 @@ export function PublicFooter() {
                   href="/products"
                   className="text-[#516357] hover:text-[#287A45] transition-colors"
                 >
-                  எங்கள் பொருட்கள்
+                  {t("products")}
                 </Link>
               </li>
               <li>
@@ -94,7 +108,7 @@ export function PublicFooter() {
                   href="/about"
                   className="text-[#516357] hover:text-[#287A45] transition-colors"
                 >
-                  எங்களைப் பற்றி
+                  {t("about")}
                 </Link>
               </li>
               <li>
@@ -102,7 +116,7 @@ export function PublicFooter() {
                   href="/contact"
                   className="text-[#516357] hover:text-[#287A45] transition-colors"
                 >
-                  தொடர்பு கொள்ள
+                  {t("contact")}
                 </Link>
               </li>
               <li className="col-span-2 sm:col-span-1 pt-1">
@@ -111,7 +125,7 @@ export function PublicFooter() {
                   className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-[#287A45] hover:underline"
                 >
                   <Shield className="w-3 h-3" />
-                  நிர்வாக மையம் (Admin)
+                  <span>{t("adminLink")} (Admin)</span>
                 </Link>
               </li>
             </ul>
@@ -120,7 +134,7 @@ export function PublicFooter() {
           {/* Contact */}
           <div>
             <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[#26352B] mb-2.5 sm:mb-3">
-              தொடர்பு விவரங்கள்
+              {t("storeLocation")}
             </h3>
             <ul className="space-y-2 text-xs sm:text-sm text-[#516357]">
               <li className="flex items-center gap-2">
@@ -151,7 +165,7 @@ export function PublicFooter() {
           {/* Opening Hours */}
           <div className="hidden sm:block">
             <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[#26352B] mb-2.5 sm:mb-3">
-              வேலை நேரம்
+              {t("workingHours")}
             </h3>
             <ul className="space-y-2 text-xs text-[#516357]">
               {content.contact.openingHours.map((item) => (
@@ -160,7 +174,7 @@ export function PublicFooter() {
                     <Clock className="w-3 h-3 text-[#287A45]" />
                     <span className="font-medium text-[#26352B]">{item.day}</span>
                   </div>
-                  <span>{item.isClosed ? "விடுமுறை" : item.hours}</span>
+                  <span>{item.isClosed ? (language === "en" ? "Closed" : "விடுமுறை") : item.hours}</span>
                 </li>
               ))}
             </ul>
@@ -168,8 +182,14 @@ export function PublicFooter() {
         </div>
 
         <div className="mt-6 pt-4 border-t border-[#EDF7EE] flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] text-[#516357]">
-          <p>{content.footer.copyrightText}</p>
-          <p>தினசரி புதிய பண்ணை இறைச்சி • ஸ்ரீ மகாலட்சுமி பிராய்லர்ஸ்</p>
+          <p>
+            {content.shopName} • {content.footer.copyrightText}
+          </p>
+          <p>
+            {language === "en"
+              ? "Fresh Morning Farm Supply • Hygienic Cuts & Healthy Eggs"
+              : "தினசரி புதிய பண்ணை இறைச்சி • ஸ்ரீ மகாலட்சுமி பிராய்லர்ஸ்"}
+          </p>
         </div>
       </div>
     </footer>

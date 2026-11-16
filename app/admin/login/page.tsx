@@ -18,6 +18,8 @@ import {
   X,
 } from "lucide-react";
 import { useToast } from "@/components/common/ToastProvider";
+import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
+import { useLanguage } from "@/context/LanguageContext";
 import { authService, DEMO_CREDENTIALS } from "@/services/auth-service";
 import { useWebsiteContent } from "@/services/use-store-data";
 
@@ -25,6 +27,7 @@ export default function AdminLoginPage() {
   const router = useRouter();
   const { showToast } = useToast();
   const { content } = useWebsiteContent();
+  const { language, t } = useLanguage();
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -45,15 +48,26 @@ export default function AdminLoginPage() {
 
     const res = await authService.login(loginUser, loginPass);
     if (!res.ok) {
-      setError(res.error ?? "தவறான நிர்வாகி சான்றுகள்.");
+      setError(
+        res.error ??
+          (language === "ta" ? "தவறான நிர்வாகி சான்றுகள்." : "Invalid admin credentials.")
+      );
       setIsLoading(false);
       return;
     }
 
     const isSuper = res.user?.role === "super_admin";
-    showToast("நிர்வாக போர்டலில் உள்நுழைந்தீர்கள் (டெமோ முறை)", {
-      description: `நல்வரவு, ${res.user?.name} [${isSuper ? "முதன்மை நிர்வாகி" : "பணியாளர் நிர்வாகி"}].`,
-    });
+    showToast(
+      language === "ta"
+        ? "நிர்வாக போர்டலில் உள்நுழைந்தீர்கள் (டெமோ முறை)"
+        : "Signed in to Admin Portal (Demo Mode)",
+      {
+        description:
+          language === "ta"
+            ? `நல்வரவு, ${res.user?.name} [${isSuper ? "முதன்மை நிர்வாகி" : "பணியாளர் நிர்வாகி"}].`
+            : `Welcome, ${res.user?.name} [${isSuper ? "Super Admin" : "Staff Admin"}].`,
+      }
+    );
     router.replace("/admin/dashboard");
   };
 
@@ -70,8 +84,13 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#DDF3DF] flex flex-col justify-center items-center p-4 sm:p-6 text-slate-800">
-      <div className="w-full max-w-md space-y-6">
+    <div className="min-h-screen bg-[#DDF3DF] flex flex-col justify-center items-center p-4 sm:p-6 text-slate-800 relative">
+      {/* Top Bar with Language Switcher */}
+      <div className="w-full max-w-md flex justify-end mb-2">
+        <LanguageSwitcher className="bg-white/90 shadow-2xs border-[#C7E4CA]" />
+      </div>
+
+      <div className="w-full max-w-md space-y-5">
         {/* Header Icon & Brand */}
         <div className="flex flex-col items-center text-center space-y-2">
           <div className="w-14 h-14 rounded-2xl bg-[#287A45] flex items-center justify-center text-white shadow-lg shadow-[#287A45]/25 text-2xl font-bold">
@@ -82,7 +101,7 @@ export default function AdminLoginPage() {
               {content.shopName || "ஸ்ரீ மகாலட்சுமி பிராய்லர்ஸ்"}
             </h2>
             <p className="text-xs font-bold text-[#287A45] uppercase tracking-widest mt-0.5">
-              நிர்வாக கட்டுப்பாட்டு மையம்
+              {language === "ta" ? "நிர்வாக கட்டுப்பாட்டு மையம்" : "Admin Operations Portal"}
             </p>
           </div>
         </div>
@@ -98,21 +117,21 @@ export default function AdminLoginPage() {
           <div className="mb-4 flex items-center justify-between gap-2 px-3 py-1.5 rounded-xl bg-amber-50 border border-amber-300 text-amber-900 text-xs font-bold">
             <div className="flex items-center gap-1.5">
               <span className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse" />
-              <span>டெமோ பயன்முறை • DEMO MODE</span>
+              <span>{language === "ta" ? "டெமோ பயன்முறை • DEMO MODE" : "DEMO MODE"}</span>
             </div>
             <span className="text-[10px] px-2 py-0.5 rounded-md bg-amber-200/70 font-semibold text-amber-950">
-              முன்முனை மாதிரி
+              {language === "ta" ? "முன்முனை மாதிரி" : "Frontend Demo"}
             </span>
           </div>
 
           <div className="space-y-1.5 border-b border-slate-100 pb-5">
             <div className="flex items-center gap-1.5 text-xs font-semibold text-[#287A45] bg-[#EDF7EE] w-fit px-2.5 py-1 rounded-md border border-[#C7E4CA]">
               <ShieldCheck className="w-3.5 h-3.5" />
-              நேரடி டெமோ நிர்வாக அணுகல்
+              {language === "ta" ? "நேரடி டெமோ நிர்வாக அணுகல்" : "Instant Demo Admin Access"}
             </div>
-            <h1 className="text-2xl font-bold text-[#26352B] pt-1">நிர்வாகி உள்நுழைவு</h1>
+            <h1 className="text-2xl font-bold text-[#26352B] pt-1">{t("adminLoginTitle")}</h1>
             <p className="text-xs sm:text-sm text-slate-500">
-              கோழி அங்காடி மேலாண்மை மற்றும் சரக்கு இருப்பு கட்டுப்பாட்டு அறை.
+              {t("adminLoginSubtitle")}
             </p>
           </div>
 
@@ -128,7 +147,7 @@ export default function AdminLoginPage() {
                 htmlFor="admin-username"
                 className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5"
               >
-                பயனர் பெயர் அல்லது மின்னஞ்சல்
+                {language === "ta" ? "பயனர் பெயர் அல்லது மின்னஞ்சல்" : "Username or Email"}
               </label>
               <div className="relative">
                 <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
@@ -151,14 +170,14 @@ export default function AdminLoginPage() {
                   htmlFor="admin-password"
                   className="block text-xs font-bold text-slate-700 uppercase tracking-wider"
                 >
-                  கடவுச்சொல்
+                  {language === "ta" ? "கடவுச்சொல்" : "Password"}
                 </label>
                 <button
                   type="button"
                   onClick={() => setForgotModalOpen(true)}
                   className="text-xs font-semibold text-[#287A45] hover:text-[#1E5F35] transition-colors"
                 >
-                  கடவுச்சொல் உதவி
+                  {language === "ta" ? "கடவுச்சொல் உதவி" : "Credentials Guide"}
                 </button>
               </div>
               <div className="relative">
@@ -197,7 +216,11 @@ export default function AdminLoginPage() {
               ) : (
                 <LogIn className="w-4 h-4" />
               )}
-              <span>{isLoading ? "உள்நுழைகிறது..." : "நிர்வாகப் பலகையில் உள்நுழைக"}</span>
+              <span>
+                {isLoading
+                  ? (language === "ta" ? "உள்நுழைகிறது..." : "Signing in...")
+                  : t("loginBtn")}
+              </span>
             </button>
           </form>
 
@@ -206,9 +229,11 @@ export default function AdminLoginPage() {
             <div className="flex items-center justify-between mb-2.5">
               <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1">
                 <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                <span>விரைவு டெமோ உள்நுழைவு (1-கிளிக்)</span>
+                <span>{t("quickLoginTitle")}</span>
               </p>
-              <span className="text-[10px] text-slate-400">கிளிக் செய்து நுழையலாம்</span>
+              <span className="text-[10px] text-slate-400">
+                {language === "ta" ? "கிளிக் செய்து நுழையலாம்" : "Click to sign in"}
+              </span>
             </div>
             <div className="grid grid-cols-2 gap-2">
               <button
@@ -220,7 +245,7 @@ export default function AdminLoginPage() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1 text-[11px] font-bold text-[#287A45]">
                     <KeyRound className="w-3 h-3 text-[#287A45]" />
-                    முதன்மை நிர்வாகி
+                    {t("adminSuperAdmin")}
                   </div>
                   <span className="text-[9px] font-bold uppercase bg-[#287A45] text-white px-1.5 py-0.2 rounded group-hover:bg-[#1E5F35]">
                     Admin
@@ -229,7 +254,9 @@ export default function AdminLoginPage() {
                 <div className="text-[11px] text-slate-700 font-mono mt-1 font-semibold truncate">
                   admin@greenpasture.com
                 </div>
-                <div className="text-[10px] text-emerald-700 mt-0.5">முழு நிர்வாக அணுகல்</div>
+                <div className="text-[10px] text-emerald-700 mt-0.5">
+                  {language === "ta" ? "முழு நிர்வாக அணுகல்" : "Full Admin Access"}
+                </div>
               </button>
 
               <button
@@ -241,7 +268,7 @@ export default function AdminLoginPage() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1 text-[11px] font-bold text-blue-800">
                     <KeyRound className="w-3 h-3 text-blue-600" />
-                    பணியாளர் நிர்வாகி
+                    {t("adminStaff")}
                   </div>
                   <span className="text-[9px] font-bold uppercase bg-blue-600 text-white px-1.5 py-0.2 rounded group-hover:bg-blue-700">
                     Staff
@@ -250,7 +277,9 @@ export default function AdminLoginPage() {
                 <div className="text-[11px] text-slate-700 font-mono mt-1 font-semibold truncate">
                   staff@greenpasture.com
                 </div>
-                <div className="text-[10px] text-blue-700 mt-0.5">பொருட்கள் & விசாரணைகள்</div>
+                <div className="text-[10px] text-blue-700 mt-0.5">
+                  {language === "ta" ? "பொருட்கள் & விசாரணைகள்" : "Products & Orders"}
+                </div>
               </button>
             </div>
           </div>
@@ -263,7 +292,7 @@ export default function AdminLoginPage() {
             className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#26352B] hover:text-[#287A45] transition-colors"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
-            <span>கடை முகப்புக்குத் திரும்பு</span>
+            <span>{language === "ta" ? "கடை முகப்புக்குத் திரும்பு" : "Return to Storefront"}</span>
           </Link>
         </div>
       </div>
@@ -291,8 +320,12 @@ export default function AdminLoginPage() {
                     <HelpCircle className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="text-base font-bold text-slate-900">டெமோ உள்நுழைவு வழிகாட்டி</h3>
-                    <p className="text-xs text-slate-500">முன்முனை காட்சி முறை சான்றுகள்</p>
+                    <h3 className="text-base font-bold text-slate-900">
+                      {language === "ta" ? "டெமோ உள்நுழைவு வழிகாட்டி" : "Demo Sign In Guide"}
+                    </h3>
+                    <p className="text-xs text-slate-500">
+                      {language === "ta" ? "முன்முனை காட்சி முறை சான்றுகள்" : "Frontend Demo Mode Credentials"}
+                    </p>
                   </div>
                 </div>
                 <button
@@ -306,17 +339,23 @@ export default function AdminLoginPage() {
 
               <div className="mt-4 space-y-3 text-xs sm:text-sm text-slate-600">
                 <p>
-                  இது ஒரு முன்முனை டெமோ பதிப்பு. சேவையகம் அல்லது தரவுத்தள இணைப்பு தேவையின்றி உடனடி அணுகல் வழங்கப்பட்டுள்ளது.
+                  {language === "ta"
+                    ? "இது ஒரு முன்முனை டெமோ பதிப்பு. சேவையகம் அல்லது தரவுத்தள இணைப்பு தேவையின்றி உடனடி அணுகல் வழங்கப்பட்டுள்ளது."
+                    : "This is a frontend demo mode. Instant 1-click access is provided without requiring a backend database."}
                 </p>
                 <div className="p-3 rounded-xl bg-[#EDF7EE] border border-[#C7E4CA] text-xs text-[#26352B] space-y-2">
-                  <div className="font-bold text-[#287A45]">முதன்மை நிர்வாகி (Super Admin):</div>
-                  <div><strong>மின்னஞ்சல்:</strong> admin@greenpasture.com</div>
-                  <div><strong>அணுகல்:</strong> முழு கட்டுப்பாட்டு அறை, அமைப்புகள் &amp; பயனர்கள்</div>
+                  <div className="font-bold text-[#287A45]">
+                    {language === "ta" ? "முதன்மை நிர்வாகி (Super Admin):" : "Super Admin:"}
+                  </div>
+                  <div><strong>{language === "ta" ? "மின்னஞ்சல்:" : "Email:"}</strong> admin@greenpasture.com</div>
+                  <div><strong>{language === "ta" ? "அணுகல்:" : "Access:"}</strong> {language === "ta" ? "முழு கட்டுப்பாட்டு அறை, அமைப்புகள் & பயனர்கள்" : "Full Dashboard, Settings & Users"}</div>
                 </div>
                 <div className="p-3 rounded-xl bg-blue-50 border border-blue-200 text-xs text-blue-950 space-y-2">
-                  <div className="font-bold text-blue-800">பணியாளர் நிர்வாகி (Staff Admin):</div>
-                  <div><strong>மின்னஞ்சல்:</strong> staff@greenpasture.com</div>
-                  <div><strong>அணுகல்:</strong> பொருட்கள், பிரிவுகள், பேனர்கள் &amp; விசாரணைகள்</div>
+                  <div className="font-bold text-blue-800">
+                    {language === "ta" ? "பணியாளர் நிர்வாகி (Staff Admin):" : "Staff Admin:"}
+                  </div>
+                  <div><strong>{language === "ta" ? "மின்னஞ்சல்:" : "Email:"}</strong> staff@greenpasture.com</div>
+                  <div><strong>{language === "ta" ? "அணுகல்:" : "Access:"}</strong> {language === "ta" ? "பொருட்கள், பிரிவுகள், பேனர்கள் & விசாரணைகள்" : "Products, Categories, Banners & Enquiries"}</div>
                 </div>
               </div>
 
@@ -326,7 +365,7 @@ export default function AdminLoginPage() {
                   onClick={() => setForgotModalOpen(false)}
                   className="px-4 py-2 rounded-xl bg-[#287A45] text-white text-xs font-semibold hover:bg-[#1E5F35]"
                 >
-                  புரிந்தது
+                  {language === "ta" ? "புரிந்தது" : "Got it"}
                 </button>
               </div>
             </motion.div>

@@ -10,17 +10,33 @@ import {
 import { WhatsAppIcon } from "@/components/common/WhatsAppIcon";
 import { FadeInSection } from "@/components/common/MotionPrimitives";
 import { PublicShell } from "@/components/public/PublicShell";
+import { useLanguage } from "@/context/LanguageContext";
 import { contentService } from "@/services/content-service";
 import { useWebsiteContent } from "@/services/use-store-data";
 
 export default function AboutPage() {
   const { content } = useWebsiteContent();
   const { about } = content;
+  const { language, t } = useLanguage();
+
+  const whatsappMessage =
+    language === "ta"
+      ? `வணக்கம் ${content.shopName}, உங்கள் புதிய பண்ணை கோழிக்கறி விநியோகம் குறித்து அறிய விரும்புகிறேன்.`
+      : `Hello ${content.shopName}, I would like to inquire about your farm fresh poultry cuts.`;
 
   const whatsappUrl = contentService.buildWhatsAppUrl(
     content.contact.whatsappNumber,
-    `வணக்கம் ${content.shopName}, உங்கள் புதிய பண்ணை கோழிக்கறி விநியோகம் குறித்து அறிய விரும்புகிறேன்.`
+    whatsappMessage
   );
+
+  const introTitle = language === "ta" ? about.introTitle : t("aboutIntroTitle");
+  const introDescription = language === "ta" ? about.introDescription : t("aboutIntroDesc");
+  const businessInfoTitle = language === "ta" ? about.businessInfoTitle : t("aboutBusinessTitle");
+  const businessInfoBody = language === "ta" ? about.businessInfoBody : t("aboutBusinessBody");
+  const ownerBio = language === "ta" ? about.ownerBio : t("aboutOwnerBio");
+  const qualityCommitment = language === "ta" ? about.qualityCommitment : t("aboutQualityCommitmentText");
+  const hygienePractices = language === "ta" ? about.hygienePractices : t("aboutHygieneText");
+  const customerSatisfaction = language === "ta" ? about.customerSatisfaction : t("aboutSatisfactionText");
 
   return (
     <PublicShell>
@@ -30,13 +46,13 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-center">
             <FadeInSection className="lg:col-span-6 space-y-3 sm:space-y-4">
               <span className="inline-block px-3 py-1 rounded-full bg-[#DDF3DF] text-[#287A45] text-[11px] font-bold uppercase tracking-wider">
-                {about.introBadge}
+                {t("aboutBadge")}
               </span>
               <h1 className="text-2xl sm:text-4xl lg:text-[40px] font-extrabold tracking-tight text-[#26352B] leading-tight">
-                {about.introTitle}
+                {introTitle}
               </h1>
               <p className="text-xs sm:text-base text-[#516357] leading-relaxed">
-                {about.introDescription}
+                {introDescription}
               </p>
 
               <div className="pt-1 flex items-center gap-2 sm:gap-4">
@@ -45,7 +61,7 @@ export default function AboutPage() {
                     {about.businessExperienceYears}
                   </span>
                   <span className="text-[10px] sm:text-xs font-medium text-[#516357]">
-                    அனுபவம்
+                    {t("aboutExperience")}
                   </span>
                 </div>
                 <div className="flex-1 px-3 py-2 sm:px-4 sm:py-3 rounded-xl bg-[#DDF3DF]/70 border border-[#C7E4CA] text-center sm:text-left">
@@ -53,7 +69,7 @@ export default function AboutPage() {
                     0°C – 4°C
                   </span>
                   <span className="text-[10px] sm:text-xs font-medium text-[#516357]">
-                    குளிரூட்டப்பட்டது
+                    {t("aboutChilled")}
                   </span>
                 </div>
                 <div className="flex-1 px-3 py-2 sm:px-4 sm:py-3 rounded-xl bg-[#DDF3DF]/70 border border-[#C7E4CA] text-center sm:text-left">
@@ -61,7 +77,7 @@ export default function AboutPage() {
                     100%
                   </span>
                   <span className="text-[10px] sm:text-xs font-medium text-[#516357]">
-                    சுகாதாரமானது
+                    {t("aboutHygienic")}
                   </span>
                 </div>
               </div>
@@ -88,13 +104,13 @@ export default function AboutPage() {
             <div className="bg-white rounded-2xl border border-[#C7E4CA] p-5 sm:p-8 shadow-xs">
               <div className="max-w-3xl space-y-2">
                 <span className="text-[11px] font-bold uppercase tracking-widest text-[#287A45]">
-                  வணிகத் தகவல்கள்
+                  {t("businessInfoTag")}
                 </span>
                 <h2 className="text-xl sm:text-2xl font-bold text-[#26352B]">
-                  {about.businessInfoTitle}
+                  {businessInfoTitle}
                 </h2>
                 <p className="text-xs sm:text-base text-[#516357] leading-relaxed">
-                  {about.businessInfoBody}
+                  {businessInfoBody}
                 </p>
               </div>
             </div>
@@ -113,25 +129,27 @@ export default function AboutPage() {
                 </div>
                 <div className="md:col-span-7 p-5 sm:p-8 space-y-2.5 sm:space-y-3">
                   <span className="inline-block px-2.5 py-0.5 rounded-md bg-[#DDF3DF] text-[#287A45] text-[11px] font-semibold">
-                    உரிமையாளரைச் சந்தியுங்கள்
+                    {t("meetOwnerTag")}
                   </span>
                   <div>
                     <h2 className="text-xl sm:text-2xl font-bold text-[#26352B]">
                       {about.ownerName}
                     </h2>
                     <p className="text-xs sm:text-sm font-semibold text-[#287A45] mt-0.5">
-                      {about.ownerDesignation} • {about.businessExperienceYears} அனுபவம்
+                      {language === "ta"
+                        ? `${about.ownerDesignation} • ${about.businessExperienceYears} அனுபவம்`
+                        : `${t("ownerDesignation")} • ${about.businessExperienceYears} Experience`}
                     </p>
                   </div>
                   <p className="text-xs sm:text-sm text-[#516357] leading-relaxed">
-                    {about.ownerBio}
+                    {ownerBio}
                   </p>
                   <div className="pt-1 flex flex-wrap gap-2.5">
                     <Link
                       href="/products"
                       className="px-4 py-2 rounded-lg bg-[#287A45] hover:bg-[#1E5F35] text-white text-xs font-semibold transition-colors"
                     >
-                      எங்கள் கறிக்கட்டுகளைப் பார்க்க
+                      {t("viewOurCutsBtn")}
                     </Link>
                     <a
                       href={whatsappUrl}
@@ -140,7 +158,7 @@ export default function AboutPage() {
                       className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#25D366] hover:bg-[#20ba59] text-white text-xs font-semibold transition-colors"
                     >
                       <WhatsAppIcon className="w-4 h-4 rounded" />
-                      <span>வாட்ஸ்அப் ஆர்டர்</span>
+                      <span>{t("heroSecondaryCta")}</span>
                     </a>
                   </div>
                 </div>
@@ -155,9 +173,9 @@ export default function AboutPage() {
                 <div className="w-9 h-9 rounded-lg bg-[#DDF3DF] text-[#287A45] flex items-center justify-center mb-2.5">
                   <Award className="w-5 h-5" />
                 </div>
-                <h3 className="text-sm sm:text-base font-bold text-[#26352B]">தர உறுதிப்பாடு</h3>
+                <h3 className="text-sm sm:text-base font-bold text-[#26352B]">{t("qualityCommitmentHeading")}</h3>
                 <p className="text-xs sm:text-sm text-[#516357] mt-1 leading-relaxed">
-                  {about.qualityCommitment}
+                  {qualityCommitment}
                 </p>
               </div>
             </FadeInSection>
@@ -167,9 +185,9 @@ export default function AboutPage() {
                 <div className="w-9 h-9 rounded-lg bg-[#DDF3DF] text-[#287A45] flex items-center justify-center mb-2.5">
                   <ShieldCheck className="w-5 h-5" />
                 </div>
-                <h3 className="text-sm sm:text-base font-bold text-[#26352B]">சுகாதார நடைமுறைகள்</h3>
+                <h3 className="text-sm sm:text-base font-bold text-[#26352B]">{t("hygienePracticesHeading")}</h3>
                 <p className="text-xs sm:text-sm text-[#516357] mt-1 leading-relaxed">
-                  {about.hygienePractices}
+                  {hygienePractices}
                 </p>
               </div>
             </FadeInSection>
@@ -179,9 +197,9 @@ export default function AboutPage() {
                 <div className="w-9 h-9 rounded-lg bg-[#DDF3DF] text-[#287A45] flex items-center justify-center mb-2.5">
                   <HeartHandshake className="w-5 h-5" />
                 </div>
-                <h3 className="text-sm sm:text-base font-bold text-[#26352B]">வாடிக்கையாளர் திருப்தி</h3>
+                <h3 className="text-sm sm:text-base font-bold text-[#26352B]">{t("customerSatisfactionHeading")}</h3>
                 <p className="text-xs sm:text-sm text-[#516357] mt-1 leading-relaxed">
-                  {about.customerSatisfaction}
+                  {customerSatisfaction}
                 </p>
               </div>
             </FadeInSection>

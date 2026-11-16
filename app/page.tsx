@@ -15,6 +15,7 @@ import { WhatsAppIcon } from "@/components/common/WhatsAppIcon";
 import { FadeInSection } from "@/components/common/MotionPrimitives";
 import { ProductShowcase } from "@/components/public/ProductShowcase";
 import { PublicShell } from "@/components/public/PublicShell";
+import { useLanguage } from "@/context/LanguageContext";
 import { contentService } from "@/services/content-service";
 import {
   useCategories,
@@ -34,6 +35,7 @@ export default function HomePage() {
   const { content } = useWebsiteContent();
   const { products } = useProducts();
   const { categories } = useCategories();
+  const { language, t } = useLanguage();
 
   const categoryMap = new Map((categories || []).map((c) => [c.id, c.name]));
 
@@ -48,15 +50,34 @@ export default function HomePage() {
       ? selectedFeatured.slice(0, 7)
       : activeProducts.filter((p) => p.isFeatured).slice(0, 7);
 
+  const heroWhatsAppMessage =
+    language === "ta"
+      ? `வணக்கம் ${content?.shopName || "ஸ்ரீ மகாலட்சுமி பிராய்லர்ஸ்"}, நான் புதிய சிக்கன் கறிக்கட்டுகள் ஆர்டர் செய்ய விரும்புகிறேன்.`
+      : `Hello ${content?.shopName || "Sri Mahalakshmi Broilers"}, I would like to order fresh chicken cuts.`;
+
   const heroWhatsAppUrl = contentService.buildWhatsAppUrl(
     content?.contact?.whatsappNumber || "919876543210",
-    `வணக்கம் ${content?.shopName || "ஸ்ரீ மகாலட்சுமி பிராய்லர்ஸ்"}, நான் புதிய சிக்கன் கறிக்கட்டுகள் ஆர்டர் செய்ய விரும்புகிறேன்.`
+    heroWhatsAppMessage
   );
+
+  const ctaWhatsAppMessage =
+    language === "ta"
+      ? `வணக்கம் ${content?.shopName || "ஸ்ரீ மகாலட்சுமி பிராய்லர்ஸ்"}, நான் முன்கூட்டியே ஆர்டர் பதிவு செய்ய விரும்புகிறேன்.`
+      : `Hello ${content?.shopName || "Sri Mahalakshmi Broilers"}, I would like to pre-book an order for chicken cuts.`;
 
   const ctaWhatsAppUrl = contentService.buildWhatsAppUrl(
     content?.contact?.whatsappNumber || "919876543210",
-    `வணக்கம் ${content?.shopName || "ஸ்ரீ மகாலட்சுமி பிராய்லர்ஸ்"}, நான் முன்கூட்டியே ஆர்டர் பதிவு செய்ய விரும்புகிறேன்.`
+    ctaWhatsAppMessage
   );
+
+  const getWhyItem = (idx: number, item: WhyChooseUsItem) => {
+    if (language === "ta") return { title: item.title, description: item.description };
+    if (idx === 0) return { title: t("whyFreshTitle"), description: t("whyFreshDesc") };
+    if (idx === 1) return { title: t("whyHygieneTitle"), description: t("whyHygieneDesc") };
+    if (idx === 2) return { title: t("whyServiceTitle"), description: t("whyServiceDesc") };
+    if (idx === 3) return { title: t("whyTrustTitle"), description: t("whyTrustDesc") };
+    return { title: item.title, description: item.description };
+  };
 
   return (
     <PublicShell>
@@ -73,15 +94,15 @@ export default function HomePage() {
               >
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#DDF3DF] text-[#287A45] text-[11px] sm:text-xs font-semibold tracking-wide">
                   <CheckCircle2 className="w-3.5 h-3.5" />
-                  {content?.hero?.badge || "100% தினசரி புதிய பண்ணை வரவு"}
+                  {language === "ta" ? (content?.hero?.badge || t("heroBadge")) : t("heroBadge")}
                 </span>
 
                 <h1 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-[#26352B] leading-tight">
-                  {content?.hero?.headline || "தினமும் காலையில் சுகாதாரமாக வெட்டப்பட்ட புதிய கோழிக்கறி"}
+                  {language === "ta" ? (content?.hero?.headline || t("heroHeadline")) : t("heroHeadline")}
                 </h1>
 
                 <p className="text-xs sm:text-base lg:text-lg text-[#516357] leading-relaxed max-w-xl">
-                  {content?.hero?.subheadline || "மென்மையான கறிக்கட், கொழுப்பற்ற எலும்பில்லா நெஞ்சுக்கறி முதல் பண்ணை முட்டைகள் வரை."}
+                  {language === "ta" ? (content?.hero?.subheadline || t("heroSubheadline")) : t("heroSubheadline")}
                 </p>
 
                 <div className="flex flex-row flex-wrap items-center gap-2.5 pt-1">
@@ -89,7 +110,7 @@ export default function HomePage() {
                     href="/products"
                     className="inline-flex items-center justify-center gap-1.5 px-4 sm:px-6 py-2.5 sm:py-3.5 rounded-xl bg-[#287A45] hover:bg-[#1E5F35] text-white font-semibold text-xs sm:text-sm shadow-sm transition-all duration-200"
                   >
-                    <span>{content?.hero?.primaryCtaText || "பொருட்களைப் பார்க்க"}</span>
+                    <span>{language === "ta" ? (content?.hero?.primaryCtaText || t("heroPrimaryCta")) : t("heroPrimaryCta")}</span>
                     <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   </Link>
 
@@ -100,7 +121,7 @@ export default function HomePage() {
                     className="inline-flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3.5 rounded-xl bg-[#25D366] hover:bg-[#20ba59] text-white font-semibold text-xs sm:text-sm shadow-sm transition-colors"
                   >
                     <WhatsAppIcon className="w-4 h-4 sm:w-5 sm:h-5 rounded" />
-                    <span>வாட்ஸ்அப் ஆர்டர்</span>
+                    <span>{t("heroSecondaryCta")}</span>
                   </a>
                 </div>
               </motion.div>
@@ -136,35 +157,38 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
           <FadeInSection className="text-center max-w-2xl mx-auto mb-6 sm:mb-10">
             <span className="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-[#287A45]">
-              எங்கள் தரக் கொள்கைகள்
+              {t("whySubtitle")}
             </span>
             <h2 className="text-xl sm:text-3xl font-bold tracking-tight text-[#26352B] mt-0.5">
-              குடும்பங்கள் ஏன் {content?.shopName || "ஸ்ரீ மகாலட்சுமி பிராய்லர்ஸ்"}யை தேர்ந்தெடுக்கிறார்கள்?
+              {t("whyTitle")}
             </h2>
             <p className="text-xs sm:text-sm text-[#516357] mt-1 hidden sm:block">
-              சீரான தூய்மை, நேர்மையான எடை மற்றும் தினசரி புதிய காலைப் பண்ணை வரவு.
+              {t("whyDesc")}
             </p>
           </FadeInSection>
 
           {/* 2 columns on mobile */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-5">
-            {(content?.whyChooseUs || []).map((item, idx) => (
-              <FadeInSection key={item.id} delay={idx * 0.05}>
-                <div className="bg-white rounded-xl border border-[#C7E4CA] p-3.5 sm:p-5 shadow-xs hover:shadow-sm transition-shadow h-full flex flex-col justify-between">
-                  <div>
-                    <div className="w-8 h-8 sm:w-11 sm:h-11 rounded-lg bg-[#DDF3DF] flex items-center justify-center mb-2.5 sm:mb-3">
-                      {WHY_ICONS[item.iconName] || <Sparkles className="w-5 h-5 text-[#287A45]" />}
+            {(content?.whyChooseUs || []).map((item, idx) => {
+              const localized = getWhyItem(idx, item);
+              return (
+                <FadeInSection key={item.id} delay={idx * 0.05}>
+                  <div className="bg-white rounded-xl border border-[#C7E4CA] p-3.5 sm:p-5 shadow-xs hover:shadow-sm transition-shadow h-full flex flex-col justify-between">
+                    <div>
+                      <div className="w-8 h-8 sm:w-11 sm:h-11 rounded-lg bg-[#DDF3DF] flex items-center justify-center mb-2.5 sm:mb-3">
+                        {WHY_ICONS[item.iconName] || <Sparkles className="w-5 h-5 text-[#287A45]" />}
+                      </div>
+                      <h3 className="text-xs sm:text-base font-bold text-[#26352B] leading-tight">
+                        {localized.title}
+                      </h3>
+                      <p className="text-[11px] sm:text-xs text-[#516357] mt-1 sm:mt-1.5 leading-relaxed line-clamp-2 sm:line-clamp-none">
+                        {localized.description}
+                      </p>
                     </div>
-                    <h3 className="text-xs sm:text-base font-bold text-[#26352B] leading-tight">
-                      {item.title}
-                    </h3>
-                    <p className="text-[11px] sm:text-xs text-[#516357] mt-1 sm:mt-1.5 leading-relaxed line-clamp-2 sm:line-clamp-none">
-                      {item.description}
-                    </p>
                   </div>
-                </div>
-              </FadeInSection>
-            ))}
+                </FadeInSection>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -176,10 +200,10 @@ export default function HomePage() {
             <div className="bg-[#287A45] rounded-2xl p-5 sm:p-8 lg:p-10 text-white shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6">
               <div className="max-w-xl space-y-1.5">
                 <h2 className="text-lg sm:text-2xl font-bold tracking-tight leading-snug">
-                  {content?.ctaBanner?.headline || "நீங்கள் வருவதற்கு முன்பே கறி வெட்டித் தயார் செய்து வைக்க வேண்டுமா?"}
+                  {language === "ta" ? (content?.ctaBanner?.headline || t("ctaHeadline")) : t("ctaHeadline")}
                 </h2>
                 <p className="text-xs sm:text-sm text-white/90 leading-relaxed">
-                  {content?.ctaBanner?.description || "உங்களுக்குத் தேவையான கறிக்கட்டு வகை மற்றும் எடையை வாட்ஸ்அப்பில் அனுப்புங்கள்."}
+                  {language === "ta" ? (content?.ctaBanner?.description || t("ctaDesc")) : t("ctaDesc")}
                 </p>
               </div>
               <a
@@ -189,7 +213,7 @@ export default function HomePage() {
                 className="inline-flex items-center justify-center gap-2 px-5 py-2.5 sm:py-3.5 rounded-xl bg-white text-[#287A45] hover:bg-[#EDF7EE] font-bold text-xs sm:text-sm shadow-sm transition-all duration-200 shrink-0 w-full sm:w-auto"
               >
                 <WhatsAppIcon className="w-5 h-5 rounded" />
-                <span>{content?.ctaBanner?.buttonText || "வாட்ஸ்அப்பில் உடனே ஆர்டர் செய்க"}</span>
+                <span>{language === "ta" ? (content?.ctaBanner?.buttonText || t("ctaButton")) : t("ctaButton")}</span>
               </a>
             </div>
           </FadeInSection>

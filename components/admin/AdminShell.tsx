@@ -23,9 +23,23 @@ import {
   X,
 } from "lucide-react";
 import { useToast } from "@/components/common/ToastProvider";
+import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
+import { useLanguage, TRANSLATIONS } from "@/context/LanguageContext";
 import { authService, DEMO_CREDENTIALS } from "@/services/auth-service";
 import { useWebsiteContent } from "@/services/use-store-data";
 import { AdminUser } from "@/types";
+
+const NAV_KEY_MAP: Record<string, keyof typeof TRANSLATIONS["ta"]> = {
+  "/admin/dashboard": "adminDashboard",
+  "/admin/products": "adminProducts",
+  "/admin/categories": "adminCategories",
+  "/admin/banners": "adminBanners",
+  "/admin/media": "adminMedia",
+  "/admin/content": "adminContent",
+  "/admin/enquiries": "adminEnquiries",
+  "/admin/users": "adminUsers",
+  "/admin/settings": "adminSettings",
+};
 
 const ALL_NAV_ITEMS = [
   { href: "/admin/dashboard", label: "கட்டுப்பாட்டு அறை", icon: LayoutDashboard, adminOnly: false },
@@ -62,6 +76,7 @@ export function AdminShell({
   const router = useRouter();
   const { showToast } = useToast();
   const { content } = useWebsiteContent();
+  const { language, t } = useLanguage();
 
   const [user, setUser] = useState<AdminUser | null>(null);
   const [checked, setChecked] = useState(false);
@@ -133,7 +148,9 @@ export function AdminShell({
               {content.shopName || "ஸ்ரீ மகாலட்சுமி பிராய்லர்ஸ்"}
             </span>
             <span className="text-[11px] font-bold text-[#287A45] uppercase tracking-wider block">
-              {isSuperAdmin ? "நிர்வாக போர்டல் (Admin)" : "பணியாளர் போர்டல் (Staff)"}
+              {isSuperAdmin
+                ? (language === "ta" ? "நிர்வாக போர்டல் (Admin)" : "Super Admin Portal")
+                : (language === "ta" ? "பணியாளர் போர்டல் (Staff)" : "Staff Portal")}
             </span>
           </div>
         </Link>
@@ -150,11 +167,15 @@ export function AdminShell({
       {/* Navigation */}
       <nav className="flex-1 p-3.5 space-y-1 overflow-y-auto" aria-label="நிர்வாக வழிகாட்டி">
         <div className="px-2 py-1 mb-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">
-          {isSuperAdmin ? "முதன்மை நிர்வாகப் பிரிவுகள்" : "பணியாளர் பணிப் பிரிவுகள்"}
+          {isSuperAdmin
+            ? (language === "ta" ? "முதன்மை நிர்வாகப் பிரிவுகள்" : "Super Admin Navigation")
+            : (language === "ta" ? "பணியாளர் பணிப் பிரிவுகள்" : "Staff Navigation")}
         </div>
         {navItems.map((item) => {
           const Icon = item.icon;
           const active = pathname === item.href;
+          const navLabelKey = NAV_KEY_MAP[item.href];
+          const displayLabel = navLabelKey ? t(navLabelKey) : item.label;
           return (
             <Link
               key={item.href}
@@ -167,7 +188,7 @@ export function AdminShell({
               }`}
             >
               <Icon className={`w-4 h-4 shrink-0 ${active ? "text-white" : "text-slate-400 group-hover:text-[#287A45]"}`} />
-              <span>{item.label}</span>
+              <span>{displayLabel}</span>
             </Link>
           );
         })}
@@ -177,19 +198,23 @@ export function AdminShell({
           <div className="pt-3 mt-3 border-t border-slate-100 px-2 space-y-1">
             <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 flex items-center gap-1">
               <Lock className="w-3 h-3 text-slate-400" />
-              <span>முதன்மை நிர்வாகி மட்டும்</span>
+              <span>{language === "ta" ? "முதன்மை நிர்வாகி மட்டும்" : "Super Admin Only"}</span>
             </div>
-            {ALL_NAV_ITEMS.filter((i) => i.adminOnly).map((i) => (
-              <div
-                key={i.href}
-                className="flex items-center justify-between px-2.5 py-1.5 text-xs text-slate-400 rounded-lg bg-slate-50 border border-dashed border-slate-200"
-              >
-                <span className="truncate">{i.label}</span>
-                <span className="text-[9px] font-semibold text-amber-700 bg-amber-100 px-1.5 py-0.2 rounded">
-                  பூட்டப்பட்டது
-                </span>
-              </div>
-            ))}
+            {ALL_NAV_ITEMS.filter((i) => i.adminOnly).map((i) => {
+              const lockedLabelKey = NAV_KEY_MAP[i.href];
+              const displayLocked = lockedLabelKey ? t(lockedLabelKey) : i.label;
+              return (
+                <div
+                  key={i.href}
+                  className="flex items-center justify-between px-2.5 py-1.5 text-xs text-slate-400 rounded-lg bg-slate-50 border border-dashed border-slate-200"
+                >
+                  <span className="truncate">{displayLocked}</span>
+                  <span className="text-[9px] font-semibold text-amber-700 bg-amber-100 px-1.5 py-0.2 rounded">
+                    {language === "ta" ? "பூட்டப்பட்டது" : "Locked"}
+                  </span>
+                </div>
+              );
+            })}
           </div>
         )}
       </nav>
@@ -207,7 +232,7 @@ export function AdminShell({
               }`}
             >
               <ShieldCheck className="w-3 h-3" />
-              {isSuperAdmin ? "முதன்மை நிர்வாகி" : "பணியாளர்"}
+              {isSuperAdmin ? t("adminSuperAdmin") : t("adminStaff")}
             </span>
           </div>
           <p className="text-[11px] text-slate-500 truncate font-mono">{user?.email}</p>
@@ -216,16 +241,22 @@ export function AdminShell({
           <div className="mt-2.5 pt-2 border-t border-slate-100 flex items-center justify-between text-[10px]">
             <span className="text-amber-800 font-bold flex items-center gap-1">
               <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
-              டெமோ முறை
+              {language === "ta" ? "டெமோ முறை" : "DEMO"}
             </span>
             <button
               type="button"
               onClick={() => switchToRole(isSuperAdmin ? "staffAdmin" : "superAdmin")}
               className="text-[#287A45] hover:text-[#1E5F35] font-semibold underline underline-offset-2"
             >
-              {isSuperAdmin ? "பணியாளராக மாற" : "முதன்மை நிர்வாகியாக மாற"}
+              {isSuperAdmin
+                ? (language === "ta" ? "பணியாளராக மாற" : "Switch to Staff")
+                : (language === "ta" ? "முதன்மை நிர்வாகியாக மாற" : "Switch to Admin")}
             </button>
           </div>
+        </div>
+
+        <div className="flex justify-center">
+          <LanguageSwitcher className="w-full justify-center bg-white shadow-2xs border-slate-200" />
         </div>
 
         <Link
@@ -234,7 +265,7 @@ export function AdminShell({
           className="w-full inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-xl border border-slate-200 bg-white text-xs font-semibold text-slate-700 hover:bg-[#EDF7EE] hover:text-[#287A45] hover:border-[#C7E4CA] transition-colors shadow-2xs"
         >
           <ExternalLink className="w-3.5 h-3.5 text-[#287A45]" />
-          <span>நேரலை கடையைக் காண்க</span>
+          <span>{t("adminLiveStore")}</span>
         </Link>
 
         <button
@@ -243,7 +274,7 @@ export function AdminShell({
           className="w-full inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
         >
           <LogOut className="w-3.5 h-3.5" />
-          <span>வெளியேறு (Logout)</span>
+          <span>{t("adminLogout")}</span>
         </button>
       </div>
     </div>
@@ -311,8 +342,11 @@ export function AdminShell({
               {/* Prominent DEMO MODE badge in top bar */}
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] sm:text-xs font-bold bg-amber-50 text-amber-900 border border-amber-300 shadow-2xs">
                 <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
-                <span>டெமோ பயன்முறை • DEMO MODE</span>
+                <span>{language === "ta" ? "டெமோ பயன்முறை • DEMO MODE" : "DEMO MODE"}</span>
               </div>
+
+              {/* Language Switcher in Admin Header */}
+              <LanguageSwitcher className="bg-slate-50 border-slate-200" />
 
               {actions}
             </div>
