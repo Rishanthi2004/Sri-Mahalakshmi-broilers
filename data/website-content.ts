@@ -61,8 +61,8 @@ export const DEFAULT_WEBSITE_CONTENT: WebsiteContent = {
     businessInfoTitle: "Over 20 Years of Poultry Excellence & 20+ Stores",
     businessInfoBody:
       "With over 20 years of experience in the poultry industry and a growing network of 20+ chicken shops, our journey has always been built on one foundation — Trust and Quality.",
-    ownerName: "Founder",
-    ownerDesignation: "Founder, Sri Mahalakshmi Broilers",
+    ownerName: "Sri Mahalakshmi Broilers",
+    ownerDesignation: "20+ Years Experience • 20+ Outlets",
     ownerPhoto: "/images/founder.jpg",
     ownerBio:
       "With over 20 years of experience in the poultry industry and a growing network of 20+ chicken shops, our journey has always been built on one foundation — Trust and Quality.\n\nYour trust is our strength, and serving you better is our commitment.\n\nThank you for being part of our journey.",
