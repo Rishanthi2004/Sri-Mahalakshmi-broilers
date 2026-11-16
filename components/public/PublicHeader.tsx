@@ -15,7 +15,7 @@ import { useWebsiteContent } from "@/services/use-store-data";
 export function PublicHeader() {
   const pathname = usePathname();
   const { content } = useWebsiteContent();
-  const { t, language } = useLanguage();
+  const { t, language, setLanguage } = useLanguage();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const navLinks = [
@@ -37,16 +37,16 @@ export function PublicHeader() {
 
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-[#C7E4CA]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="h-18 py-3 flex items-center justify-between gap-2.5 sm:gap-4">
+      <div className="max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8">
+        <div className="h-16 sm:h-18 py-2 sm:py-3 flex items-center justify-between gap-1.5 sm:gap-4">
           
           {/* Left Side: Mobile Hamburger Menu Button (Left-aligned on Mobile) + Logo & Brand */}
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-1.5 sm:gap-3 min-w-0">
             {/* Hamburger on Mobile (Left side) */}
             <button
               type="button"
               onClick={() => setMobileOpen((prev) => !prev)}
-              className="p-2 rounded-xl border border-[#C7E4CA] text-[#26352B] hover:bg-[#EDF7EE] hover:text-[#287A45] active:scale-95 transition-all md:hidden shrink-0 cursor-pointer"
+              className="p-1.5 sm:p-2 rounded-xl border border-[#C7E4CA] text-[#26352B] hover:bg-[#EDF7EE] hover:text-[#287A45] active:scale-95 transition-all md:hidden shrink-0 cursor-pointer"
               aria-label={mobileOpen ? "Close menu" : "Open menu"}
               aria-expanded={mobileOpen}
             >
@@ -58,7 +58,7 @@ export function PublicHeader() {
             </button>
 
             {/* Logo & Brand */}
-            <Link href="/" className="shrink-0" onClick={() => setMobileOpen(false)}>
+            <Link href="/" className="shrink-0 min-w-0" onClick={() => setMobileOpen(false)}>
               <BrandLogo
                 shopName="ஸ்ரீ மகாலட்சுமி"
                 logoUrl={content.logoUrl}
@@ -171,6 +171,41 @@ export function PublicHeader() {
                   <WhatsAppIcon className="w-5 h-5 rounded" />
                   <span>{t("orderWhatsApp")}</span>
                 </a>
+              </div>
+
+              {/* Language Switcher inside Mobile Drawer */}
+              <div className="pt-3 px-1 border-t border-[#EDF7EE] flex items-center justify-between text-xs text-[#516357]">
+                <span className="font-semibold">{language === "ta" ? "மொழி தேர்வு:" : "Language:"}</span>
+                <div className="inline-flex items-center p-0.5 rounded-full border border-[#C7E4CA] bg-[#EDF7EE] text-xs font-bold">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setLanguage("ta");
+                      setMobileOpen(false);
+                    }}
+                    className={`px-3 py-1 rounded-full transition-all cursor-pointer ${
+                      language === "ta"
+                        ? "bg-[#287A45] text-white shadow-2xs font-bold"
+                        : "text-[#26352B] hover:text-[#287A45]"
+                    }`}
+                  >
+                    தமிழ்
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setLanguage("en");
+                      setMobileOpen(false);
+                    }}
+                    className={`px-3 py-1 rounded-full transition-all cursor-pointer ${
+                      language === "en"
+                        ? "bg-[#287A45] text-white shadow-2xs font-bold"
+                        : "text-[#26352B] hover:text-[#287A45]"
+                    }`}
+                  >
+                    English
+                  </button>
+                </div>
               </div>
             </div>
           </motion.div>
