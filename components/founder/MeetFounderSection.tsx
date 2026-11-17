@@ -3,6 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import {
+  ArrowRight,
   Award,
   ExternalLink,
   MapPin,
@@ -19,7 +20,11 @@ import { useLanguage } from "@/context/LanguageContext";
 import { contentService } from "@/services/content-service";
 import { useWebsiteContent } from "@/services/use-store-data";
 
-export function MeetFounderSection() {
+interface MeetFounderSectionProps {
+  isHero?: boolean;
+}
+
+export function MeetFounderSection({ isHero = false }: MeetFounderSectionProps) {
   const { content } = useWebsiteContent();
   const { about, contact } = content;
   const { language, t } = useLanguage();
@@ -97,30 +102,32 @@ export function MeetFounderSection() {
   return (
     <section
       id="meet-our-founder"
-      className="py-10 sm:py-16 bg-white border-b border-[#C7E4CA]"
+      className={isHero ? "bg-[#DDF3DF] pt-3 pb-6 sm:pt-6 sm:pb-10" : "py-10 sm:py-16 bg-white border-b border-[#C7E4CA]"}
       aria-labelledby="meet-our-founder-heading"
     >
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-8 sm:space-y-12">
-        {/* Section Header */}
-        <FadeInSection className="text-center max-w-3xl mx-auto space-y-2.5">
-          <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#DDF3DF] text-[#287A45] text-xs font-extrabold uppercase tracking-widest border border-[#C7E4CA]">
-            <Sparkles className="w-3.5 h-3.5" />
-            {t("meetOurFounderBadge")}
-          </span>
-          <h2
-            id="meet-our-founder-heading"
-            className="text-2xl sm:text-4xl font-extrabold tracking-tight text-[#26352B]"
-          >
-            {t("meetOurFounder")}
-          </h2>
-          <p className="text-xs sm:text-base text-[#516357] leading-relaxed">
-            {t("meetOurFounderSubtitle")}
-          </p>
-        </FadeInSection>
+      <div className={`max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 ${isHero ? "space-y-4" : "space-y-8 sm:space-y-12"}`}>
+        {/* Section Header (shown on About page, omitted in Hero mode) */}
+        {!isHero && (
+          <FadeInSection className="text-center max-w-3xl mx-auto space-y-2.5">
+            <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#DDF3DF] text-[#287A45] text-xs font-extrabold uppercase tracking-widest border border-[#C7E4CA]">
+              <Sparkles className="w-3.5 h-3.5" />
+              {t("meetOurFounderBadge")}
+            </span>
+            <h2
+              id="meet-our-founder-heading"
+              className="text-2xl sm:text-4xl font-extrabold tracking-tight text-[#26352B]"
+            >
+              {t("meetOurFounder")}
+            </h2>
+            <p className="text-xs sm:text-base text-[#516357] leading-relaxed">
+              {t("meetOurFounderSubtitle")}
+            </p>
+          </FadeInSection>
+        )}
 
         {/* Founder Profile Card */}
         <AnimatedCard hoverLift={false}>
-          <div className="bg-[#F8FCF8] rounded-3xl border border-[#C7E4CA] p-4 sm:p-8 lg:p-10 shadow-sm">
+          <div className={`rounded-3xl border border-[#C7E4CA] p-4 sm:p-8 lg:p-10 shadow-sm ${isHero ? "bg-white" : "bg-[#F8FCF8]"}`}>
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-center">
               
               {/* Left Column: Photo & Experience Highlights */}
@@ -267,6 +274,17 @@ export function MeetFounderSection() {
                     <WhatsAppIcon className="w-4 h-4 rounded" />
                     <span>{t("orderWhatsApp")}</span>
                   </a>
+
+                  {/* If Hero on Homepage, give direct CTA to explore cuts */}
+                  {isHero && (
+                    <Link
+                      href="/products"
+                      className="inline-flex items-center justify-center gap-2 px-4 py-2.5 sm:px-5 sm:py-3 rounded-xl bg-[#287A45] hover:bg-[#1E5F35] text-white text-xs sm:text-sm font-bold shadow-2xs transition-all active:scale-95 cursor-pointer"
+                    >
+                      <span>{language === "ta" ? "எங்கள் பொருட்கள்" : "Our Products"}</span>
+                      <ArrowRight className="w-4 h-4 shrink-0" />
+                    </Link>
+                  )}
                 </div>
 
               </div>

@@ -1,18 +1,15 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
-import { motion } from "framer-motion";
 import {
-  ArrowRight,
   Award,
-  CheckCircle2,
   HeartHandshake,
   ShieldCheck,
   Sparkles,
 } from "lucide-react";
 import { WhatsAppIcon } from "@/components/common/WhatsAppIcon";
 import { AnimatedCard, FadeInSection } from "@/components/common/MotionPrimitives";
+import { MeetFounderSection } from "@/components/founder/MeetFounderSection";
 import { ProductShowcase } from "@/components/public/ProductShowcase";
 import { PublicShell } from "@/components/public/PublicShell";
 import { useLanguage } from "@/context/LanguageContext";
@@ -55,16 +52,6 @@ export default function HomePage() {
       ? (content?.shopName || "ஸ்ரீ மகாலட்சுமி பிராய்லர்ஸ்")
       : (content?.shopNameEn || "Sri Mahalakshmi Broilers");
 
-  const heroWhatsAppMessage =
-    language === "ta"
-      ? `வணக்கம் ${shopDisplayName}, நான் புதிய சிக்கன் கறிக்கட்டுகள் ஆர்டர் செய்ய விரும்புகிறேன்.`
-      : `Hello ${shopDisplayName}, I would like to order fresh chicken cuts.`;
-
-  const heroWhatsAppUrl = contentService.buildWhatsAppUrl(
-    content?.contact?.whatsappNumber || "919487203778",
-    heroWhatsAppMessage
-  );
-
   const ctaWhatsAppMessage =
     language === "ta"
       ? `வணக்கம் ${shopDisplayName}, நான் முன்கூட்டியே ஆர்டர் பதிவு செய்ய விரும்புகிறேன்.`
@@ -85,70 +72,8 @@ export default function HomePage() {
 
   return (
     <PublicShell>
-      {/* HERO SECTION - Streamlined on Mobile */}
-      <section className="relative overflow-hidden bg-[#DDF3DF] pt-4 pb-6 sm:pt-8 sm:pb-14 lg:pt-12 lg:pb-16">
-        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-          <div className="bg-white rounded-2xl border border-[#C7E4CA] shadow-sm overflow-hidden">
-            <div className="grid grid-cols-1 lg:grid-cols-12 items-center">
-              <motion.div
-                initial={{ opacity: 0, y: 14 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.35 }}
-                className="lg:col-span-6 p-5 sm:p-8 lg:p-12 space-y-3.5 sm:space-y-5"
-              >
-                <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#DDF3DF] text-[#287A45] text-[11px] sm:text-xs font-semibold tracking-wide ${language === "ta" ? "font-tamil" : ""}`}>
-                  <CheckCircle2 className="w-3.5 h-3.5" />
-                  {t("heroBadge")}
-                </span>
-
-                <h1 className={`text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-[#26352B] leading-tight ${language === "ta" ? "font-tamil-hero" : ""}`}>
-                  {t("heroHeadline")}
-                </h1>
-
-                <p className={`text-xs sm:text-base lg:text-lg text-[#516357] leading-relaxed max-w-xl ${language === "ta" ? "font-tamil" : ""}`}>
-                  {t("heroSubheadline")}
-                </p>
-
-                <div className="flex flex-row flex-wrap items-center gap-2.5 pt-1">
-                  <Link
-                    href="/products"
-                    className="inline-flex items-center justify-center gap-1.5 px-4 sm:px-6 py-2.5 sm:py-3.5 rounded-xl bg-[#287A45] hover:bg-[#1E5F35] text-white font-semibold text-xs sm:text-sm shadow-sm transition-all duration-200"
-                  >
-                    <span>{t("heroPrimaryCta")}</span>
-                    <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                  </Link>
-
-                  <a
-                    href={heroWhatsAppUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3.5 rounded-xl bg-[#25D366] hover:bg-[#20ba59] text-white font-semibold text-xs sm:text-sm shadow-sm transition-colors"
-                  >
-                    <WhatsAppIcon className="w-4 h-4 sm:w-5 sm:h-5 rounded" />
-                    <span>{t("heroSecondaryCta")}</span>
-                  </a>
-                </div>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, scale: 0.98 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.4, delay: 0.08 }}
-                className="lg:col-span-6 h-48 sm:h-64 lg:h-[420px] relative bg-[#EDF7EE] overflow-hidden"
-              >
-                <picture className="w-full h-full block">
-                  <source srcSet="/images/hero-banner.avif" type="image/avif" />
-                  <img
-                    src={content?.hero?.bannerImage || "/images/hero-banner.jpg"}
-                    alt={`${content?.shopName || "ஸ்ரீ மகாலட்சுமி பிராய்லர்ஸ்"} புதிய பண்ணை கோழிக்கறி வரவு`}
-                    className="w-full h-full object-cover object-center"
-                  />
-                </picture>
-              </motion.div>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* FOUNDER HERO SECTION */}
+      <MeetFounderSection isHero />
 
       {/* FEATURED PRODUCTS SHOWCASE - Floating Showcase */}
       <ProductShowcase

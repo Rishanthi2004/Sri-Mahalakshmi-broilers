@@ -97,18 +97,18 @@ export function PublicFooter() {
               </li>
               <li>
                 <Link
-                  href="/products"
-                  className="text-[#516357] hover:text-[#287A45] transition-colors"
-                >
-                  {t("products")}
-                </Link>
-              </li>
-              <li>
-                <Link
                   href="/about"
                   className="text-[#516357] hover:text-[#287A45] transition-colors"
                 >
                   {t("about")}
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/products"
+                  className="text-[#516357] hover:text-[#287A45] transition-colors"
+                >
+                  {t("products")}
                 </Link>
               </li>
               <li>

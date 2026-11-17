@@ -20,8 +20,8 @@ export function PublicHeader() {
 
   const navLinks = [
     { href: "/", label: t("home"), icon: Home },
-    { href: "/products", label: t("products"), icon: ShoppingBag },
     { href: "/about", label: t("about"), icon: Info },
+    { href: "/products", label: t("products"), icon: ShoppingBag },
     { href: "/contact", label: t("contact"), icon: Phone },
   ];
 
