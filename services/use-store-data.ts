@@ -52,25 +52,44 @@ export function useWebsiteContent() {
 }
 
 export function useProducts() {
-  const [products, setProducts] = useState<Product[]>(DEFAULT_PRODUCTS);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
 
   const reload = useCallback(async () => {
+    // 1. Instant optimistic load from client cache
     const cached = productService.getAll();
-    setProducts(cached);
-    setReady(true);
+    if (cached && cached.length > 0) {
+      setProducts(cached.filter((p) => !p.isDeleted));
+      setReady(true);
+    }
 
+    // 2. Dynamic fetch from server database API
     try {
-      const res = await fetch("/api/products");
+      const res = await fetch("/api/products", { cache: "no-store" });
       if (res.ok) {
-        const live = await res.json();
-        if (JSON.stringify(live) !== JSON.stringify(cached)) {
-          setProducts(live);
+        const live: Product[] = await res.json();
+        if (Array.isArray(live)) {
+          const activeOnly = live.filter((p) => !p.isDeleted);
+          setProducts(activeOnly);
+          setError(null);
+          // Sync client cache with live server data
+          writeStorage(STORAGE_KEYS.PRODUCTS, live, false);
         }
-        writeStorage(STORAGE_KEYS.PRODUCTS, live, false);
+      } else {
+        throw new Error("Unable to fetch live products from server database");
       }
-    } catch {}
-  }, []);
+    } catch (err: unknown) {
+      console.warn("Products API live fetch warning, using cached catalog:", err);
+      if (!ready && (!cached || cached.length === 0)) {
+        setError((err as Error).message || "Failed to load products");
+      }
+    } finally {
+      setLoading(false);
+      setReady(true);
+    }
+  }, [ready]);
 
   useEffect(() => {
     reload();
@@ -83,7 +102,7 @@ export function useProducts() {
     };
   }, [reload]);
 
-  return { products, ready, reload };
+  return { products, loading, error, ready, reload };
 }
 
 export function useCategories() {

@@ -82,14 +82,17 @@ function ProductsManagerContent() {
 
   const extraFileRef = useRef<HTMLInputElement>(null);
 
-  const loadData = () => {
+  const loadData = async () => {
     setLoading(true);
     try {
-      const all = productService.getAll();
+      const all = await productService.fetchAll(true);
       setProducts(all.filter((p) => !p.isDeleted));
       setDeletedProducts(all.filter((p) => Boolean(p.isDeleted)));
     } catch (e) {
       console.error("Failed to load products", e);
+      const all = productService.getAll();
+      setProducts(all.filter((p) => !p.isDeleted));
+      setDeletedProducts(all.filter((p) => Boolean(p.isDeleted)));
     } finally {
       setLoading(false);
     }
@@ -202,15 +205,15 @@ function ProductsManagerContent() {
       };
 
       if (editingId) {
-        productService.update(editingId, payload);
+        await productService.update(editingId, payload);
         showToast(isTa ? "பொருள் வெற்றிகரமாக புதுப்பிக்கப்பட்டது" : "Product updated successfully", { description: form.name });
       } else {
-        productService.create(payload);
+        await productService.create(payload);
         showToast(isTa ? "பொருள் பட்டியலில் சேர்க்கப்பட்டது" : "Product added to catalog", { description: form.name });
       }
 
       setModalOpen(false);
-      loadData();
+      await loadData();
     } catch {
       setFormError(isTa ? "பொருளைச் சேமிப்பதில் பிழை ஏற்பட்டது." : "An error occurred while saving the product.");
     } finally {
@@ -221,7 +224,7 @@ function ProductsManagerContent() {
   const handleSoftDelete = async () => {
     if (!deleteTarget) return;
     try {
-      productService.update(deleteTarget.id, {
+      await productService.update(deleteTarget.id, {
         isDeleted: true,
         deletedAt: new Date().toISOString(),
       });
@@ -229,7 +232,7 @@ function ProductsManagerContent() {
         description: isTa ? `${deleteTarget.name} எப்போது வேண்டுமானாலும் மீட்டெடுக்கப்படலாம்.` : `${deleteTarget.name} can be restored at any time.`,
         type: "info",
       });
-      loadData();
+      await loadData();
     } catch {
       showToast(isTa ? "பொருளை நீக்குவதில் பிழை ஏற்பட்டது" : "Error moving product to trash", { type: "danger" });
     } finally {
@@ -239,15 +242,12 @@ function ProductsManagerContent() {
 
   const handleRestore = async (p: Product) => {
     try {
-      productService.update(p.id, {
-        isDeleted: false,
-        deletedAt: undefined,
-      });
+      await productService.restore(p.id);
       showToast(isTa ? "பொருள் மீண்டும் பட்டியலில் சேர்க்கப்பட்டது" : "Product restored to catalog", {
         description: p.name,
         type: "success",
       });
-      loadData();
+      await loadData();
     } catch {
       showToast(isTa ? "பொருளை மீட்டெடுப்பதில் பிழை" : "Error restoring product", { type: "danger" });
     }
@@ -256,12 +256,12 @@ function ProductsManagerContent() {
   const handlePermanentDelete = async () => {
     if (!permanentDeleteTarget) return;
     try {
-      productService.remove(permanentDeleteTarget.id);
+      await productService.remove(permanentDeleteTarget.id, true);
       showToast(isTa ? "பொருள் நிரந்தரமாக நீக்கப்பட்டது" : "Product deleted permanently", {
         description: permanentDeleteTarget.name,
         type: "info",
       });
-      loadData();
+      await loadData();
     } catch {
       showToast(isTa ? "பொருளை நீக்குவதில் பிழை" : "Error deleting product", { type: "danger" });
     } finally {

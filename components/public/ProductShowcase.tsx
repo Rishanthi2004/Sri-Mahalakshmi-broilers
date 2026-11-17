@@ -156,8 +156,11 @@ export function ProductShowcase({
                       className="w-48 h-40 sm:w-64 sm:h-56 lg:w-72 lg:h-64 flex items-center justify-center"
                     >
                       <img
-                        src={selected.image}
+                        src={selected.image || "/images/float-curry-cut.png"}
                         alt={selected.name}
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = "/images/float-curry-cut.png";
+                        }}
                         className={`max-w-full max-h-full object-contain filter drop-shadow-[0_18px_24px_rgba(40,122,69,0.18)] transition-all ${
                           !isAvailable ? "opacity-75 grayscale-[30%]" : ""
                         }`}

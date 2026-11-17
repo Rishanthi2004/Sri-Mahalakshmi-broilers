@@ -64,8 +64,11 @@ export function ProductCard({
       {/* Floating Image Showcase */}
       <div className="relative aspect-square sm:aspect-[4/3] w-full overflow-hidden bg-gradient-to-b from-[#F4FAF5] to-white flex items-center justify-center p-3 sm:p-4">
         <img
-          src={product.image}
+          src={product.image || "/images/float-curry-cut.png"}
           alt={displayName}
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = "/images/float-curry-cut.png";
+          }}
           className={`max-w-full max-h-full object-contain filter drop-shadow-[0_8px_14px_rgba(0,0,0,0.1)] transition-transform duration-300 group-hover:scale-110 group-hover:-translate-y-1 ${
             !isAvailable ? "opacity-75 grayscale-[25%]" : ""
           }`}

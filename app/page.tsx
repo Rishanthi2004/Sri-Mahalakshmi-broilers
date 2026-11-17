@@ -40,7 +40,7 @@ export default function HomePage() {
   const categoryMap = new Map((categories || []).map((c) => [c.id, c.name]));
 
   // Match featuredProductIds order, falling back to products flagged isFeatured
-  const activeProducts = (products || []).filter((p) => p?.isActive);
+  const activeProducts = (products || []).filter((p) => p?.isActive && !p?.isDeleted);
   const selectedFeatured = (content?.featuredProductIds || [])
     .map((id) => activeProducts.find((p) => p.id === id))
     .filter((p): p is NonNullable<typeof p> => Boolean(p));

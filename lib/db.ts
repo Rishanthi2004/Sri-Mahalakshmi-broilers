@@ -1,4 +1,6 @@
 import crypto from "node:crypto";
+import fs from "node:fs";
+import path from "node:path";
 import { DEFAULT_BANNERS } from "@/data/banners";
 import { DEFAULT_CATEGORIES } from "@/data/categories";
 import { DEFAULT_ENQUIRIES, DEFAULT_MEDIA } from "@/data/enquiries";
@@ -230,9 +232,44 @@ declare global {
   var __chickenshop_store: InMemoryStore | undefined;
 }
 
+const DB_FILE_PATH = path.join(process.cwd(), "data", "db-store.json");
+
+function loadPersistedStore(): InMemoryStore | null {
+  try {
+    if (fs.existsSync(DB_FILE_PATH)) {
+      const data = fs.readFileSync(DB_FILE_PATH, "utf-8");
+      const parsed = JSON.parse(data) as InMemoryStore;
+      if (parsed && Array.isArray(parsed.products) && Array.isArray(parsed.categories)) {
+        return parsed;
+      }
+    }
+  } catch (err) {
+    console.error("Failed to load persisted store from disk:", err);
+  }
+  return null;
+}
+
+function persistStore(store: InMemoryStore) {
+  try {
+    const dir = path.dirname(DB_FILE_PATH);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    fs.writeFileSync(DB_FILE_PATH, JSON.stringify(store, null, 2), "utf-8");
+  } catch (err) {
+    console.error("Failed to persist store to disk:", err);
+  }
+}
+
 export function getDb() {
   if (!global.__chickenshop_store) {
-    global.__chickenshop_store = createInitialStore();
+    const loaded = loadPersistedStore();
+    if (loaded) {
+      global.__chickenshop_store = loaded;
+    } else {
+      global.__chickenshop_store = createInitialStore();
+      persistStore(global.__chickenshop_store);
+    }
   }
   const store = global.__chickenshop_store;
 
@@ -398,12 +435,48 @@ export function getDb() {
           }
           // --- PRODUCTS ---
           if (lower.includes("from products")) {
+            let res = [...store.products];
             if (lower.includes("is_deleted = 1")) {
-              return store.products.filter((p) => p.is_deleted === 1);
+              res = res.filter((p) => p.is_deleted === 1);
+            } else if (lower.includes("is_deleted = 0")) {
+              res = res.filter((p) => p.is_deleted === 0);
             }
-            let res = store.products.filter((p) => p.is_deleted === 0);
             if (lower.includes("is_active = 1")) {
               res = res.filter((p) => p.is_active === 1);
+            } else if (lower.includes("is_active = 0")) {
+              res = res.filter((p) => p.is_active === 0);
+            }
+            if (lower.includes("is_featured = 1")) {
+              res = res.filter((p) => p.is_featured === 1);
+            }
+            if (lower.includes("category_id = ?")) {
+              const catParam = params.find(
+                (pr) => typeof pr === "string" && pr.startsWith("cat-")
+              );
+              if (catParam) {
+                res = res.filter((p) => p.category_id === catParam);
+              }
+            }
+            if (lower.includes("availability = ?")) {
+              const availParam = params.find(
+                (pr) => pr === "available" || pr === "out_of_stock"
+              );
+              if (availParam) {
+                res = res.filter((p) => p.availability === availParam);
+              }
+            }
+            if (lower.includes("like ?")) {
+              const searchParam = params.find(
+                (pr) => typeof pr === "string" && pr.startsWith("%") && pr.endsWith("%")
+              );
+              if (searchParam && typeof searchParam === "string") {
+                const term = searchParam.replace(/%/g, "").toLowerCase();
+                res = res.filter(
+                  (p) =>
+                    p.name.toLowerCase().includes(term) ||
+                    p.description.toLowerCase().includes(term)
+                );
+              }
             }
             return res;
           }
@@ -575,18 +648,54 @@ export function getDb() {
           }
 
           // --- UPDATES ---
-          else if (lower.startsWith("update products set is_deleted = 1")) {
-            const id = String(params[1] || "");
+          else if (lower.startsWith("update products set is_deleted = 1") || (lower.startsWith("update products set") && lower.includes("is_deleted = 1"))) {
+            const id = String(params[1] || params[params.length - 1] || "");
             const p = store.products.find((prod) => prod.id === id);
             if (p) {
               p.is_deleted = 1;
               p.deleted_at = String(params[0] || now);
+              p.updated_at = String(params[0] || now);
             }
+            persistStore(store);
+          } else if (lower.startsWith("update products set is_deleted = 0") || (lower.startsWith("update products") && lower.includes("is_deleted = 0"))) {
+            const id = String(params[1] || params[params.length - 1] || "");
+            const p = store.products.find((prod) => prod.id === id);
+            if (p) {
+              p.is_deleted = 0;
+              p.deleted_at = null;
+              p.updated_at = String(params[0] || now);
+            }
+            persistStore(store);
+          } else if (lower.startsWith("update products set")) {
+            // Full update: name, slug, category_id, description, price, unit, image, gallery_images, availability, is_featured, is_active, updated_at, id
+            const id = String(params[12] || params[params.length - 1] || "");
+            const p = store.products.find((prod) => prod.id === id);
+            if (p) {
+              if (params[0] !== undefined) p.name = String(params[0]);
+              if (params[1] !== undefined) p.slug = String(params[1]);
+              if (params[2] !== undefined) p.category_id = String(params[2]);
+              if (params[3] !== undefined) p.description = String(params[3]);
+              if (params[4] !== undefined) p.price = Number(params[4]);
+              if (params[5] !== undefined) p.unit = String(params[5]);
+              if (params[6] !== undefined) p.image = String(params[6]);
+              if (params[7] !== undefined) p.gallery_images = String(params[7]);
+              if (params[8] !== undefined) p.availability = String(params[8]);
+              if (params[9] !== undefined) p.is_featured = Number(params[9]);
+              if (params[10] !== undefined) p.is_active = Number(params[10]);
+              p.updated_at = String(params[11] || now);
+            }
+            persistStore(store);
           } else if (lower.startsWith("update enquiries set status = ?")) {
             const status = String(params[0] || "new");
             const id = String(params[1] || "");
             const enq = store.enquiries.find((e) => e.id === id);
             if (enq) enq.status = status;
+            persistStore(store);
+          }
+
+          // Persist store on insert and delete actions too
+          if (lower.startsWith("insert into") || lower.startsWith("delete from")) {
+            persistStore(store);
           }
 
           return { changes: 1 };

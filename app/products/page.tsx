@@ -13,7 +13,7 @@ import {
 } from "@/services/use-store-data";
 
 export default function ProductsPage() {
-  const { products } = useProducts();
+  const { products, loading, error, reload } = useProducts();
   const { categories } = useCategories();
   const { content } = useWebsiteContent();
   const { language, t, localizeCategoryName, localizeProductName } = useLanguage();
@@ -210,7 +210,35 @@ export default function ProductsPage() {
             )}
           </div>
 
-          {filteredProducts.length === 0 ? (
+          {loading && products.length === 0 ? (
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2.5 sm:gap-5">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="bg-white rounded-xl border border-[#C7E4CA] p-3 sm:p-4 space-y-3 animate-pulse"
+                >
+                  <div className="aspect-square sm:aspect-[4/3] bg-slate-100 rounded-lg" />
+                  <div className="h-4 bg-slate-200 rounded-md w-3/4" />
+                  <div className="h-3 bg-slate-100 rounded-md w-1/2" />
+                  <div className="h-8 bg-[#EDF7EE] rounded-lg mt-2" />
+                </div>
+              ))}
+            </div>
+          ) : error && products.length === 0 ? (
+            <div className="bg-white rounded-2xl border border-rose-200 p-8 text-center max-w-sm mx-auto shadow-xs">
+              <p className="text-sm font-bold text-rose-700">
+                {language === "ta" ? "பொருட்களை ஏற்றுவதில் பிழை ஏற்பட்டது" : "Failed to load products"}
+              </p>
+              <p className="text-xs text-slate-500 mt-1">{error}</p>
+              <button
+                type="button"
+                onClick={reload}
+                className="mt-3.5 px-4 py-2 rounded-lg bg-[#287A45] text-white text-xs font-semibold hover:bg-[#1E5F35] cursor-pointer"
+              >
+                {language === "ta" ? "மீண்டும் முயற்சி செய்" : "Retry"}
+              </button>
+            </div>
+          ) : filteredProducts.length === 0 ? (
             <div className="bg-white rounded-2xl border border-[#C7E4CA] p-8 text-center max-w-sm mx-auto">
               <p className="text-sm font-bold text-[#26352B]">{t("noProductsFound")}</p>
               <p className="text-xs text-[#516357] mt-1">
