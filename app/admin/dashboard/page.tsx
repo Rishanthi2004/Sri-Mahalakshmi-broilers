@@ -24,6 +24,7 @@ import { bannerService } from "@/services/banner-service";
 import { categoryService } from "@/services/category-service";
 import { enquiryService, mediaService } from "@/services/media-enquiry-service";
 import { productService } from "@/services/product-service";
+import { ENQUIRY_TRANSLATIONS } from "@/data/enquiries";
 import { AdminUser, Category, Product } from "@/types";
 
 interface DashboardStats {
@@ -500,45 +501,54 @@ export default function AdminDashboardPage() {
               </div>
             ) : (
               <div className="space-y-2.5 flex-1">
-                {stats.recentEnquiries.map((enq) => (
-                  <div
-                    key={enq.id}
-                    className="p-3 rounded-xl border border-slate-200/80 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-2 hover:bg-white transition-colors"
-                  >
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-bold text-slate-900 truncate">
-                          {enq.customerName}
-                        </span>
-                        <span
-                          className={`px-1.5 py-0.5 rounded text-[10px] font-bold uppercase ${
-                            enq.status === "new"
-                              ? "bg-rose-100 text-rose-700"
+                {stats.recentEnquiries.map((enq) => {
+                  const displayName = language === "en"
+                    ? (ENQUIRY_TRANSLATIONS[enq.id]?.nameEn || ENQUIRY_TRANSLATIONS[enq.customerName]?.nameEn || enq.customerName)
+                    : enq.customerName;
+                  const displayMessage = language === "en"
+                    ? (ENQUIRY_TRANSLATIONS[enq.id]?.messageEn || ENQUIRY_TRANSLATIONS[enq.customerName]?.messageEn || enq.message)
+                    : enq.message;
+
+                  return (
+                    <div
+                      key={enq.id}
+                      className="p-3 rounded-xl border border-slate-200/80 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-2 hover:bg-white transition-colors"
+                    >
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-bold text-slate-900 truncate">
+                            {displayName}
+                          </span>
+                          <span
+                            className={`px-1.5 py-0.5 rounded text-[10px] font-bold uppercase ${
+                              enq.status === "new"
+                                ? "bg-rose-100 text-rose-700"
+                                : enq.status === "contacted"
+                                ? "bg-amber-100 text-amber-800"
+                                : "bg-emerald-100 text-emerald-800"
+                            }`}
+                          >
+                            {enq.status === "new"
+                              ? language === "ta"
+                                ? "புதியது"
+                                : "New"
                               : enq.status === "contacted"
-                              ? "bg-amber-100 text-amber-800"
-                              : "bg-emerald-100 text-emerald-800"
-                          }`}
-                        >
-                          {enq.status === "new"
-                            ? language === "ta"
-                              ? "புதியது"
-                              : "New"
-                            : enq.status === "contacted"
-                            ? language === "ta"
-                              ? "தொடர்புகொள்ளப்பட்டது"
-                              : "Contacted"
-                            : language === "ta"
-                            ? "தீர்க்கப்பட்டது"
-                            : "Resolved"}
-                        </span>
+                              ? language === "ta"
+                                ? "தொடர்புகொள்ளப்பட்டது"
+                                : "Contacted"
+                              : language === "ta"
+                              ? "தீர்க்கப்பட்டது"
+                              : "Resolved"}
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-slate-500 truncate mt-0.5">{displayMessage}</p>
                       </div>
-                      <p className="text-[11px] text-slate-500 truncate mt-0.5">{enq.message}</p>
+                      <div className="text-[11px] font-mono text-slate-500 sm:text-right shrink-0">
+                        {enq.phoneNumber}
+                      </div>
                     </div>
-                    <div className="text-[11px] font-mono text-slate-500 sm:text-right shrink-0">
-                      {enq.phoneNumber}
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>

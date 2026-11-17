@@ -17,6 +17,7 @@ import { AdminShell } from "@/components/admin/AdminShell";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { useToast } from "@/components/common/ToastProvider";
 import { useLanguage } from "@/context/LanguageContext";
+import { MEDIA_TRANSLATIONS } from "@/data/enquiries";
 import { mediaService } from "@/services/media-enquiry-service";
 import { readFileAsDataUrl } from "@/services/storage";
 import { MediaCategory, MediaItem } from "@/types";
@@ -268,9 +269,16 @@ export default function AdminMediaPage() {
                   </div>
 
                   <div className="p-3">
-                    <p className="text-xs font-bold text-slate-900 truncate" title={item.title}>
-                      {item.title}
-                    </p>
+                    {(() => {
+                      const displayTitle = !isTa
+                        ? (item.titleEn || MEDIA_TRANSLATIONS[item.id] || MEDIA_TRANSLATIONS[item.title] || item.title)
+                        : item.title;
+                      return (
+                        <p className="text-xs font-bold text-slate-900 truncate" title={displayTitle}>
+                          {displayTitle}
+                        </p>
+                      );
+                    })()}
                     <div className="flex items-center justify-between text-[10px] text-slate-500 mt-1">
                       <span className="capitalize">{item.category}</span>
                       <span>{item.dimensions || "High Res"}</span>
@@ -433,7 +441,11 @@ export default function AdminMediaPage() {
           <div className="relative z-10 w-full max-w-2xl bg-white rounded-3xl border border-slate-200 p-6 shadow-2xl overflow-hidden">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h3 className="text-base font-bold text-slate-900">{previewItem.title}</h3>
+                <h3 className="text-base font-bold text-slate-900">
+                  {!isTa
+                    ? (previewItem.titleEn || MEDIA_TRANSLATIONS[previewItem.id] || MEDIA_TRANSLATIONS[previewItem.title] || previewItem.title)
+                    : previewItem.title}
+                </h3>
                 <p className="text-xs text-slate-500 font-mono">{previewItem.url}</p>
               </div>
               <button

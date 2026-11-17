@@ -26,6 +26,7 @@ import { useToast } from "@/components/common/ToastProvider";
 import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
 import { useLanguage, TRANSLATIONS } from "@/context/LanguageContext";
 import { authService, DEMO_CREDENTIALS } from "@/services/auth-service";
+import { USER_NAME_TRANSLATIONS } from "@/data/enquiries";
 import { useWebsiteContent } from "@/services/use-store-data";
 import { AdminUser } from "@/types";
 
@@ -296,7 +297,11 @@ export function AdminShell({
       <div className="p-4 border-t border-slate-100 space-y-3 bg-slate-50/50">
         <div className="p-3 rounded-xl bg-white border border-slate-200/80 shadow-xs">
           <div className="flex items-center justify-between mb-1">
-            <p className="text-xs font-bold text-slate-900 truncate">{user?.name}</p>
+            <p className="text-xs font-bold text-slate-900 truncate">
+              {language === "en"
+                ? (USER_NAME_TRANSLATIONS[user?.id || ""] || USER_NAME_TRANSLATIONS[user?.name || ""] || user?.name)
+                : user?.name}
+            </p>
             <span
               className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
                 isSuperAdmin

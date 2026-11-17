@@ -15,6 +15,7 @@ import { AdminShell } from "@/components/admin/AdminShell";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { useToast } from "@/components/common/ToastProvider";
 import { useLanguage } from "@/context/LanguageContext";
+import { USER_NAME_TRANSLATIONS } from "@/data/enquiries";
 import { userService } from "@/services/user-service";
 import { AdminUser } from "@/types";
 
@@ -285,14 +286,19 @@ export default function AdminUsersPage() {
                 ) : (
                     users.map((u) => {
                       const isSuper = u.role === "super_admin";
+                      const displayUserName = !isTa
+                        ? (USER_NAME_TRANSLATIONS[u.id] || USER_NAME_TRANSLATIONS[u.name] || u.name || "Unnamed User")
+                        : (u.name || "பெயரிடப்படாத பயனர்");
+                      const userInitials = displayUserName.slice(0, 2).toUpperCase();
+
                       return (
                         <tr key={u.id} className="hover:bg-[#EDF7EE]/30 transition-colors">
                           <td className="py-3.5 px-4 font-bold text-slate-900 whitespace-nowrap">
                             <div className="flex items-center gap-2.5">
                               <div className="w-8 h-8 rounded-full bg-[#EDF7EE] border border-[#C7E4CA] flex items-center justify-center font-bold text-[#287A45] text-xs">
-                                {(u.name || (isTa ? "பய" : "Ad")).slice(0, 2).toUpperCase()}
+                                {userInitials}
                               </div>
-                              <span>{u.name || (isTa ? "பெயரிடப்படாத பயனர்" : "Unnamed User")}</span>
+                              <span>{displayUserName}</span>
                             </div>
                           </td>
                           <td className="py-3.5 px-4 font-mono text-xs text-slate-600 whitespace-nowrap">

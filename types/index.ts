@@ -126,6 +126,7 @@ export type MediaCategory =
 export interface MediaItem {
   id: string;
   title: string;
+  titleEn?: string;
   url: string;
   category: MediaCategory;
   uploadedAt: string;
@@ -137,8 +138,10 @@ export type EnquiryStatus = "new" | "contacted" | "resolved";
 export interface Enquiry {
   id: string;
   customerName: string;
+  customerNameEn?: string;
   phoneNumber: string;
   message: string;
+  messageEn?: string;
   submittedAt: string;
   status: EnquiryStatus;
 }
