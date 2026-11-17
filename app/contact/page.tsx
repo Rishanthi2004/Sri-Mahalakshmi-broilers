@@ -224,17 +224,22 @@ export default function ContactPage() {
                         {t("openingHoursTitle")}
                       </span>
                       <div className="space-y-0.5 text-xs">
-                        {content.contact.openingHours.map((item) => (
-                          <div
-                            key={item.day}
-                            className="flex items-center justify-between gap-2"
-                          >
-                            <span className="font-medium text-[#26352B]">{item.day}</span>
-                            <span className="text-[#516357]">
-                              {item.isClosed ? t("contactClosed") : item.hours}
-                            </span>
-                          </div>
-                        ))}
+                        {content.contact.openingHours.map((item) => {
+                          const dayLabel = language === "ta"
+                            ? (item.day.includes("Monday") ? "திங்கள் – சனி" : item.day.includes("Sunday") ? "ஞாயிறு" : item.day)
+                            : (item.day.includes("திங்கள்") ? "Monday – Saturday" : item.day.includes("ஞாயிறு") ? "Sunday" : item.day);
+                          return (
+                            <div
+                              key={item.day}
+                              className="flex items-center justify-between gap-2"
+                            >
+                              <span className="font-medium text-[#26352B]">{dayLabel}</span>
+                              <span className="text-[#516357]">
+                                {item.isClosed ? t("contactClosed") : item.hours}
+                              </span>
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                   </div>

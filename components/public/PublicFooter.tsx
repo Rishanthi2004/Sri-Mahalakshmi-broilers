@@ -178,15 +178,20 @@ export function PublicFooter() {
               {t("workingHours")}
             </h3>
             <ul className="space-y-2 text-xs text-[#516357]">
-              {content.contact.openingHours.map((item) => (
-                <li key={item.day} className="flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-1.5">
-                    <Clock className="w-3 h-3 text-[#287A45]" />
-                    <span className="font-medium text-[#26352B]">{item.day}</span>
-                  </div>
-                  <span>{item.isClosed ? (language === "en" ? "Closed" : "விடுமுறை") : item.hours}</span>
-                </li>
-              ))}
+              {content.contact.openingHours.map((item) => {
+                const dayLabel = language === "ta"
+                  ? (item.day.includes("Monday") ? "திங்கள் – சனி" : item.day.includes("Sunday") ? "ஞாயிறு" : item.day)
+                  : (item.day.includes("திங்கள்") ? "Monday – Saturday" : item.day.includes("ஞாயிறு") ? "Sunday" : item.day);
+                return (
+                  <li key={item.day} className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-1.5">
+                      <Clock className="w-3 h-3 text-[#287A45]" />
+                      <span className="font-medium text-[#26352B]">{dayLabel}</span>
+                    </div>
+                    <span>{item.isClosed ? (language === "en" ? "Closed" : "விடுமுறை") : item.hours}</span>
+                  </li>
+                );
+              })}
             </ul>
           </div>
         </div>

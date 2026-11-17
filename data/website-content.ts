@@ -94,9 +94,8 @@ export const DEFAULT_WEBSITE_CONTENT: WebsiteContent = {
     googleMapsEmbedPlaceholder:
       "EB Colony Bus stop, Paramathi Road, Namakkal — Customer parking available.",
     openingHours: [
-      { day: "Monday – Friday", hours: "7:00 AM – 8:30 PM" },
-      { day: "Saturday", hours: "6:30 AM – 9:00 PM" },
-      { day: "Sunday", hours: "6:30 AM – 2:30 PM" },
+      { day: "Monday – Saturday", hours: "5:00 AM – 11:00 PM" },
+      { day: "Sunday", hours: "3:00 AM – 8:00 PM" },
     ],
   },
   socialLinks: {

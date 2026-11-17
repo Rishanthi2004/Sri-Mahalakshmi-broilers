@@ -21,6 +21,7 @@ import { useWebsiteContent } from "@/services/use-store-data";
 import { WebsiteContent } from "@/types";
 
 const DAY_NAMES_EN: Record<string, string> = {
+  "திங்கள் – சனி": "Monday – Saturday",
   "திங்கள்": "Monday",
   "செவ்வாய்": "Tuesday",
   "புதன்": "Wednesday",
@@ -31,6 +32,8 @@ const DAY_NAMES_EN: Record<string, string> = {
 };
 
 const DAY_NAMES_TA: Record<string, string> = {
+  "Monday – Saturday": "திங்கள் – சனி",
+  "Monday - Saturday": "திங்கள் – சனி",
   "Monday": "திங்கள்",
   "Tuesday": "செவ்வாய்",
   "Wednesday": "புதன்",
