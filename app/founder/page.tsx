@@ -42,39 +42,65 @@ export default function FounderProfilePage() {
     }
   }, []);
 
+  const isDefaultFounderName =
+    !about.ownerName ||
+    about.ownerName.trim() === "Paramasivam Masanaicker" ||
+    about.ownerName.trim() === "பரமசிவம் மாசநாயக்கர்";
+
   const founderName =
-    about.ownerName && about.ownerName.trim() !== ""
-      ? about.ownerName
-      : "Paramasivam Masanaicker";
+    language === "ta"
+      ? about.ownerNameTa || (isDefaultFounderName ? "பரமசிவம் மாசநாயக்கர்" : about.ownerName)
+      : about.ownerName || "Paramasivam Masanaicker";
+
+  const isDefaultDesignation =
+    !about.ownerDesignation ||
+    about.ownerDesignation.trim() === "Founder, Sri Mahalakshmi Broilers" ||
+    about.ownerDesignation.trim() === "நிறுவனர், ஸ்ரீ மகாலட்சுமி பிராய்லர்ஸ்";
 
   const founderDesignation =
-    about.ownerDesignation && about.ownerDesignation.trim() !== ""
-      ? about.ownerDesignation
-      : language === "ta"
-      ? "நிறுவனர், ஸ்ரீ மகாலட்சுமி பிராய்லர்ஸ்"
-      : "Founder, Sri Mahalakshmi Broilers";
+    language === "ta"
+      ? about.ownerDesignationTa ||
+        (isDefaultDesignation ? "நிறுவனர், ஸ்ரீ மகாலட்சுமி பிராய்லர்ஸ்" : about.ownerDesignation)
+      : about.ownerDesignation || "Founder, Sri Mahalakshmi Broilers";
 
   const founderPhoto =
     about.ownerPhoto && about.ownerPhoto.trim() !== ""
       ? about.ownerPhoto
       : "/images/founder.jpg";
 
+  const isDefaultExperience =
+    !about.founderExperience ||
+    about.founderExperience.includes("20+ Years") ||
+    about.founderExperience.includes("20+ Retail") ||
+    about.founderExperience.includes("20+ வருட");
+
   const founderExperience =
-    about.founderExperience && about.founderExperience.trim() !== ""
-      ? about.founderExperience
-      : language === "ta"
-      ? "கோழிப்பண்ணைத் துறையில் 20+ வருட அனுபவம் • 20+ கிளைகள்"
-      : "20+ Years in Poultry & Farming • 20+ Retail Outlets";
+    language === "ta"
+      ? about.founderExperienceTa ||
+        (isDefaultExperience
+          ? "கோழிப்பண்ணைத் துறையில் 20+ வருட அனுபவம் • 20+ சில்லறை கிளைகள்"
+          : about.founderExperience)
+      : about.founderExperience || "20+ Years in Poultry & Farming • 20+ Retail Outlets";
+
+  const isEnglishVision =
+    !about.founderVision ||
+    about.founderVision.includes("hospital-grade cleanliness") ||
+    /^[A-Za-z0-9\s.,!?:;'"()\–\-–%°C–]+$/.test(about.founderVision.trim());
 
   const founderVision =
-    about.founderVision && about.founderVision.trim() !== ""
-      ? about.founderVision
-      : t("founderVisionDefault");
+    language === "ta"
+      ? about.founderVisionTa || (isEnglishVision ? t("founderVisionDefault") : about.founderVision)
+      : about.founderVision || t("founderVisionDefault");
+
+  const isEnglishBio =
+    !about.ownerBio ||
+    about.ownerBio.includes("With over 20 years of experience") ||
+    /^[A-Za-z0-9\s.,!?:;'"()\–\-–%°C–\n\r]+$/.test(about.ownerBio.trim());
 
   const founderBio =
-    about.ownerBio && about.ownerBio.trim() !== ""
-      ? about.ownerBio
-      : t("founderBioDefault");
+    language === "ta"
+      ? about.ownerBioTa || (isEnglishBio ? t("founderBioDefault") : about.ownerBio)
+      : about.ownerBio || t("founderBioDefault");
 
   const whatsappMessage =
     language === "ta"
@@ -328,7 +354,9 @@ export default function FounderProfilePage() {
                               {t("founderOfficeAddress")}
                             </span>
                             <span className="font-semibold">
-                              EB Colony Bus stop, Paramathi Road, Namakkal
+                              {language === "ta"
+                                ? "ஈ.பி. காலனி பேருந்து நிறுத்தம், பரமத்தி சாலை, நாமக்கல்"
+                                : "EB Colony Bus stop, Paramathi Road, Namakkal"}
                             </span>
                           </div>
                         </div>

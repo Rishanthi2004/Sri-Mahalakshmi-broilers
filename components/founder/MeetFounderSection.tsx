@@ -24,39 +24,65 @@ export function MeetFounderSection() {
   const { about, contact } = content;
   const { language, t } = useLanguage();
 
+  const isDefaultFounderName =
+    !about.ownerName ||
+    about.ownerName.trim() === "Paramasivam Masanaicker" ||
+    about.ownerName.trim() === "பரமசிவம் மாசநாயக்கர்";
+
   const founderName =
-    about.ownerName && about.ownerName.trim() !== ""
-      ? about.ownerName
-      : "Paramasivam Masanaicker";
+    language === "ta"
+      ? about.ownerNameTa || (isDefaultFounderName ? "பரமசிவம் மாசநாயக்கர்" : about.ownerName)
+      : about.ownerName || "Paramasivam Masanaicker";
+
+  const isDefaultDesignation =
+    !about.ownerDesignation ||
+    about.ownerDesignation.trim() === "Founder, Sri Mahalakshmi Broilers" ||
+    about.ownerDesignation.trim() === "நிறுவனர், ஸ்ரீ மகாலட்சுமி பிராய்லர்ஸ்";
 
   const founderDesignation =
-    about.ownerDesignation && about.ownerDesignation.trim() !== ""
-      ? about.ownerDesignation
-      : language === "ta"
-      ? "நிறுவனர், ஸ்ரீ மகாலட்சுமி பிராய்லர்ஸ்"
-      : "Founder, Sri Mahalakshmi Broilers";
+    language === "ta"
+      ? about.ownerDesignationTa ||
+        (isDefaultDesignation ? "நிறுவனர், ஸ்ரீ மகாலட்சுமி பிராய்லர்ஸ்" : about.ownerDesignation)
+      : about.ownerDesignation || "Founder, Sri Mahalakshmi Broilers";
 
   const founderPhoto =
     about.ownerPhoto && about.ownerPhoto.trim() !== ""
       ? about.ownerPhoto
       : "/images/founder.jpg";
 
+  const isDefaultExperience =
+    !about.founderExperience ||
+    about.founderExperience.includes("20+ Years") ||
+    about.founderExperience.includes("20+ Retail") ||
+    about.founderExperience.includes("20+ வருட");
+
   const founderExperience =
-    about.founderExperience && about.founderExperience.trim() !== ""
-      ? about.founderExperience
-      : language === "ta"
-      ? "கோழிப்பண்ணைத் துறையில் 20+ வருட அனுபவம் • 20+ கிளைகள்"
-      : "20+ Years in Poultry & Farming • 20+ Retail Outlets";
+    language === "ta"
+      ? about.founderExperienceTa ||
+        (isDefaultExperience
+          ? "கோழிப்பண்ணைத் துறையில் 20+ வருட அனுபவம் • 20+ சில்லறை கிளைகள்"
+          : about.founderExperience)
+      : about.founderExperience || "20+ Years in Poultry & Farming • 20+ Retail Outlets";
+
+  const isEnglishVision =
+    !about.founderVision ||
+    about.founderVision.includes("hospital-grade cleanliness") ||
+    /^[A-Za-z0-9\s.,!?:;'"()\–\-–%°C–]+$/.test(about.founderVision.trim());
 
   const founderVision =
-    about.founderVision && about.founderVision.trim() !== ""
-      ? about.founderVision
-      : t("founderVisionDefault");
+    language === "ta"
+      ? about.founderVisionTa || (isEnglishVision ? t("founderVisionDefault") : about.founderVision)
+      : about.founderVision || t("founderVisionDefault");
+
+  const isEnglishBio =
+    !about.ownerBio ||
+    about.ownerBio.includes("With over 20 years of experience") ||
+    /^[A-Za-z0-9\s.,!?:;'"()\–\-–%°C–\n\r]+$/.test(about.ownerBio.trim());
 
   const founderBio =
-    about.ownerBio && about.ownerBio.trim() !== ""
-      ? about.ownerBio
-      : t("founderBioDefault");
+    language === "ta"
+      ? about.ownerBioTa || (isEnglishBio ? t("founderBioDefault") : about.ownerBio)
+      : about.ownerBio || t("founderBioDefault");
 
   const whatsappMessage =
     language === "ta"
@@ -130,7 +156,7 @@ export function MeetFounderSection() {
                     <Award className="w-5 h-5 text-[#287A45] shrink-0" />
                     <div>
                       <span className="block text-xs sm:text-sm font-extrabold text-[#26352B]">
-                        20+ Years
+                        {language === "ta" ? "20+ ஆண்டுகள்" : "20+ Years"}
                       </span>
                       <span className="block text-[10px] text-[#516357]">
                         {language === "ta" ? "பண்ணை அனுபவம்" : "Poultry Experience"}
@@ -142,7 +168,7 @@ export function MeetFounderSection() {
                     <ShieldCheck className="w-5 h-5 text-[#287A45] shrink-0" />
                     <div>
                       <span className="block text-xs sm:text-sm font-extrabold text-[#26352B]">
-                        20+ Shops
+                        {language === "ta" ? "20+ கிளைகள்" : "20+ Shops"}
                       </span>
                       <span className="block text-[10px] text-[#516357]">
                         {language === "ta" ? "சில்லறை கிளைகள்" : "Retail Outlets"}
@@ -195,7 +221,11 @@ export function MeetFounderSection() {
                 <div className="pt-2 border-t border-[#C7E4CA]/70 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 text-xs text-[#26352B]">
                   <div className="flex items-start gap-2">
                     <MapPin className="w-4 h-4 text-[#287A45] shrink-0 mt-0.5" />
-                    <span>EB Colony Bus stop, Paramathi Road, Namakkal</span>
+                    <span>
+                      {language === "ta"
+                        ? "ஈ.பி. காலனி பேருந்து நிறுத்தம், பரமத்தி சாலை, நாமக்கல்"
+                        : "EB Colony Bus stop, Paramathi Road, Namakkal"}
+                    </span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Phone className="w-4 h-4 text-[#287A45] shrink-0" />

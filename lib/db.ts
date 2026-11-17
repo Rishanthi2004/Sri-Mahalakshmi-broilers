@@ -3,7 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { DEFAULT_BANNERS } from "@/data/banners";
 import { DEFAULT_CATEGORIES } from "@/data/categories";
-import { DEFAULT_ENQUIRIES, DEFAULT_MEDIA } from "@/data/enquiries";
+import { DEFAULT_ENQUIRIES, DEFAULT_MEDIA, ENQUIRY_TRANSLATIONS } from "@/data/enquiries";
 import { DEFAULT_PRODUCTS } from "@/data/products";
 import { DEFAULT_WEBSITE_CONTENT } from "@/data/website-content";
 
@@ -106,8 +106,10 @@ interface InMemEnquiry {
   [key: string]: unknown;
   id: string;
   customer_name: string;
+  customer_name_en?: string;
   phone_number: string;
   message: string;
+  message_en?: string;
   status: string;
   submitted_at: string;
 }
@@ -219,8 +221,10 @@ function createInitialStore(): InMemoryStore {
     enquiries: DEFAULT_ENQUIRIES.map((e) => ({
       id: e.id,
       customer_name: e.customerName,
+      customer_name_en: e.customerNameEn || ENQUIRY_TRANSLATIONS[e.id]?.nameEn || e.customerName,
       phone_number: e.phoneNumber,
       message: e.message,
+      message_en: e.messageEn || ENQUIRY_TRANSLATIONS[e.id]?.messageEn || e.message,
       status: e.status,
       submitted_at: e.submittedAt || now,
     })),

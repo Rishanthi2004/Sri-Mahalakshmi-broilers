@@ -17,7 +17,7 @@ import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { useToast } from "@/components/common/ToastProvider";
 import { WhatsAppIcon } from "@/components/common/WhatsAppIcon";
 import { useLanguage } from "@/context/LanguageContext";
-import { ENQUIRY_TRANSLATIONS } from "@/data/enquiries";
+import { ENQUIRY_TRANSLATIONS, getLocalizedEnquiry } from "@/data/enquiries";
 import { enquiryService } from "@/services/media-enquiry-service";
 import { useWebsiteContent } from "@/services/use-store-data";
 import { Enquiry, EnquiryStatus } from "@/types";
@@ -217,12 +217,9 @@ export default function AdminEnquiriesPage() {
                     const cleanPhone = enq.phoneNumber.replace(/[^0-9]/g, "");
                     const isNew = enq.status === "new";
                     const isContacted = enq.status === "contacted";
-                    const displayName = !isTa
-                      ? (enq.customerNameEn || ENQUIRY_TRANSLATIONS[enq.id]?.nameEn || ENQUIRY_TRANSLATIONS[enq.customerName]?.nameEn || enq.customerName)
-                      : enq.customerName;
-                    const displayMessage = !isTa
-                      ? (enq.messageEn || ENQUIRY_TRANSLATIONS[enq.id]?.messageEn || ENQUIRY_TRANSLATIONS[enq.customerName]?.messageEn || enq.message)
-                      : enq.message;
+                    const localized = getLocalizedEnquiry(enq, isTa ? "ta" : "en");
+                    const displayName = localized.customerName;
+                    const displayMessage = localized.message;
 
                     return (
                       <tr key={enq.id} className="hover:bg-[#EDF7EE]/30 transition-colors">
@@ -273,8 +270,8 @@ export default function AdminEnquiriesPage() {
                             <a
                               href={`https://wa.me/${cleanPhone}?text=${encodeURIComponent(
                                 isTa
-                                  ? `வணக்கம் ${enq.customerName}, ${content.shopName} இல் நீங்கள் கேட்ட கோழிக்கறி விசாரணை தொடர்பாக:`
-                                  : `Hello ${enq.customerName}, regarding your inquiry with ${content.shopName}:`
+                                  ? `வணக்கம் ${displayName}, ${content.shopName} இல் நீங்கள் கேட்ட கோழிக்கறி விசாரணை தொடர்பாக:`
+                                  : `Hello ${displayName}, regarding your inquiry with ${content.shopName}:`
                               )}`}
                               target="_blank"
                               rel="noopener noreferrer"
@@ -330,9 +327,7 @@ export default function AdminEnquiriesPage() {
                 </div>
                 <div>
                   <h3 className="text-base font-bold text-slate-900">
-                    {!isTa
-                      ? (selectedEnquiry.customerNameEn || ENQUIRY_TRANSLATIONS[selectedEnquiry.id]?.nameEn || ENQUIRY_TRANSLATIONS[selectedEnquiry.customerName]?.nameEn || selectedEnquiry.customerName)
-                      : selectedEnquiry.customerName}
+                    {getLocalizedEnquiry(selectedEnquiry, isTa ? "ta" : "en").customerName}
                   </h3>
                   <p className="text-xs text-slate-500 font-mono">
                     {selectedEnquiry.phoneNumber}
@@ -354,9 +349,7 @@ export default function AdminEnquiriesPage() {
                   {isTa ? "வாடிக்கையாளர் செய்தி:" : "Customer Message:"}
                 </p>
                 <p className="text-sm text-slate-800 whitespace-pre-wrap leading-relaxed">
-                  {!isTa
-                    ? (selectedEnquiry.messageEn || ENQUIRY_TRANSLATIONS[selectedEnquiry.id]?.messageEn || ENQUIRY_TRANSLATIONS[selectedEnquiry.customerName]?.messageEn || selectedEnquiry.message)
-                    : selectedEnquiry.message}
+                  {getLocalizedEnquiry(selectedEnquiry, isTa ? "ta" : "en").message}
                 </p>
               </div>
 

@@ -24,7 +24,7 @@ import { bannerService } from "@/services/banner-service";
 import { categoryService } from "@/services/category-service";
 import { enquiryService, mediaService } from "@/services/media-enquiry-service";
 import { productService } from "@/services/product-service";
-import { ENQUIRY_TRANSLATIONS } from "@/data/enquiries";
+import { ENQUIRY_TRANSLATIONS, getLocalizedEnquiry } from "@/data/enquiries";
 import { AdminUser, Category, Product } from "@/types";
 
 interface DashboardStats {
@@ -40,8 +40,10 @@ interface DashboardStats {
   recentEnquiries: Array<{
     id: string;
     customerName: string;
+    customerNameEn?: string;
     phoneNumber: string;
     message: string;
+    messageEn?: string;
     status: string;
     submittedAt: string;
   }>;
@@ -86,8 +88,10 @@ export default function AdminDashboardPage() {
       recentEnquiries: enquiries.slice(0, 5).map((e) => ({
         id: e.id,
         customerName: e.customerName,
+        customerNameEn: e.customerNameEn,
         phoneNumber: e.phoneNumber,
         message: e.message,
+        messageEn: e.messageEn,
         status: e.status,
         submittedAt: e.submittedAt,
       })),
@@ -502,12 +506,9 @@ export default function AdminDashboardPage() {
             ) : (
               <div className="space-y-2.5 flex-1">
                 {stats.recentEnquiries.map((enq) => {
-                  const displayName = language === "en"
-                    ? (ENQUIRY_TRANSLATIONS[enq.id]?.nameEn || ENQUIRY_TRANSLATIONS[enq.customerName]?.nameEn || enq.customerName)
-                    : enq.customerName;
-                  const displayMessage = language === "en"
-                    ? (ENQUIRY_TRANSLATIONS[enq.id]?.messageEn || ENQUIRY_TRANSLATIONS[enq.customerName]?.messageEn || enq.message)
-                    : enq.message;
+                  const localized = getLocalizedEnquiry(enq, language);
+                  const displayName = localized.customerName;
+                  const displayMessage = localized.message;
 
                   return (
                     <div

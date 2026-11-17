@@ -62,13 +62,20 @@ export const DEFAULT_WEBSITE_CONTENT: WebsiteContent = {
     businessInfoBody:
       "With over 20 years of experience in the poultry industry and a growing network of 20+ chicken shops, our journey has always been built on one foundation — Trust and Quality.",
     ownerName: "Paramasivam Masanaicker",
+    ownerNameTa: "பரமசிவம் மாசநாயக்கர்",
     ownerDesignation: "Founder, Sri Mahalakshmi Broilers",
+    ownerDesignationTa: "நிறுவனர், ஸ்ரீ மகாலட்சுமி பிராய்லர்ஸ்",
     ownerPhoto: "/images/founder.jpg",
     ownerBio:
       "With over 20 years of experience in the poultry industry and a growing network of 20+ chicken shops, our journey has always been built on one foundation — Trust and Quality.\n\nYour trust is our strength, and serving you better is our commitment.\n\nThank you for being part of our journey.",
+    ownerBioTa:
+      "கோழிப்பண்ணைத் துறையில் 20 ஆண்டுகளுக்கும் மேலான அனுபவத்துடனும், 20-க்கும் மேற்பட்ட கிளைகளின் விரிவான வலையமைப்புடனும் எங்கள் பயணம் எப்போதும் ஒரு வலுவான அடித்தளத்தின் மீதே கட்டமைக்கப்பட்டுள்ளது — நம்பிக்கை மற்றும் தரம்.\n\nஉங்கள் நம்பிக்கையே எங்கள் பலம், உங்களுக்கு இன்னும் சிறப்பாகச் சேவையாற்றுவதே எங்கள் உறுதிப்பாடு.\n\nஎங்கள் பயணத்தின் ஒரு பகுதியாக இருப்பதற்கு நன்றி.",
     founderExperience: "20+ Years in Poultry & Farming • 20+ Retail Outlets",
+    founderExperienceTa: "கோழிப்பண்ணைத் துறையில் 20+ வருட அனுபவம் • 20+ சில்லறை கிளைகள்",
     founderVision:
       "To provide hospital-grade cleanliness, 100% daily farm freshness, and ethical poultry care to every neighborhood family at fair prices.",
+    founderVisionTa:
+      "ஒவ்வொரு குடும்பத்திற்கும் தூய்மையான, மருத்துவமனை அளவிலான சுகாதாரத்துடன் கூடிய பண்ணைக் கோழிக்கறியை நேர்மையான விலையில் தினசரி வழங்குவதே எங்கள் இலக்கு.",
     qualityCommitment:
       "Every cut is inspected prior to weighing. Excess skin, bone splinters, and unwanted fat are trimmed away cleanly so you pay only for prime, usable meat.",
     hygienePractices:

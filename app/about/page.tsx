@@ -47,7 +47,9 @@ export default function AboutPage() {
               <div className="pt-1 flex items-center gap-2 sm:gap-4">
                 <div className="flex-1 px-3 py-2 sm:px-4 sm:py-3 rounded-xl bg-[#DDF3DF]/70 border border-[#C7E4CA] text-center sm:text-left">
                   <span className="block text-base sm:text-xl font-extrabold text-[#287A45]">
-                    {about.businessExperienceYears}
+                    {language === "ta"
+                      ? "20+ ஆண்டுகள்"
+                      : about.businessExperienceYears || "20+ Years"}
                   </span>
                   <span className="text-[10px] sm:text-xs font-medium text-[#516357]">
                     {t("aboutExperience")}
@@ -113,7 +115,9 @@ export default function AboutPage() {
                         {language === "ta" ? "அலுவலக முகவரி" : "Office Address"}
                       </span>
                       <span className="font-semibold">
-                        EB Colony Bus stop, Paramathi Road, Namakkal
+                        {language === "ta"
+                          ? "ஈ.பி. காலனி பேருந்து நிறுத்தம், பரமத்தி சாலை, நாமக்கல்"
+                          : "EB Colony Bus stop, Paramathi Road, Namakkal"}
                       </span>
                     </div>
                   </div>

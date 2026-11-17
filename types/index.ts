@@ -91,11 +91,16 @@ export interface WebsiteContent {
     businessInfoTitle: string;
     businessInfoBody: string;
     ownerName: string;
+    ownerNameTa?: string;
     ownerDesignation: string;
+    ownerDesignationTa?: string;
     ownerPhoto: string;
     ownerBio: string;
+    ownerBioTa?: string;
     founderExperience?: string;
+    founderExperienceTa?: string;
     founderVision?: string;
+    founderVisionTa?: string;
     qualityCommitment: string;
     hygienePractices: string;
     customerSatisfaction: string;

@@ -1,11 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
+import { ENQUIRY_TRANSLATIONS, getLocalizedEnquiry } from "@/data/enquiries";
 
 interface EnquiryRow {
   id: string;
   customer_name: string;
+  customer_name_en?: string;
   phone_number: string;
   message: string;
+  message_en?: string;
   status: "new" | "contacted" | "resolved";
   submitted_at: string;
 }
@@ -27,14 +30,28 @@ export async function GET(req: NextRequest) {
 
     const rows = db.prepare(query).all(...params) as unknown as EnquiryRow[];
     return NextResponse.json(
-      rows.map((r) => ({
-        id: r.id,
-        customerName: r.customer_name,
-        phoneNumber: r.phone_number,
-        message: r.message,
-        status: r.status,
-        submittedAt: r.submitted_at,
-      }))
+      rows.map((r) => {
+        const enLoc = getLocalizedEnquiry(
+          {
+            id: r.id,
+            customerName: r.customer_name,
+            customerNameEn: r.customer_name_en,
+            message: r.message,
+            messageEn: r.message_en,
+          },
+          "en"
+        );
+        return {
+          id: r.id,
+          customerName: r.customer_name,
+          customerNameEn: r.customer_name_en || enLoc.customerName,
+          phoneNumber: r.phone_number,
+          message: r.message,
+          messageEn: r.message_en || enLoc.message,
+          status: r.status,
+          submittedAt: r.submitted_at,
+        };
+      })
     );
   } catch (error) {
     console.error("Enquiries GET error:", error);

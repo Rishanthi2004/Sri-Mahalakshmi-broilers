@@ -199,7 +199,9 @@ export function ShareFounderModal({
                     {founderDesignation}
                   </p>
                   <p className="text-[11px] text-[#516357] font-medium">
-                    20+ Years in Poultry & Farming • 20+ Shops
+                    {language === "ta"
+                      ? "கோழிப்பண்ணைத் துறையில் 20+ வருட அனுபவம் • 20+ கிளைகள்"
+                      : "20+ Years in Poultry & Farming • 20+ Shops"}
                   </p>
                 </div>
               </div>
