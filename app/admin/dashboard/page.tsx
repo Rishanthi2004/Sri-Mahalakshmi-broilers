@@ -24,7 +24,7 @@ import { bannerService } from "@/services/banner-service";
 import { categoryService } from "@/services/category-service";
 import { enquiryService, mediaService } from "@/services/media-enquiry-service";
 import { productService } from "@/services/product-service";
-import { ENQUIRY_TRANSLATIONS, getLocalizedEnquiry } from "@/data/enquiries";
+import { getLocalizedEnquiry } from "@/data/enquiries";
 import { AdminUser, Category, Product } from "@/types";
 
 interface DashboardStats {

@@ -33,6 +33,7 @@ export default function ContactPage() {
     message?: string;
   }>({});
   const [submittedDemo, setSubmittedDemo] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const whatsappMessage =
     language === "ta"
@@ -44,7 +45,7 @@ export default function ContactPage() {
     whatsappMessage
   );
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const nextErrors: typeof errors = {};
 
@@ -62,32 +63,43 @@ export default function ContactPage() {
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) return;
 
+    setIsSubmitting(true);
     try {
-      fetch("/api/enquiries", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          customerName: customerName.trim(),
-          phoneNumber: phoneNumber.trim(),
-          message: message.trim(),
-        }),
+      try {
+        await fetch("/api/enquiries", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            customerName: customerName.trim(),
+            phoneNumber: phoneNumber.trim(),
+            message: message.trim(),
+          }),
+        });
+      } catch (err) {
+        console.warn("API route submit warning, falling back to local storage", err);
+      }
+
+      enquiryService.submit({
+        customerName: customerName.trim(),
+        phoneNumber: phoneNumber.trim(),
+        message: message.trim(),
       });
-    } catch {}
 
-    enquiryService.submit({
-      customerName: customerName.trim(),
-      phoneNumber: phoneNumber.trim(),
-      message: message.trim(),
-    });
-
-    setSubmittedDemo(true);
-    setCustomerName("");
-    setPhoneNumber("");
-    setMessage("");
-    showToast(t("contactEnquirySubmitted"), {
-      description: t("contactStaffWillContact"),
-      type: "success",
-    });
+      setSubmittedDemo(true);
+      setCustomerName("");
+      setPhoneNumber("");
+      setMessage("");
+      showToast(t("contactEnquirySubmitted"), {
+        description: t("contactStaffWillContact"),
+        type: "success",
+      });
+    } catch {
+      showToast(language === "ta" ? "செய்தி அனுப்புவதில் பிழை ஏற்பட்டது" : "Failed to submit enquiry", {
+        type: "danger",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -399,10 +411,11 @@ export default function ContactPage() {
                     </p>
                     <button
                       type="submit"
-                      className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[#287A45] hover:bg-[#1E5F35] text-white text-xs sm:text-sm font-semibold shadow-xs transition-colors"
+                      disabled={isSubmitting}
+                      className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[#287A45] hover:bg-[#1E5F35] disabled:opacity-60 text-white text-xs sm:text-sm font-semibold shadow-xs transition-colors cursor-pointer"
                     >
-                      <Send className="w-3.5 h-3.5" />
-                      <span>{t("sendMessageBtn")}</span>
+                      <Send className={`w-3.5 h-3.5 ${isSubmitting ? "animate-pulse" : ""}`} />
+                      <span>{isSubmitting ? (language === "ta" ? "அனுப்பப்படுகிறது..." : "Sending...") : t("sendMessageBtn")}</span>
                     </button>
                   </div>
                 </form>

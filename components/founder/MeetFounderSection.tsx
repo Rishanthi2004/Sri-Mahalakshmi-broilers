@@ -223,14 +223,17 @@ export function MeetFounderSection() {
                     <MapPin className="w-4 h-4 text-[#287A45] shrink-0 mt-0.5" />
                     <span>
                       {language === "ta"
-                        ? "ஈ.பி. காலனி பேருந்து நிறுத்தம், பரமத்தி சாலை, நாமக்கல்"
-                        : "EB Colony Bus stop, Paramathi Road, Namakkal"}
+                        ? (contact.addressTa || contact.address || "ஈ.பி. காலனி பேருந்து நிறுத்தம், பரமத்தி சாலை, நாமக்கல்")
+                        : (contact.address || "EB Colony Bus stop, Paramathi Road, Namakkal")}
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Phone className="w-4 h-4 text-[#287A45] shrink-0" />
-                    <a href="tel:+919487203778" className="font-bold hover:text-[#287A45] transition-colors">
-                      +91 94872 03778
+                    <a
+                      href={`tel:${(contact.phone || "+919487203778").replace(/\s+/g, "")}`}
+                      className="font-bold hover:text-[#287A45] transition-colors"
+                    >
+                      {contact.phone || "+91 94872 03778"}
                     </a>
                   </div>
                 </div>

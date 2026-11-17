@@ -355,8 +355,8 @@ export default function FounderProfilePage() {
                             </span>
                             <span className="font-semibold">
                               {language === "ta"
-                                ? "ஈ.பி. காலனி பேருந்து நிறுத்தம், பரமத்தி சாலை, நாமக்கல்"
-                                : "EB Colony Bus stop, Paramathi Road, Namakkal"}
+                                ? (content.contact.addressTa || content.contact.address || "ஈ.பி. காலனி பேருந்து நிறுத்தம், பரமத்தி சாலை, நாமக்கல்")
+                                : (content.contact.address || "EB Colony Bus stop, Paramathi Road, Namakkal")}
                             </span>
                           </div>
                         </div>
@@ -368,10 +368,10 @@ export default function FounderProfilePage() {
                               {t("founderContactNo")}
                             </span>
                             <a
-                              href="tel:+919487203778"
+                              href={`tel:${(content.contact.phone || "+919487203778").replace(/\s+/g, "")}`}
                               className="font-bold hover:text-[#287A45] transition-colors"
                             >
-                              +91 94872 03778
+                              {content.contact.phone || "+91 94872 03778"}
                             </a>
                           </div>
                         </div>

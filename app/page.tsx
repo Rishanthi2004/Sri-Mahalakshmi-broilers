@@ -50,23 +50,28 @@ export default function HomePage() {
       ? selectedFeatured.slice(0, 7)
       : activeProducts.filter((p) => p.isFeatured).slice(0, 7);
 
+  const shopDisplayName =
+    language === "ta"
+      ? (content?.shopName || "ஸ்ரீ மகாலட்சுமி பிராய்லர்ஸ்")
+      : (content?.shopNameEn || "Sri Mahalakshmi Broilers");
+
   const heroWhatsAppMessage =
     language === "ta"
-      ? `வணக்கம் ${content?.shopName || "ஸ்ரீ மகாலட்சுமி பிராய்லர்ஸ்"}, நான் புதிய சிக்கன் கறிக்கட்டுகள் ஆர்டர் செய்ய விரும்புகிறேன்.`
-      : `Hello ${content?.shopName || "Sri Mahalakshmi Broilers"}, I would like to order fresh chicken cuts.`;
+      ? `வணக்கம் ${shopDisplayName}, நான் புதிய சிக்கன் கறிக்கட்டுகள் ஆர்டர் செய்ய விரும்புகிறேன்.`
+      : `Hello ${shopDisplayName}, I would like to order fresh chicken cuts.`;
 
   const heroWhatsAppUrl = contentService.buildWhatsAppUrl(
-    content?.contact?.whatsappNumber || "919876543210",
+    content?.contact?.whatsappNumber || "919487203778",
     heroWhatsAppMessage
   );
 
   const ctaWhatsAppMessage =
     language === "ta"
-      ? `வணக்கம் ${content?.shopName || "ஸ்ரீ மகாலட்சுமி பிராய்லர்ஸ்"}, நான் முன்கூட்டியே ஆர்டர் பதிவு செய்ய விரும்புகிறேன்.`
-      : `Hello ${content?.shopName || "Sri Mahalakshmi Broilers"}, I would like to pre-book an order for chicken cuts.`;
+      ? `வணக்கம் ${shopDisplayName}, நான் முன்கூட்டியே ஆர்டர் பதிவு செய்ய விரும்புகிறேன்.`
+      : `Hello ${shopDisplayName}, I would like to pre-book an order for chicken cuts.`;
 
   const ctaWhatsAppUrl = contentService.buildWhatsAppUrl(
-    content?.contact?.whatsappNumber || "919876543210",
+    content?.contact?.whatsappNumber || "919487203778",
     ctaWhatsAppMessage
   );
 
@@ -149,8 +154,8 @@ export default function HomePage() {
       <ProductShowcase
         products={featuredProducts}
         categoryMap={categoryMap}
-        whatsappNumber={content?.contact?.whatsappNumber || "919876543210"}
-        shopName={content?.shopName || "ஸ்ரீ மகாலட்சுமி பிராய்லர்ஸ்"}
+        whatsappNumber={content?.contact?.whatsappNumber || "919487203778"}
+        shopName={shopDisplayName}
       />
 
       {/* WHY CHOOSE US - Compact 2x2 on Mobile */}

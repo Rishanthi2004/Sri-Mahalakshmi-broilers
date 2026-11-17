@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
-import { ENQUIRY_TRANSLATIONS, getLocalizedEnquiry } from "@/data/enquiries";
+import { getLocalizedEnquiry } from "@/data/enquiries";
 
 interface EnquiryRow {
   id: string;

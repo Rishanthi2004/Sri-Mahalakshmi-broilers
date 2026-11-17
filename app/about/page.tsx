@@ -116,8 +116,8 @@ export default function AboutPage() {
                       </span>
                       <span className="font-semibold">
                         {language === "ta"
-                          ? "ஈ.பி. காலனி பேருந்து நிறுத்தம், பரமத்தி சாலை, நாமக்கல்"
-                          : "EB Colony Bus stop, Paramathi Road, Namakkal"}
+                          ? (content.contact.addressTa || content.contact.address || "ஈ.பி. காலனி பேருந்து நிறுத்தம், பரமத்தி சாலை, நாமக்கல்")
+                          : (content.contact.address || "EB Colony Bus stop, Paramathi Road, Namakkal")}
                       </span>
                     </div>
                   </div>
@@ -128,8 +128,11 @@ export default function AboutPage() {
                       <span className="block text-[10px] font-bold uppercase tracking-wider text-[#516357]">
                         {language === "ta" ? "தொடர்பு எண்" : "Contact No"}
                       </span>
-                      <a href="tel:+919487203778" className="font-semibold hover:text-[#287A45] transition-colors">
-                        +91 94872 03778
+                      <a
+                        href={`tel:${(content.contact.phone || "+919487203778").replace(/\s+/g, "")}`}
+                        className="font-semibold hover:text-[#287A45] transition-colors"
+                      >
+                        {content.contact.phone || "+91 94872 03778"}
                       </a>
                     </div>
                   </div>

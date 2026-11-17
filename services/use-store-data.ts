@@ -4,7 +4,6 @@ import { useCallback, useEffect, useState } from "react";
 import { DEFAULT_BANNERS } from "@/data/banners";
 import { DEFAULT_CATEGORIES } from "@/data/categories";
 import { DEFAULT_ENQUIRIES, DEFAULT_MEDIA } from "@/data/enquiries";
-import { DEFAULT_PRODUCTS } from "@/data/products";
 import { DEFAULT_WEBSITE_CONTENT } from "@/data/website-content";
 import { bannerService } from "./banner-service";
 import { categoryService } from "./category-service";

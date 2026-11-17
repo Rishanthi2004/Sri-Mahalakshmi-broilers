@@ -60,9 +60,9 @@ export function PublicHeader() {
             {/* Logo & Brand */}
             <Link href="/" className="shrink-0 min-w-0" onClick={() => setMobileOpen(false)}>
               <BrandLogo
-                shopName="ஸ்ரீ மகாலட்சுமி"
+                shopName={language === "ta" ? "ஸ்ரீ மகாலட்சுமி" : (content.shopNameEn || "Sri Mahalakshmi")}
                 logoUrl={content.logoUrl}
-                subtitle="பிராய்லர்ஸ்"
+                subtitle={language === "ta" ? "பிராய்லர்ஸ்" : "Broilers"}
               />
             </Link>
           </div>

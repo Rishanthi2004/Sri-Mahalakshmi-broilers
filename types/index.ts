@@ -64,6 +64,7 @@ export interface OpeningHour {
 
 export interface WebsiteContent {
   shopName: string;
+  shopNameEn?: string;
   tagline: string;
   logoUrl: string;
   faviconUrl: string;
@@ -110,6 +111,7 @@ export interface WebsiteContent {
     whatsappNumber: string;
     email: string;
     address: string;
+    addressTa?: string;
     googleMapsUrl: string;
     googleMapsEmbedPlaceholder: string;
     openingHours: OpeningHour[];

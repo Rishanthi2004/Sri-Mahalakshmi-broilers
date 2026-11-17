@@ -1,7 +1,8 @@
 import { WebsiteContent } from "@/types";
 
 export const DEFAULT_WEBSITE_CONTENT: WebsiteContent = {
-  shopName: "Sri Mahalakshmi Broilers",
+  shopName: "ஸ்ரீ மகாலட்சுமி பிராய்லர்ஸ்",
+  shopNameEn: "Sri Mahalakshmi Broilers",
   tagline: "Daily Fresh, Hygienically Cut Farm Chicken & Eggs",
   logoUrl: "/images/logo.png",
   faviconUrl: "/images/logo.png",
@@ -88,6 +89,7 @@ export const DEFAULT_WEBSITE_CONTENT: WebsiteContent = {
     whatsappNumber: "919487203778",
     email: "contact@srimahalakshmibroilers.com",
     address: "EB Colony Bus stop, Paramathi Road, Namakkal",
+    addressTa: "ஈ.பி. காலனி பேருந்து நிறுத்தம், பரமத்தி சாலை, நாமக்கல்",
     googleMapsUrl: "https://maps.google.com/?q=EB+Colony+Bus+stop+Paramathi+Road+Namakkal",
     googleMapsEmbedPlaceholder:
       "EB Colony Bus stop, Paramathi Road, Namakkal — Customer parking available.",

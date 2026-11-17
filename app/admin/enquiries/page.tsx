@@ -17,7 +17,7 @@ import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { useToast } from "@/components/common/ToastProvider";
 import { WhatsAppIcon } from "@/components/common/WhatsAppIcon";
 import { useLanguage } from "@/context/LanguageContext";
-import { ENQUIRY_TRANSLATIONS, getLocalizedEnquiry } from "@/data/enquiries";
+import { getLocalizedEnquiry } from "@/data/enquiries";
 import { enquiryService } from "@/services/media-enquiry-service";
 import { useWebsiteContent } from "@/services/use-store-data";
 import { Enquiry, EnquiryStatus } from "@/types";
