@@ -88,38 +88,48 @@ export default function FounderProfilePage() {
 
   const handleCopyLink = async () => {
     try {
+      let copySuccess = false;
       if (navigator?.clipboard?.writeText) {
-        await navigator.clipboard.writeText(currentUrl);
-      } else {
+        try {
+          await navigator.clipboard.writeText(currentUrl);
+          copySuccess = true;
+        } catch {
+          copySuccess = false;
+        }
+      }
+
+      if (!copySuccess) {
         const textarea = document.createElement("textarea");
         textarea.value = currentUrl;
         textarea.style.position = "fixed";
-        textarea.style.opacity = "0";
+        textarea.style.left = "-9999px";
+        textarea.style.top = "-9999px";
+        textarea.setAttribute("readonly", "");
         document.body.appendChild(textarea);
+        textarea.focus();
         textarea.select();
-        document.execCommand("copy");
+        textarea.setSelectionRange(0, 99999);
+        copySuccess = document.execCommand("copy");
         document.body.removeChild(textarea);
       }
+
       setCopied(true);
       showToast(t("founderLinkCopied"), {
         description: currentUrl,
         type: "success",
       });
-      setTimeout(() => setCopied(false), 2500);
+      setTimeout(() => setCopied(false), 3000);
     } catch {
       showToast("Unable to copy link.", { type: "danger" });
     }
   };
 
-  const handleWhatsAppShare = () => {
-    const text =
-      language === "ta"
-        ? `*${founderName}* — ${founderDesignation}\nஸ்ரீ மகாலட்சுமி பிராய்லர்ஸ் நிறுவனர் திரு. ${founderName} அவர்களின் சுயவிவரம் மற்றும் 20+ வருட பயணம்:\n👉 ${currentUrl}`
-        : `*${founderName}* — ${founderDesignation}\nMeet the Founder of Sri Mahalakshmi Broilers with 20+ years of trust in poultry:\n👉 ${currentUrl}`;
+  const shareText =
+    language === "ta"
+      ? `*${founderName}* — ${founderDesignation}\nஸ்ரீ மகாலட்சுமி பிராய்லர்ஸ் நிறுவனர் திரு. ${founderName} அவர்களின் சுயவிவரம் மற்றும் 20+ வருட பயணம்:\n\n${currentUrl}`
+      : `*${founderName}* — ${founderDesignation}\nMeet the Founder of Sri Mahalakshmi Broilers with 20+ years of trust in poultry.\n\n${currentUrl}`;
 
-    const waShareUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
-    window.open(waShareUrl, "_blank", "noopener,noreferrer");
-  };
+  const waShareUrl = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
 
   return (
     <PublicShell>
@@ -234,14 +244,15 @@ export default function FounderProfilePage() {
                         {language === "ta" ? "சுயவிவரத்தை உடனே பகிருங்கள்" : "Share Profile"}
                       </span>
                       <div className="grid grid-cols-2 gap-2">
-                        <button
-                          type="button"
-                          onClick={handleWhatsAppShare}
+                        <a
+                          href={waShareUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
                           className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[#25D366] hover:bg-[#20ba59] text-white text-xs font-bold transition-all active:scale-95 cursor-pointer shadow-2xs"
                         >
                           <WhatsAppIcon className="w-3.5 h-3.5 rounded" />
                           <span>WhatsApp</span>
-                        </button>
+                        </a>
                         <button
                           type="button"
                           onClick={handleCopyLink}
