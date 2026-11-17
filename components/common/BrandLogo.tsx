@@ -7,6 +7,7 @@ interface BrandLogoProps {
   logoUrl?: string;
   subtitle?: string;
   size?: "sm" | "md";
+  showDivider?: boolean;
 }
 
 export function BrandLogo({
@@ -14,18 +15,23 @@ export function BrandLogo({
   logoUrl = "/images/logo.png",
   subtitle = "பிராய்லர்ஸ்",
   size = "md",
+  showDivider = true,
 }: BrandLogoProps) {
   const iconBox = size === "sm" ? "h-8 w-8 sm:h-10 sm:w-10" : "h-9 w-9 sm:h-11 sm:w-11";
   const titleSize = size === "sm" ? "text-xs sm:text-base" : "text-[15px] sm:text-lg lg:text-xl";
+  const dividerHeight = size === "sm" ? "h-7" : "h-8 sm:h-9";
   const resolvedLogo = logoUrl && logoUrl.trim() !== "" ? logoUrl : "/images/logo.png";
 
   return (
-    <div className="flex items-center gap-1.5 sm:gap-2.5 select-none">
+    <div className="flex items-center gap-2 sm:gap-2.5 select-none">
       <img
         src={resolvedLogo}
         alt={shopName}
         className={`${iconBox} rounded-full object-cover border-2 border-[#287A45]/30 shadow-xs bg-white shrink-0`}
       />
+      {showDivider && (
+        <div className={`w-[1px] ${dividerHeight} bg-slate-300 shrink-0`} />
+      )}
       <div className="leading-tight">
         <span className={`block font-extrabold tracking-tight text-[#26352B] ${titleSize} whitespace-nowrap`}>
           {shopName}

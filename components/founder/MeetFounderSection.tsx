@@ -14,6 +14,7 @@ import {
   UserCheck,
 } from "lucide-react";
 import { WhatsAppIcon } from "@/components/common/WhatsAppIcon";
+import { BrandLogo } from "@/components/common/BrandLogo";
 import { AnimatedCard, FadeInSection } from "@/components/common/MotionPrimitives";
 import { ShareFounderButton } from "@/components/founder/ShareFounderButton";
 import { useLanguage } from "@/context/LanguageContext";
@@ -187,18 +188,31 @@ export function MeetFounderSection({ isHero = false }: MeetFounderSectionProps) 
 
               {/* Right Column: Name, Designation, Experience, Vision, Bio & Action Buttons */}
               <div className="lg:col-span-7 space-y-4 sm:space-y-5">
-                <div>
-                  <div className="flex flex-wrap items-center gap-2 mb-2">
-                    <span className="inline-block px-3 py-0.5 rounded-full bg-[#DDF3DF] text-[#287A45] text-xs font-bold">
-                      {founderExperience}
-                    </span>
+                {/* Header Row: Founder Details (Left) + Sri Mahalakshmi Broilers Brand Logo (Right) */}
+                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4">
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2 mb-2">
+                      <span className="inline-block px-3 py-0.5 rounded-full bg-[#DDF3DF] text-[#287A45] text-xs font-bold">
+                        {founderExperience}
+                      </span>
+                    </div>
+                    <h3 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#26352B] tracking-tight">
+                      {founderName}
+                    </h3>
+                    <p className="text-sm sm:text-base font-bold text-[#287A45] mt-1">
+                      {founderDesignation}
+                    </p>
                   </div>
-                  <h3 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#26352B] tracking-tight">
-                    {founderName}
-                  </h3>
-                  <p className="text-sm sm:text-base font-bold text-[#287A45] mt-1">
-                    {founderDesignation}
-                  </p>
+
+                  {/* Sri Mahalakshmi Broilers Brand Logo & Tamil Name at Top-Right */}
+                  <div className="shrink-0 self-start sm:pt-0.5">
+                    <BrandLogo
+                      shopName="ஸ்ரீ மகாலட்சுமி"
+                      subtitle="பிராய்லர்ஸ்"
+                      logoUrl={content.logoUrl}
+                      size="md"
+                    />
+                  </div>
                 </div>
 
                 {/* Founder's Vision Box */}
