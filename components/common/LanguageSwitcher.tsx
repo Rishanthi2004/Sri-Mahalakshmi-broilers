@@ -84,7 +84,7 @@ export function LanguageSwitcher({
 
       {/* Mobile-optimized compact version: Perfect fit without pushing logo */}
       <div
-        className={`inline-flex sm:hidden items-center p-0.5 rounded-full border border-[#C7E4CA] bg-[#EDF7EE] text-[11px] font-bold select-none shrink-0 shadow-2xs ${className}`}
+        className={`inline-flex sm:hidden items-center p-0.5 rounded-full border border-[#C7E4CA] bg-[#EDF7EE] text-[10px] font-bold select-none shrink-0 shadow-2xs ${className}`}
         role="group"
         aria-label="Language selection"
       >
@@ -92,7 +92,7 @@ export function LanguageSwitcher({
           type="button"
           onClick={() => setLanguage("ta")}
           aria-pressed={language === "ta"}
-          className={`px-2 py-0.5 rounded-full transition-all cursor-pointer ${
+          className={`px-1.5 py-0.5 rounded-full transition-all cursor-pointer ${
             language === "ta"
               ? "bg-[#287A45] text-white font-bold shadow-2xs"
               : "text-[#26352B] hover:text-[#287A45]"
@@ -104,7 +104,7 @@ export function LanguageSwitcher({
           type="button"
           onClick={() => setLanguage("en")}
           aria-pressed={language === "en"}
-          className={`px-2 py-0.5 rounded-full transition-all cursor-pointer ${
+          className={`px-1.5 py-0.5 rounded-full transition-all cursor-pointer ${
             language === "en"
               ? "bg-[#287A45] text-white font-bold shadow-2xs"
               : "text-[#26352B] hover:text-[#287A45]"

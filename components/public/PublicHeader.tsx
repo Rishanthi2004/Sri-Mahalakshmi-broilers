@@ -38,27 +38,27 @@ export function PublicHeader() {
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-[#C7E4CA]">
       <div className="max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8">
-        <div className="h-16 sm:h-18 py-2 sm:py-3 flex items-center justify-between gap-1.5 sm:gap-4">
+        <div className="h-15 sm:h-18 py-1.5 sm:py-3 flex items-center justify-between gap-1 sm:gap-4">
           
           {/* Left Side: Mobile Hamburger Menu Button (Left-aligned on Mobile) + Logo & Brand */}
-          <div className="flex items-center gap-1.5 sm:gap-3 min-w-0">
+          <div className="flex items-center gap-1 sm:gap-2.5 min-w-0">
             {/* Hamburger on Mobile (Left side) */}
             <button
               type="button"
               onClick={() => setMobileOpen((prev) => !prev)}
-              className="p-1.5 sm:p-2 rounded-xl border border-[#C7E4CA] text-[#26352B] hover:bg-[#EDF7EE] hover:text-[#287A45] active:scale-95 transition-all md:hidden shrink-0 cursor-pointer"
+              className="p-1 sm:p-2 rounded-lg sm:rounded-xl border border-[#C7E4CA] text-[#26352B] hover:bg-[#EDF7EE] hover:text-[#287A45] active:scale-95 transition-all md:hidden shrink-0 cursor-pointer"
               aria-label={mobileOpen ? "Close menu" : "Open menu"}
               aria-expanded={mobileOpen}
             >
               {mobileOpen ? (
-                <X className="w-5 h-5 text-[#287A45]" />
+                <X className="w-4 h-4 sm:w-5 sm:h-5 text-[#287A45]" />
               ) : (
-                <Menu className="w-5 h-5 text-[#26352B]" />
+                <Menu className="w-4 h-4 sm:w-5 sm:h-5 text-[#26352B]" />
               )}
             </button>
 
             {/* Logo & Brand - Always in Tamil for both English and Tamil */}
-            <Link href="/" className="shrink-0 min-w-0" onClick={() => setMobileOpen(false)}>
+            <Link href="/" className="min-w-0" onClick={() => setMobileOpen(false)}>
               <BrandLogo
                 shopName="ஸ்ரீ மகாலட்சுமி"
                 logoUrl={content.logoUrl}
@@ -112,7 +112,7 @@ export function PublicHeader() {
           </div>
 
           {/* Mobile Right Bar: Language Switcher only */}
-          <div className="flex md:hidden items-center">
+          <div className="flex md:hidden items-center shrink-0 ml-1.5">
             <LanguageSwitcher />
           </div>
         </div>
