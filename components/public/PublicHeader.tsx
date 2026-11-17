@@ -38,10 +38,10 @@ export function PublicHeader() {
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-[#C7E4CA]">
       <div className="max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8">
-        <div className="h-15 sm:h-18 py-1.5 sm:py-3 flex items-center justify-between gap-1 sm:gap-4">
+        <div className="h-16 sm:h-18 py-2 sm:py-3 flex items-center justify-between gap-1 sm:gap-4">
           
           {/* Left Side: Mobile Hamburger Menu Button (Left-aligned on Mobile) + Logo & Brand */}
-          <div className="flex items-center gap-1 sm:gap-2.5 min-w-0">
+          <div className="flex items-center gap-1 sm:gap-3 min-w-0">
             {/* Hamburger on Mobile (Left side) */}
             <button
               type="button"
@@ -58,7 +58,7 @@ export function PublicHeader() {
             </button>
 
             {/* Logo & Brand - Always in Tamil for both English and Tamil */}
-            <Link href="/" className="min-w-0" onClick={() => setMobileOpen(false)}>
+            <Link href="/" className="min-w-0 flex items-center" onClick={() => setMobileOpen(false)}>
               <BrandLogo
                 shopName="ஸ்ரீ மகாலட்சுமி"
                 logoUrl={content.logoUrl}
@@ -112,7 +112,7 @@ export function PublicHeader() {
           </div>
 
           {/* Mobile Right Bar: Language Switcher only */}
-          <div className="flex md:hidden items-center shrink-0 ml-1.5">
+          <div className="flex md:hidden items-center shrink-0 pl-1">
             <LanguageSwitcher />
           </div>
         </div>

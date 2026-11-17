@@ -17,25 +17,13 @@ export function BrandLogo({
   size = "md",
   showDivider = true,
 }: BrandLogoProps) {
-  const iconBox =
-    size === "sm"
-      ? "h-7 w-7 sm:h-9 sm:w-9"
-      : "h-8 w-8 sm:h-10 sm:w-10 lg:h-11 lg:w-11";
-  const titleSize =
-    size === "sm"
-      ? "text-[11px] sm:text-sm"
-      : "text-[13px] sm:text-base lg:text-lg";
-  const subtitleSize =
-    size === "sm"
-      ? "text-[9px] sm:text-[11px]"
-      : "text-[10px] sm:text-xs";
-  const dividerHeight =
-    size === "sm" ? "h-6 sm:h-7" : "h-7 sm:h-8";
-  const resolvedLogo =
-    logoUrl && logoUrl.trim() !== "" ? logoUrl : "/images/logo.png";
+  const iconBox = size === "sm" ? "h-7 w-7 sm:h-9 sm:w-9" : "h-8 w-8 sm:h-11 sm:w-11";
+  const titleSize = size === "sm" ? "text-xs sm:text-base" : "text-xs min-[360px]:text-[13px] sm:text-lg lg:text-xl";
+  const dividerHeight = size === "sm" ? "h-6 sm:h-7" : "h-7 sm:h-9";
+  const resolvedLogo = logoUrl && logoUrl.trim() !== "" ? logoUrl : "/images/logo.png";
 
   return (
-    <div className="flex items-center gap-1.5 sm:gap-2.5 select-none">
+    <div className="flex items-center gap-1.5 sm:gap-2.5 select-none min-w-0">
       <img
         src={resolvedLogo}
         alt={shopName}
@@ -45,15 +33,11 @@ export function BrandLogo({
         <div className={`w-[1px] ${dividerHeight} bg-slate-300 shrink-0`} />
       )}
       <div className="leading-tight min-w-0">
-        <span
-          className={`block font-extrabold tracking-tight text-[#26352B] ${titleSize} whitespace-nowrap`}
-        >
+        <span className={`block font-extrabold tracking-tight text-[#26352B] ${titleSize} whitespace-nowrap`}>
           {shopName}
         </span>
         {subtitle && (
-          <span
-            className={`block font-bold text-[#287A45] tracking-wide ${subtitleSize} whitespace-nowrap`}
-          >
+          <span className="block text-[9px] sm:text-xs font-bold text-[#287A45] tracking-wide">
             {subtitle}
           </span>
         )}
