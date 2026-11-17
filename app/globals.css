@@ -1,7 +1,8 @@
+@import url("https://fonts.googleapis.com/css2?family=Anek+Tamil:wght@400;500;600;700;800&family=Baloo+Thambi+2:wght@500;600;700;800&family=Catamaran:wght@500;600;700;800;900&family=Mukta+Malar:wght@400;500;600;700;800&family=Noto+Sans+Tamil:wght@400;500;600;700;800&display=swap");
 @import "tailwindcss";
-@import url("https://fonts.googleapis.com/css2?family=Mukta+Malar:wght@400;500;600;700;800&family=Noto+Sans+Tamil:wght@400;500;600;700;800&display=swap");
 
 :root {
+  --font-tamil: "Anek Tamil", "Baloo Thambi 2", "Catamaran", "Mukta Malar", "Noto Sans Tamil", "Nirmala UI", sans-serif;
   --bg-primary: #DDF3DF;
   --bg-secondary: #FFFFFF;
   --brand-green: #287A45;
@@ -20,33 +21,36 @@
   }
 
   body {
-    font-family: var(--font-sans), "Mukta Malar", "Noto Sans Tamil", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Nirmala UI", sans-serif;
+    font-family: var(--font-tamil), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Nirmala UI", sans-serif;
     color: #26352B;
     background-color: #DDF3DF;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
   }
+}
 
-  /* Refined, modern, highly readable Tamil font styling */
-  html[lang="ta"],
-  html[lang="ta"] body,
-  :lang(ta),
-  .font-tamil {
-    font-family: "Mukta Malar", "Noto Sans Tamil", "Nirmala UI", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    letter-spacing: 0.012em;
-    line-height: 1.62;
-  }
+/* Modern, stylish, highly distinct Tamil typography */
+.font-tamil-hero,
+.font-tamil-heading,
+html[lang="ta"] h1,
+html[lang="ta"] h2,
+html[lang="ta"] h3,
+html[lang="ta"] h4,
+html[lang="ta"] .font-heading {
+  font-family: "Anek Tamil", "Baloo Thambi 2", "Catamaran", "Mukta Malar", "Noto Sans Tamil", sans-serif !important;
+  font-weight: 800;
+  letter-spacing: -0.015em;
+  line-height: 1.35;
+}
 
-  html[lang="ta"] h1,
-  html[lang="ta"] h2,
-  html[lang="ta"] h3,
-  html[lang="ta"] h4 {
-    font-family: "Mukta Malar", "Noto Sans Tamil", "Nirmala UI", sans-serif;
-    font-weight: 700;
-    line-height: 1.38;
-    letter-spacing: -0.01em;
-  }
+html[lang="ta"],
+html[lang="ta"] body,
+:lang(ta),
+.font-tamil {
+  font-family: "Anek Tamil", "Mukta Malar", "Noto Sans Tamil", "Catamaran", "Nirmala UI", sans-serif !important;
+  letter-spacing: 0.01em;
+  line-height: 1.62;
 }
 
 /* Subtle custom scrollbar for tables and admin panels */

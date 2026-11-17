@@ -91,16 +91,16 @@ export default function HomePage() {
                 transition={{ duration: 0.35 }}
                 className="lg:col-span-6 p-5 sm:p-8 lg:p-12 space-y-3.5 sm:space-y-5"
               >
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#DDF3DF] text-[#287A45] text-[11px] sm:text-xs font-semibold tracking-wide">
+                <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#DDF3DF] text-[#287A45] text-[11px] sm:text-xs font-semibold tracking-wide ${language === "ta" ? "font-tamil" : ""}`}>
                   <CheckCircle2 className="w-3.5 h-3.5" />
                   {t("heroBadge")}
                 </span>
 
-                <h1 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-[#26352B] leading-tight">
+                <h1 className={`text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-[#26352B] leading-tight ${language === "ta" ? "font-tamil-hero" : ""}`}>
                   {t("heroHeadline")}
                 </h1>
 
-                <p className="text-xs sm:text-base lg:text-lg text-[#516357] leading-relaxed max-w-xl">
+                <p className={`text-xs sm:text-base lg:text-lg text-[#516357] leading-relaxed max-w-xl ${language === "ta" ? "font-tamil" : ""}`}>
                   {t("heroSubheadline")}
                 </p>
 
