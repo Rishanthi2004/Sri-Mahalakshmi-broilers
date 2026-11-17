@@ -129,6 +129,16 @@ export function MeetFounderSection({ isHero = false }: MeetFounderSectionProps) 
         {/* Founder Profile Card */}
         <AnimatedCard hoverLift={false}>
           <div className={`rounded-3xl border border-[#C7E4CA] p-4 sm:p-8 lg:p-10 shadow-sm ${isHero ? "bg-white" : "bg-[#F8FCF8]"}`}>
+            {/* Mobile & Tablet View: Brand Logo positioned at Top-Right of Card */}
+            <div className="flex lg:hidden justify-end items-center mb-3 sm:mb-4">
+              <BrandLogo
+                shopName="ஸ்ரீ மகாலட்சுமி"
+                subtitle="பிராய்லர்ஸ்"
+                logoUrl={content.logoUrl}
+                size="md"
+              />
+            </div>
+
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-center">
               
               {/* Left Column: Photo & Experience Highlights */}
@@ -204,8 +214,8 @@ export function MeetFounderSection({ isHero = false }: MeetFounderSectionProps) 
                     </p>
                   </div>
 
-                  {/* Sri Mahalakshmi Broilers Brand Logo & Tamil Name at Top-Right */}
-                  <div className="shrink-0 self-start sm:pt-0.5">
+                  {/* Desktop View: Sri Mahalakshmi Broilers Brand Logo & Tamil Name at Top-Right */}
+                  <div className="hidden lg:block shrink-0 self-start pt-0.5">
                     <BrandLogo
                       shopName="ஸ்ரீ மகாலட்சுமி"
                       subtitle="பிராய்லர்ஸ்"
