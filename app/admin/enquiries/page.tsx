@@ -16,6 +16,7 @@ import { AdminShell } from "@/components/admin/AdminShell";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { useToast } from "@/components/common/ToastProvider";
 import { WhatsAppIcon } from "@/components/common/WhatsAppIcon";
+import { useLanguage } from "@/context/LanguageContext";
 import { enquiryService } from "@/services/media-enquiry-service";
 import { useWebsiteContent } from "@/services/use-store-data";
 import { Enquiry, EnquiryStatus } from "@/types";
@@ -23,6 +24,8 @@ import { Enquiry, EnquiryStatus } from "@/types";
 export default function AdminEnquiriesPage() {
   const { content } = useWebsiteContent();
   const { showToast } = useToast();
+  const { language } = useLanguage();
+  const isTa = language === "ta";
 
   const [enquiries, setEnquiries] = useState<Enquiry[]>([]);
   const [loading, setLoading] = useState(true);
@@ -79,11 +82,22 @@ export default function AdminEnquiriesPage() {
       if (selectedEnquiry?.id === id) {
         setSelectedEnquiry({ ...selectedEnquiry, status: nextStatus });
       }
-      showToast("விசாரணை நிலை மாற்றப்பட்டது", {
-        description: nextStatus === "new" ? "புதியது" : nextStatus === "contacted" ? "தொடர்புகொள்ளப்பட்டது" : "தீர்க்கப்பட்டது",
+      showToast(isTa ? "விசாரணை நிலை மாற்றப்பட்டது" : "Enquiry status updated", {
+        description:
+          nextStatus === "new"
+            ? isTa
+              ? "புதியது"
+              : "New"
+            : nextStatus === "contacted"
+            ? isTa
+              ? "தொடர்புகொள்ளப்பட்டது"
+              : "Contacted"
+            : isTa
+            ? "தீர்க்கப்பட்டது"
+            : "Resolved",
       });
     } catch {
-      showToast("நிலையை மாற்றுவதில் பிழை", { type: "danger" });
+      showToast(isTa ? "நிலையை மாற்றுவதில் பிழை" : "Failed to update status", { type: "danger" });
     }
   };
 
@@ -92,9 +106,9 @@ export default function AdminEnquiriesPage() {
     try {
       enquiryService.remove(deleteTarget.id);
       setEnquiries(enquiryService.getAll());
-      showToast("விசாரணை நீக்கப்பட்டது", { type: "info" });
+      showToast(isTa ? "விசாரணை நீக்கப்பட்டது" : "Enquiry deleted", { type: "info" });
     } catch {
-      showToast("விசாரணையை நீக்குவதில் பிழை", { type: "danger" });
+      showToast(isTa ? "விசாரணையை நீக்குவதில் பிழை" : "Failed to delete enquiry", { type: "danger" });
     } finally {
       setDeleteTarget(null);
     }
@@ -102,8 +116,12 @@ export default function AdminEnquiriesPage() {
 
   return (
     <AdminShell
-      title="வாடிக்கையாளர் விசாரணைகள்"
-      subtitle="தொடர்பு பக்கம் வழியாக வாடிக்கையாளர்கள் அனுப்பிய கோரிக்கைகள் மற்றும் விசாரணைகளை நிர்வகித்தல்"
+      title={isTa ? "வாடிக்கையாளர் விசாரணைகள்" : "Customer Enquiries"}
+      subtitle={
+        isTa
+          ? "தொடர்பு பக்கம் வழியாக வாடிக்கையாளர்கள் அனுப்பிய கோரிக்கைகள் மற்றும் விசாரணைகளை நிர்வகித்தல்"
+          : "Manage customer questions, messages, and order enquiries submitted through the contact page"
+      }
       actions={
         <button
           type="button"
@@ -111,7 +129,7 @@ export default function AdminEnquiriesPage() {
           className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 bg-white text-xs font-semibold text-slate-700 hover:bg-slate-50 shadow-2xs"
         >
           <RefreshCw className={`w-3.5 h-3.5 text-[#287A45] ${loading ? "animate-spin" : ""}`} />
-          <span>விசாரணைகளைப் புதுப்பி</span>
+          <span>{isTa ? "விசாரணைகளைப் புதுப்பி" : "Refresh Enquiries"}</span>
         </button>
       }
     >
@@ -122,12 +140,20 @@ export default function AdminEnquiriesPage() {
             {(["all", "new", "contacted", "resolved"] as const).map((status) => {
               const label =
                 status === "all"
-                  ? "அனைத்தும்"
+                  ? isTa
+                    ? "அனைத்தும்"
+                    : "All"
                   : status === "new"
-                  ? "புதியது"
+                  ? isTa
+                    ? "புதியது"
+                    : "New"
                   : status === "contacted"
-                  ? "தொடர்புகொள்ளப்பட்டது"
-                  : "தீர்க்கப்பட்டது";
+                  ? isTa
+                    ? "தொடர்புகொள்ளப்பட்டது"
+                    : "Contacted"
+                  : isTa
+                  ? "தீர்க்கப்பட்டது"
+                  : "Resolved";
 
               return (
                 <button
@@ -152,7 +178,7 @@ export default function AdminEnquiriesPage() {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="பெயர் அல்லது அலைபேசி எண்..."
+              placeholder={isTa ? "பெயர் அல்லது அலைபேசி எண்..." : "Search by customer name or phone..."}
               className="w-full pl-9 pr-3.5 py-2 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white text-xs sm:text-sm text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-[#287A45]"
             />
           </div>
@@ -163,20 +189,26 @@ export default function AdminEnquiriesPage() {
           {filtered.length === 0 ? (
             <div className="p-12 text-center">
               <MessageSquareText className="w-10 h-10 text-slate-300 mx-auto mb-2" />
-              <p className="text-sm font-bold text-slate-800">விசாரணைகள் எதுவும் கிடைக்கவில்லை</p>
-              <p className="text-xs text-slate-500 mt-1">வாடிக்கையாளர்கள் இணையதளம் வழியாக அனுப்பும் செய்திகள் இங்கு தோன்றும்.</p>
+              <p className="text-sm font-bold text-slate-800">
+                {isTa ? "விசாரணைகள் எதுவும் கிடைக்கவில்லை" : "No enquiries found"}
+              </p>
+              <p className="text-xs text-slate-500 mt-1">
+                {isTa
+                  ? "வாடிக்கையாளர்கள் இணையதளம் வழியாக அனுப்பும் செய்திகள் இங்கு தோன்றும்."
+                  : "Customer contact messages will appear here once submitted."}
+              </p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs sm:text-sm text-slate-700">
                 <thead className="bg-slate-50/80 border-b border-slate-200 text-slate-500 text-[11px] font-bold uppercase tracking-wider">
                   <tr>
-                    <th className="py-3 px-4">வாடிக்கையாளர்</th>
-                    <th className="py-3 px-4">அலைபேசி எண்</th>
-                    <th className="py-3 px-4">செய்தி முன்னோட்டம்</th>
-                    <th className="py-3 px-4">தேதி</th>
-                    <th className="py-3 px-4">நிலை</th>
-                    <th className="py-3 px-4 text-right">விரைவுத் தொடர்பு &amp; செயல்கள்</th>
+                    <th className="py-3 px-4">{isTa ? "வாடிக்கையாளர்" : "Customer"}</th>
+                    <th className="py-3 px-4">{isTa ? "அலைபேசி எண்" : "Phone Number"}</th>
+                    <th className="py-3 px-4">{isTa ? "செய்தி முன்னோட்டம்" : "Message Preview"}</th>
+                    <th className="py-3 px-4">{isTa ? "தேதி" : "Date"}</th>
+                    <th className="py-3 px-4">{isTa ? "நிலை" : "Status"}</th>
+                    <th className="py-3 px-4 text-right">{isTa ? "விரைவுத் தொடர்பு & செயல்கள்" : "Quick Contact & Actions"}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -214,9 +246,9 @@ export default function AdminEnquiriesPage() {
                                 : "bg-emerald-50 text-emerald-800 border-emerald-200"
                             }`}
                           >
-                            <option value="new">புதியது (New)</option>
-                            <option value="contacted">தொடர்புகொள்ளப்பட்டது</option>
-                            <option value="resolved">தீர்க்கப்பட்டது</option>
+                            <option value="new">{isTa ? "புதியது (New)" : "New"}</option>
+                            <option value="contacted">{isTa ? "தொடர்புகொள்ளப்பட்டது" : "Contacted"}</option>
+                            <option value="resolved">{isTa ? "தீர்க்கப்பட்டது" : "Resolved"}</option>
                           </select>
                         </td>
                         <td className="py-3.5 px-4 whitespace-nowrap text-right">
@@ -225,7 +257,7 @@ export default function AdminEnquiriesPage() {
                             <a
                               href={`tel:${cleanPhone}`}
                               className="p-1.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-100 transition-colors"
-                              title="வாடிக்கையாளரை அழைக்க"
+                              title={isTa ? "வாடிக்கையாளரை அழைக்க" : "Call Customer"}
                             >
                               <Phone className="w-3.5 h-3.5" />
                             </a>
@@ -233,12 +265,14 @@ export default function AdminEnquiriesPage() {
                             {/* WhatsApp */}
                             <a
                               href={`https://wa.me/${cleanPhone}?text=${encodeURIComponent(
-                                `வணக்கம் ${enq.customerName}, ${content.shopName} இல் நீங்கள் கேட்ட கோழிக்கறி விசாரணை தொடர்பாக:`
+                                isTa
+                                  ? `வணக்கம் ${enq.customerName}, ${content.shopName} இல் நீங்கள் கேட்ட கோழிக்கறி விசாரணை தொடர்பாக:`
+                                  : `Hello ${enq.customerName}, regarding your inquiry with ${content.shopName}:`
                               )}`}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="p-1.5 rounded-lg border border-emerald-200 text-emerald-600 bg-emerald-50 hover:bg-emerald-100 transition-colors"
-                              title="வாட்ஸ்அப்பில் உரையாட"
+                              title={isTa ? "வாட்ஸ்அப்பில் உரையாட" : "Chat on WhatsApp"}
                             >
                               <WhatsAppIcon className="w-3.5 h-3.5 rounded" />
                             </a>
@@ -248,7 +282,7 @@ export default function AdminEnquiriesPage() {
                               type="button"
                               onClick={() => setSelectedEnquiry(enq)}
                               className="p-1.5 rounded-lg border border-slate-200 text-slate-700 hover:bg-[#EDF7EE] hover:text-[#287A45] hover:border-[#C7E4CA] transition-colors"
-                              title="முழு செய்தியைக் காண்க"
+                              title={isTa ? "முழு செய்தியைக் காண்க" : "View Message"}
                             >
                               <Eye className="w-3.5 h-3.5" />
                             </button>
@@ -258,7 +292,7 @@ export default function AdminEnquiriesPage() {
                               type="button"
                               onClick={() => setDeleteTarget(enq)}
                               className="p-1.5 rounded-lg border border-slate-200 text-rose-600 hover:bg-rose-50 hover:border-rose-200 transition-colors"
-                              title="விசாரணையை நீக்கு"
+                              title={isTa ? "விசாரணையை நீக்கு" : "Delete Enquiry"}
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
@@ -308,7 +342,7 @@ export default function AdminEnquiriesPage() {
             <div className="mt-4 space-y-4">
               <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200">
                 <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">
-                  வாடிக்கையாளர் செய்தி:
+                  {isTa ? "வாடிக்கையாளர் செய்தி:" : "Customer Message:"}
                 </p>
                 <p className="text-sm text-slate-800 whitespace-pre-wrap leading-relaxed">
                   {selectedEnquiry.message}
@@ -318,10 +352,12 @@ export default function AdminEnquiriesPage() {
               <div className="flex items-center justify-between text-xs text-slate-500 pt-2 border-t border-slate-100">
                 <div className="flex items-center gap-1.5">
                   <Calendar className="w-3.5 h-3.5 text-slate-400" />
-                  <span>பெறப்பட்ட தேதி: {new Date(selectedEnquiry.submittedAt).toLocaleString()}</span>
+                  <span>
+                    {isTa ? "பெறப்பட்ட தேதி:" : "Received:"} {new Date(selectedEnquiry.submittedAt).toLocaleString()}
+                  </span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span>நிலை:</span>
+                  <span>{isTa ? "நிலை:" : "Status:"}</span>
                   <select
                     value={selectedEnquiry.status}
                     onChange={(e) =>
@@ -332,9 +368,9 @@ export default function AdminEnquiriesPage() {
                     }
                     className="px-2 py-0.5 rounded-md border text-xs font-semibold"
                   >
-                    <option value="new">புதியது</option>
-                    <option value="contacted">தொடர்புகொள்ளப்பட்டது</option>
-                    <option value="resolved">தீர்க்கப்பட்டது</option>
+                    <option value="new">{isTa ? "புதியது" : "New"}</option>
+                    <option value="contacted">{isTa ? "தொடர்புகொள்ளப்பட்டது" : "Contacted"}</option>
+                    <option value="resolved">{isTa ? "தீர்க்கப்பட்டது" : "Resolved"}</option>
                   </select>
                 </div>
               </div>
@@ -348,7 +384,7 @@ export default function AdminEnquiriesPage() {
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#25D366] hover:bg-[#20ba59] text-white text-xs font-semibold shadow-sm"
               >
                 <WhatsAppIcon className="w-4 h-4 rounded" />
-                <span>வாட்ஸ்அப்பில் பதிலளி</span>
+                <span>{isTa ? "வாட்ஸ்அப்பில் பதிலளி" : "Reply via WhatsApp"}</span>
               </a>
 
               <button
@@ -356,7 +392,7 @@ export default function AdminEnquiriesPage() {
                 onClick={() => setSelectedEnquiry(null)}
                 className="px-4 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50"
               >
-                மூடு
+                {isTa ? "மூடு" : "Close"}
               </button>
             </div>
           </div>
@@ -366,9 +402,13 @@ export default function AdminEnquiriesPage() {
       {/* Delete Confirmation */}
       <ConfirmDialog
         open={Boolean(deleteTarget)}
-        title="விசாரணையை நீக்கவா?"
-        description={`"${deleteTarget?.customerName}" அனுப்பிய விசாரணையை நிச்சயமாக நீக்க விரும்புகிறீர்களா?`}
-        confirmLabel="நீக்குவதை உறுதிசெய்"
+        title={isTa ? "விசாரணையை நீக்கவா?" : "Delete Enquiry?"}
+        description={
+          isTa
+            ? `"${deleteTarget?.customerName}" அனுப்பிய விசாரணையை நிச்சயமாக நீக்க விரும்புகிறீர்களா?`
+            : `Are you sure you want to delete the enquiry from "${deleteTarget?.customerName}"?`
+        }
+        confirmLabel={isTa ? "நீக்குவதை உறுதிசெய்" : "Confirm Delete"}
         variant="danger"
         onConfirm={handleDelete}
         onCancel={() => setDeleteTarget(null)}

@@ -61,17 +61,62 @@ const DEFAULT_SUPERADMIN_SESSION: AdminUser = {
   isActive: true,
 };
 
+interface AdminShellProps {
+  title: string;
+  subtitle?: string;
+  titleEn?: string;
+  subtitleEn?: string;
+  actions?: React.ReactNode;
+  children: React.ReactNode;
+}
+
+const ADMIN_PAGE_TITLES: Record<string, { titleEn: string; subEn: string }> = {
+  "/admin/dashboard": {
+    titleEn: "Operations Dashboard",
+    subEn: "Overview of sales, inventory, orders, cuts, and website performance",
+  },
+  "/admin/products": {
+    titleEn: "Products Management",
+    subEn: "Manage fresh poultry cuts, stock availability, pricing, and images",
+  },
+  "/admin/categories": {
+    titleEn: "Categories Management",
+    subEn: "Organize chicken cuts, farm eggs, and specialty category classifications",
+  },
+  "/admin/banners": {
+    titleEn: "Banners Management",
+    subEn: "Manage homepage hero banners, seasonal promos, and advertising slides",
+  },
+  "/admin/media": {
+    titleEn: "Media Library",
+    subEn: "Upload, store, and manage images for products, banners, and storefront",
+  },
+  "/admin/content": {
+    titleEn: "Website Content Management",
+    subEn: "Edit hero banners, showcase cuts, About Us, founder profile, and branding",
+  },
+  "/admin/enquiries": {
+    titleEn: "Customer Enquiries",
+    subEn: "Track customer messages, cut requests, and direct WhatsApp communications",
+  },
+  "/admin/users": {
+    titleEn: "Admin Users & Roles",
+    subEn: "Manage administrator accounts, staff roles, credentials, and access control",
+  },
+  "/admin/settings": {
+    titleEn: "Store & Business Settings",
+    subEn: "Manage contact numbers, office location, store opening hours, and social media",
+  },
+};
+
 export function AdminShell({
   title,
   subtitle,
+  titleEn,
+  subtitleEn,
   actions,
   children,
-}: {
-  title: string;
-  subtitle?: string;
-  actions?: React.ReactNode;
-  children: React.ReactNode;
-}) {
+}: AdminShellProps) {
   const pathname = usePathname();
   const router = useRouter();
   const { showToast } = useToast();
@@ -96,7 +141,12 @@ export function AdminShell({
 
   const handleLogout = async () => {
     await authService.logout();
-    showToast("நிர்வாக போர்டலில் இருந்து வெளியேறினீர்கள்", { type: "info" });
+    showToast(
+      language === "ta"
+        ? "நிர்வாக போர்டலில் இருந்து வெளியேறினீர்கள்"
+        : "Signed out of Admin Portal",
+      { type: "info" }
+    );
     router.replace("/admin/login");
   };
 
@@ -105,7 +155,12 @@ export function AdminShell({
     await authService.login(creds.username, creds.password);
     const updated = authService.getSession();
     if (updated) setUser(updated);
-    showToast(`${creds.label} பயன்முறைக்கு மாறினீர்கள்`, { type: "success" });
+    showToast(
+      language === "ta"
+        ? `${creds.label} பயன்முறைக்கு மாறினீர்கள்`
+        : `Switched to ${targetRole === "superAdmin" ? "Super Admin" : "Staff Admin"} mode`,
+      { type: "success" }
+    );
   };
 
   if (!checked) {
@@ -115,8 +170,14 @@ export function AdminShell({
           <div className="w-12 h-12 mx-auto rounded-2xl bg-[#EDF7EE] border border-[#C7E4CA] flex items-center justify-center mb-4">
             <div className="w-6 h-6 border-2 border-[#287A45] border-t-transparent rounded-full animate-spin" />
           </div>
-          <p className="text-sm font-semibold text-slate-800">நிர்வாகி சான்றுகள் சரிபார்க்கப்படுகின்றன...</p>
-          <p className="text-xs text-slate-500 mt-1">கட்டுப்பாட்டு அறை அணுகப்படுகிறது</p>
+          <p className="text-sm font-semibold text-slate-800">
+            {language === "ta"
+              ? "நிர்வாகி சான்றுகள் சரிபார்க்கப்படுகின்றன..."
+              : "Verifying administrator credentials..."}
+          </p>
+          <p className="text-xs text-slate-500 mt-1">
+            {language === "ta" ? "கட்டுப்பாட்டு அறை அணுகப்படுகிறது" : "Accessing control panel..."}
+          </p>
         </div>
       </div>
     );
@@ -124,6 +185,16 @@ export function AdminShell({
 
   const isSuperAdmin = user?.role === "super_admin";
   const isStaffAdmin = user?.role === "staff_admin";
+
+  const displayTitle =
+    language === "en"
+      ? titleEn || ADMIN_PAGE_TITLES[pathname]?.titleEn || title
+      : title;
+
+  const displaySubtitle =
+    language === "en"
+      ? subtitleEn || ADMIN_PAGE_TITLES[pathname]?.subEn || subtitle
+      : subtitle;
 
   // Check if current route requires Super Admin access
   const currentNav = ALL_NAV_ITEMS.find((item) => item.href === pathname);
@@ -160,14 +231,14 @@ export function AdminShell({
           type="button"
           onClick={() => setSidebarOpen(false)}
           className="lg:hidden p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100"
-          aria-label="பட்டி மெனுவை மூடு"
+          aria-label={language === "ta" ? "பட்டி மெனுவை மூடு" : "Close sidebar menu"}
         >
           <X className="w-5 h-5" />
         </button>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-3.5 space-y-1 overflow-y-auto" aria-label="நிர்வாக வழிகாட்டி">
+      <nav className="flex-1 p-3.5 space-y-1 overflow-y-auto" aria-label={language === "ta" ? "நிர்வாக வழிகாட்டி" : "Admin navigation"}>
         <div className="px-2 py-1 mb-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">
           {isSuperAdmin
             ? (language === "ta" ? "முதன்மை நிர்வாகப் பிரிவுகள்" : "Super Admin Navigation")
@@ -322,19 +393,19 @@ export function AdminShell({
                 type="button"
                 onClick={() => setSidebarOpen(true)}
                 className="lg:hidden p-2 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-100"
-                aria-label="நிர்வாக மெனுவைத் திற"
+                aria-label={language === "ta" ? "நிர்வாக மெனுவைத் திற" : "Open admin menu"}
               >
                 <Menu className="w-5 h-5" />
               </button>
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
                   <h1 className="text-lg sm:text-xl font-bold text-slate-900 truncate">
-                    {title}
+                    {displayTitle}
                   </h1>
                 </div>
-                {subtitle && (
+                {displaySubtitle && (
                   <p className="text-xs sm:text-sm text-slate-500 truncate">
-                    {subtitle}
+                    {displaySubtitle}
                   </p>
                 )}
               </div>
@@ -364,11 +435,22 @@ export function AdminShell({
               </div>
               <div>
                 <h2 className="text-lg font-bold text-slate-900">
-                  பணியாளர் அணுகல் கட்டுப்பாடு (Staff Access Restricted)
+                  {language === "ta"
+                    ? "பணியாளர் அணுகல் கட்டுப்பாடு (Staff Access Restricted)"
+                    : "Staff Access Restricted"}
                 </h2>
                 <p className="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">
-                  நீங்கள் தற்போது <strong>பணியாளர் (staff@greenpasture.com)</strong> கணக்கில் உள்ளீர்கள்.
-                  வலைத்தள அமைப்புகள் மற்றும் பயனர் மேலாண்மை பகுதிகளை <strong>முதன்மை நிர்வாகி (Super Admin)</strong> மட்டுமே திருத்த முடியும்.
+                  {language === "ta" ? (
+                    <>
+                      நீங்கள் தற்போது <strong>பணியாளர் (staff@greenpasture.com)</strong> கணக்கில் உள்ளீர்கள்.
+                      வலைத்தள அமைப்புகள் மற்றும் பயனர் மேலாண்மை பகுதிகளை <strong>முதன்மை நிர்வாகி (Super Admin)</strong> மட்டுமே திருத்த முடியும்.
+                    </>
+                  ) : (
+                    <>
+                      You are currently signed in with the <strong>Staff (staff@greenpasture.com)</strong> account.
+                      Website settings, content, and user management can only be modified by a <strong>Super Admin</strong>.
+                    </>
+                  )}
                 </p>
               </div>
 
@@ -378,13 +460,13 @@ export function AdminShell({
                   onClick={() => switchToRole("superAdmin")}
                   className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-[#287A45] hover:bg-[#1E5F35] text-white text-xs font-bold shadow-md shadow-[#287A45]/20 transition-all cursor-pointer"
                 >
-                  முதன்மை நிர்வாகியாக மாறவும் (Admin Demo)
+                  {language === "ta" ? "முதன்மை நிர்வாகியாக மாறவும் (Admin Demo)" : "Switch to Super Admin (Demo)"}
                 </button>
                 <Link
                   href="/admin/dashboard"
                   className="w-full sm:w-auto px-5 py-2.5 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-semibold transition-all text-center"
                 >
-                  கட்டுப்பாட்டு அறைக்குத் திரும்பு
+                  {language === "ta" ? "கட்டுப்பாட்டு அறைக்குத் திரும்பு" : "Return to Dashboard"}
                 </Link>
               </div>
             </div>

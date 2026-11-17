@@ -22,6 +22,7 @@ import { AdminShell } from "@/components/admin/AdminShell";
 import { ImagePickerInput } from "@/components/admin/ImagePickerInput";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { useToast } from "@/components/common/ToastProvider";
+import { useLanguage } from "@/context/LanguageContext";
 import { productService } from "@/services/product-service";
 import { readFileAsDataUrl } from "@/services/storage";
 import { useCategories } from "@/services/use-store-data";
@@ -57,6 +58,8 @@ function ProductsManagerContent() {
   const searchParams = useSearchParams();
   const { categories } = useCategories();
   const { showToast } = useToast();
+  const { language } = useLanguage();
+  const isTa = language === "ta";
 
   const [products, setProducts] = useState<Product[]>([]);
   const [deletedProducts, setDeletedProducts] = useState<Product[]>([]);
@@ -170,16 +173,16 @@ function ProductsManagerContent() {
     setFormError("");
 
     if (!form.name.trim()) {
-      setFormError("பொருளின் பெயரை உள்ளிடவும்.");
+      setFormError(isTa ? "பொருளின் பெயரை உள்ளிடவும்." : "Please enter a product name.");
       return;
     }
     const numPrice = parseFloat(form.price);
     if (isNaN(numPrice) || numPrice <= 0) {
-      setFormError("சரியான விலையை உள்ளிடவும்.");
+      setFormError(isTa ? "சரியான விலையை உள்ளிடவும்." : "Please enter a valid price.");
       return;
     }
     if (!form.image) {
-      setFormError("பொருளின் முக்கியப் புகைப்படம் தேவை.");
+      setFormError(isTa ? "பொருளின் முக்கியப் புகைப்படம் தேவை." : "Primary product photo is required.");
       return;
     }
 
@@ -190,7 +193,7 @@ function ProductsManagerContent() {
         categoryId: form.categoryId,
         description: form.description.trim(),
         price: numPrice,
-        unit: form.unit.trim() || "1 கிலோ",
+        unit: form.unit.trim() || (isTa ? "1 கிலோ" : "1 kg"),
         image: form.image,
         galleryImages: form.galleryImages.length > 0 ? form.galleryImages : [form.image],
         availability: form.availability,
@@ -200,16 +203,16 @@ function ProductsManagerContent() {
 
       if (editingId) {
         productService.update(editingId, payload);
-        showToast("பொருள் வெற்றிகரமாக புதுப்பிக்கப்பட்டது", { description: form.name });
+        showToast(isTa ? "பொருள் வெற்றிகரமாக புதுப்பிக்கப்பட்டது" : "Product updated successfully", { description: form.name });
       } else {
         productService.create(payload);
-        showToast("பொருள் பட்டியலில் சேர்க்கப்பட்டது", { description: form.name });
+        showToast(isTa ? "பொருள் பட்டியலில் சேர்க்கப்பட்டது" : "Product added to catalog", { description: form.name });
       }
 
       setModalOpen(false);
       loadData();
     } catch {
-      setFormError("பொருளைச் சேமிப்பதில் பிழை ஏற்பட்டது.");
+      setFormError(isTa ? "பொருளைச் சேமிப்பதில் பிழை ஏற்பட்டது." : "An error occurred while saving the product.");
     } finally {
       setSubmitting(false);
     }
@@ -222,13 +225,13 @@ function ProductsManagerContent() {
         isDeleted: true,
         deletedAt: new Date().toISOString(),
       });
-      showToast("பொருள் குப்பைத் தொட்டிக்கு நகர்த்தப்பட்டது", {
-        description: `${deleteTarget.name} எப்போது வேண்டுமானாலும் மீட்டெடுக்கப்படலாம்.`,
+      showToast(isTa ? "பொருள் குப்பைத் தொட்டிக்கு நகர்த்தப்பட்டது" : "Product moved to trash", {
+        description: isTa ? `${deleteTarget.name} எப்போது வேண்டுமானாலும் மீட்டெடுக்கப்படலாம்.` : `${deleteTarget.name} can be restored at any time.`,
         type: "info",
       });
       loadData();
     } catch {
-      showToast("பொருளை நீக்குவதில் பிழை ஏற்பட்டது", { type: "danger" });
+      showToast(isTa ? "பொருளை நீக்குவதில் பிழை ஏற்பட்டது" : "Error moving product to trash", { type: "danger" });
     } finally {
       setDeleteTarget(null);
     }
@@ -240,13 +243,13 @@ function ProductsManagerContent() {
         isDeleted: false,
         deletedAt: undefined,
       });
-      showToast("பொருள் மீண்டும் பட்டியலில் சேர்க்கப்பட்டது", {
+      showToast(isTa ? "பொருள் மீண்டும் பட்டியலில் சேர்க்கப்பட்டது" : "Product restored to catalog", {
         description: p.name,
         type: "success",
       });
       loadData();
     } catch {
-      showToast("பொருளை மீட்டெடுப்பதில் பிழை", { type: "danger" });
+      showToast(isTa ? "பொருளை மீட்டெடுப்பதில் பிழை" : "Error restoring product", { type: "danger" });
     }
   };
 
@@ -254,13 +257,13 @@ function ProductsManagerContent() {
     if (!permanentDeleteTarget) return;
     try {
       productService.remove(permanentDeleteTarget.id);
-      showToast("பொருள் நிரந்தரமாக நீக்கப்பட்டது", {
+      showToast(isTa ? "பொருள் நிரந்தரமாக நீக்கப்பட்டது" : "Product deleted permanently", {
         description: permanentDeleteTarget.name,
         type: "info",
       });
       loadData();
     } catch {
-      showToast("பொருளை நீக்குவதில் பிழை", { type: "danger" });
+      showToast(isTa ? "பொருளை நீக்குவதில் பிழை" : "Error deleting product", { type: "danger" });
     } finally {
       setPermanentDeleteTarget(null);
     }
@@ -272,7 +275,7 @@ function ProductsManagerContent() {
     if (!file) return;
 
     if (file.size > 5 * 1024 * 1024) {
-      setFormError("படத்தின் அளவு 5 MB வரம்பை விட அதிகமாக உள்ளது.");
+      setFormError(isTa ? "படத்தின் அளவு 5 MB வரம்பை விட அதிகமாக உள்ளது." : "Image size exceeds 5 MB limit.");
       return;
     }
 
@@ -283,7 +286,7 @@ function ProductsManagerContent() {
         galleryImages: [...prev.galleryImages, dataUrl],
       }));
     } catch {
-      setFormError("புகைப்படத்தைப் படிக்க முடியவில்லை.");
+      setFormError(isTa ? "புகைப்படத்தைப் படிக்க முடியவில்லை." : "Failed to read image file.");
     } finally {
       if (extraFileRef.current) extraFileRef.current.value = "";
     }
@@ -309,20 +312,24 @@ function ProductsManagerContent() {
 
   const setAsMainImage = (url: string) => {
     setForm((prev) => ({ ...prev, image: url }));
-    showToast("முக்கியப் படமாக அமைக்கப்பட்டது", { type: "info" });
+    showToast(isTa ? "முக்கியப் படமாக அமைக்கப்பட்டது" : "Set as primary image", { type: "info" });
   };
 
   return (
     <AdminShell
-      title="பொருட்கள் மேலாண்மை"
-      subtitle="கறிக்கட்டுகள், விலைகள், அலகுகள், புகைப்படங்கள் மற்றும் சரக்கு இருப்பு முழுமையான கட்டுப்பாடு"
+      title={isTa ? "பொருட்கள் மேலாண்மை" : "Product Management"}
+      subtitle={
+        isTa
+          ? "கறிக்கட்டுகள், விலைகள், அலகுகள், புகைப்படங்கள் மற்றும் சரக்கு இருப்பு முழுமையான கட்டுப்பாடு"
+          : "Chicken cuts, prices, units, gallery photos, and stock inventory management"
+      }
       actions={
         <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={loadData}
             className="p-2 rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition-colors shadow-2xs"
-            title="புதுப்பி"
+            title={isTa ? "புதுப்பி" : "Refresh"}
           >
             <RefreshCw className={`w-4 h-4 text-[#287A45] ${loading ? "animate-spin" : ""}`} />
           </button>
@@ -332,7 +339,7 @@ function ProductsManagerContent() {
             className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#287A45] hover:bg-[#1E5F35] text-white text-xs sm:text-sm font-semibold shadow-md shadow-[#287A45]/25 transition-all"
           >
             <Plus className="w-4 h-4" />
-            <span>புதிய பொருள் சேர்க்க</span>
+            <span>{isTa ? "புதிய பொருள் சேர்க்க" : "Add New Product"}</span>
           </button>
         </div>
       }
@@ -350,7 +357,7 @@ function ProductsManagerContent() {
                   : "bg-white border border-slate-200 text-slate-700 hover:bg-slate-50"
               }`}
             >
-              செயலில் உள்ள பட்டியல் ({products.length})
+              {isTa ? `செயலில் உள்ள பட்டியல் (${products.length})` : `Active Catalog (${products.length})`}
             </button>
             <button
               type="button"
@@ -362,7 +369,7 @@ function ProductsManagerContent() {
               }`}
             >
               <Trash2 className="w-3.5 h-3.5 text-rose-500" />
-              <span>குப்பைத் தொட்டி ({deletedProducts.length})</span>
+              <span>{isTa ? `குப்பைத் தொட்டி (${deletedProducts.length})` : `Trash (${deletedProducts.length})`}</span>
             </button>
           </div>
         </div>
@@ -375,7 +382,7 @@ function ProductsManagerContent() {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="பெயர், கறிக்கட்டு அல்லது விளக்கம் கொண்டு தேடுங்கள்..."
+              placeholder={isTa ? "பெயர், கறிக்கட்டு அல்லது விளக்கம் கொண்டு தேடுங்கள்..." : "Search by name, cut or description..."}
               className="w-full pl-9 pr-3.5 py-2 rounded-xl border border-slate-200 bg-slate-50/50 text-xs sm:text-sm text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-[#287A45] focus:bg-white"
             />
           </div>
@@ -384,10 +391,10 @@ function ProductsManagerContent() {
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
-              aria-label="பிரிவு வாரியாக வடிகட்டு"
+              aria-label={isTa ? "பிரிவு வாரியாக வடிகட்டு" : "Filter by category"}
               className="px-3 py-2 rounded-xl border border-slate-200 bg-white text-xs sm:text-sm text-slate-700 focus:ring-2 focus:ring-[#287A45] focus:outline-hidden"
             >
-              <option value="all">அனைத்துப் பிரிவுகளும்</option>
+              <option value="all">{isTa ? "அனைத்துப் பிரிவுகளும்" : "All Categories"}</option>
               {categories.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.name}
@@ -398,23 +405,23 @@ function ProductsManagerContent() {
             <select
               value={availabilityFilter}
               onChange={(e) => setAvailabilityFilter(e.target.value)}
-              aria-label="இருப்பு நிலை வாரியாக வடிகட்டு"
+              aria-label={isTa ? "இருப்பு நிலை வாரியாக வடிகட்டு" : "Filter by stock availability"}
               className="px-3 py-2 rounded-xl border border-slate-200 bg-white text-xs sm:text-sm text-slate-700 focus:ring-2 focus:ring-[#287A45] focus:outline-hidden"
             >
-              <option value="all">அனைத்து இருப்பு நிலைகளும்</option>
-              <option value="available">இருப்பில் உள்ளவை மட்டும்</option>
-              <option value="out_of_stock">இருப்பு இல்லாதவை மட்டும்</option>
+              <option value="all">{isTa ? "அனைத்து இருப்பு நிலைகளும்" : "All Availability"}</option>
+              <option value="available">{isTa ? "இருப்பில் உள்ளவை மட்டும்" : "In Stock Only"}</option>
+              <option value="out_of_stock">{isTa ? "இருப்பு இல்லாதவை மட்டும்" : "Out of Stock Only"}</option>
             </select>
 
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              aria-label="காட்சி நிலை வாரியாக வடிகட்டு"
+              aria-label={isTa ? "காட்சி நிலை வாரியாக வடிகட்டு" : "Filter by display status"}
               className="px-3 py-2 rounded-xl border border-slate-200 bg-white text-xs sm:text-sm text-slate-700 focus:ring-2 focus:ring-[#287A45] focus:outline-hidden"
             >
-              <option value="all">அனைத்து நிலைகளும்</option>
-              <option value="active">செயலில் உள்ளவை</option>
-              <option value="inactive">செயலற்றவை</option>
+              <option value="all">{isTa ? "அனைத்து நிலைகளும்" : "All Statuses"}</option>
+              <option value="active">{isTa ? "செயலில் உள்ளவை" : "Active Only"}</option>
+              <option value="inactive">{isTa ? "செயலற்றவை" : "Inactive Only"}</option>
             </select>
 
             {(search || categoryFilter !== "all" || availabilityFilter !== "all" || statusFilter !== "all") && (
@@ -428,7 +435,7 @@ function ProductsManagerContent() {
                 }}
                 className="px-3 py-2 rounded-xl text-xs font-semibold text-rose-600 hover:bg-rose-50 border border-transparent"
               >
-                வடிகட்டிகளை மீட்டமை
+                {isTa ? "வடிகட்டிகளை மீட்டமை" : "Reset Filters"}
               </button>
             )}
           </div>
@@ -440,12 +447,22 @@ function ProductsManagerContent() {
             <div className="p-12 text-center">
               <ImageIcon className="w-10 h-10 text-slate-300 mx-auto mb-2" />
               <p className="text-sm font-bold text-slate-800">
-                {activeTab === "trash" ? "குப்பைத் தொட்டி காலியாக உள்ளது" : "பொருட்கள் எதுவும் கிடைக்கவில்லை"}
+                {activeTab === "trash"
+                  ? isTa
+                    ? "குப்பைத் தொட்டி காலியாக உள்ளது"
+                    : "Trash is empty"
+                  : isTa
+                  ? "பொருட்கள் எதுவும் கிடைக்கவில்லை"
+                  : "No products found"}
               </p>
               <p className="text-xs text-slate-500 mt-1">
                 {activeTab === "trash"
-                  ? "நீக்கப்பட்ட பொருட்கள் இங்கு தோன்றும்; எப்போது வேண்டுமானாலும் மீட்டெடுக்கலாம்."
-                  : "தேடல் வார்த்தையை மாற்றவும் அல்லது புதிய பொருளைச் சேர்க்கவும்."}
+                  ? isTa
+                    ? "நீக்கப்பட்ட பொருட்கள் இங்கு தோன்றும்; எப்போது வேண்டுமானாலும் மீட்டெடுக்கலாம்."
+                    : "Deleted products will appear here and can be restored anytime."
+                  : isTa
+                  ? "தேடல் வார்த்தையை மாற்றவும் அல்லது புதிய பொருளைச் சேர்க்கவும்."
+                  : "Try adjusting your search or add a new product."}
               </p>
             </div>
           ) : (
@@ -453,18 +470,18 @@ function ProductsManagerContent() {
               <table className="w-full text-left text-xs sm:text-sm text-slate-700">
                 <thead className="bg-slate-50/80 border-b border-slate-200 text-slate-500 text-[11px] font-bold uppercase tracking-wider">
                   <tr>
-                    <th className="py-3 px-4">பொருள்</th>
-                    <th className="py-3 px-4">பிரிவு</th>
-                    <th className="py-3 px-4">விலை / அலகு</th>
-                    <th className="py-3 px-4">இருப்பு</th>
-                    <th className="py-3 px-4">சிறப்பு</th>
-                    <th className="py-3 px-4">நிலை</th>
-                    <th className="py-3 px-4 text-right">செயல்கள்</th>
+                    <th className="py-3 px-4">{isTa ? "பொருள்" : "Product"}</th>
+                    <th className="py-3 px-4">{isTa ? "பிரிவு" : "Category"}</th>
+                    <th className="py-3 px-4">{isTa ? "விலை / அலகு" : "Price / Unit"}</th>
+                    <th className="py-3 px-4">{isTa ? "இருப்பு" : "Stock"}</th>
+                    <th className="py-3 px-4">{isTa ? "சிறப்பு" : "Featured"}</th>
+                    <th className="py-3 px-4">{isTa ? "நிலை" : "Status"}</th>
+                    <th className="py-3 px-4 text-right">{isTa ? "செயல்கள்" : "Actions"}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
                   {filteredProducts.map((p) => {
-                    const catName = categoryMap.get(p.categoryId) ?? "பிரிவு இல்லை";
+                    const catName = categoryMap.get(p.categoryId) ?? (isTa ? "பிரிவு இல்லை" : "Uncategorized");
                     const isOutOfStock = p.availability === "out_of_stock";
 
                     return (
@@ -479,7 +496,7 @@ function ProductsManagerContent() {
                             <div className="min-w-0">
                               <p className="font-bold text-slate-900 truncate">{p.name}</p>
                               <p className="text-[11px] text-slate-500 truncate max-w-xs">
-                                {p.description || "தினசரி புதிய வெட்டு"}
+                                {p.description || (isTa ? "தினசரி புதிய வெட்டு" : "Daily fresh farm cut")}
                               </p>
                             </div>
                           </div>
@@ -504,14 +521,14 @@ function ProductsManagerContent() {
                             ) : (
                               <CheckCircle2 className="w-3 h-3" />
                             )}
-                            {isOutOfStock ? "இருப்பு இல்லை" : "இருப்பில் உள்ளது"}
+                            {isOutOfStock ? (isTa ? "இருப்பு இல்லை" : "Out of Stock") : (isTa ? "இருப்பில் உள்ளது" : "In Stock")}
                           </span>
                         </td>
                         <td className="py-3 px-4 whitespace-nowrap">
                           {p.isFeatured ? (
                             <span className="inline-flex items-center gap-1 text-xs font-semibold text-amber-600">
                               <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-500" />
-                              <span>சிறப்பு</span>
+                              <span>{isTa ? "சிறப்பு" : "Featured"}</span>
                             </span>
                           ) : (
                             <span className="text-slate-400 text-xs">—</span>
@@ -525,7 +542,7 @@ function ProductsManagerContent() {
                                 : "bg-slate-100 text-slate-400"
                             }`}
                           >
-                            {p.isActive ? "செயலில்" : "செயலற்றது"}
+                            {p.isActive ? (isTa ? "செயலில்" : "Active") : (isTa ? "செயலற்றது" : "Inactive")}
                           </span>
                         </td>
                         <td className="py-3 px-4 whitespace-nowrap text-right">
@@ -535,7 +552,7 @@ function ProductsManagerContent() {
                                 type="button"
                                 onClick={() => openEditModal(p)}
                                 className="p-1.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-[#EDF7EE] hover:text-[#287A45] hover:border-[#C7E4CA] transition-colors"
-                                title="பொருளைத் திருத்து"
+                                title={isTa ? "பொருளைத் திருத்து" : "Edit product"}
                               >
                                 <Edit2 className="w-4 h-4" />
                               </button>
@@ -543,7 +560,7 @@ function ProductsManagerContent() {
                                 type="button"
                                 onClick={() => setDeleteTarget(p)}
                                 className="p-1.5 rounded-lg border border-slate-200 text-rose-600 hover:bg-rose-50 hover:border-rose-200 transition-colors"
-                                title="குப்பைத் தொட்டிக்கு நகர்த்து"
+                                title={isTa ? "குப்பைத் தொட்டிக்கு நகர்த்து" : "Move to trash"}
                               >
                                 <Trash2 className="w-4 h-4" />
                               </button>
@@ -554,16 +571,16 @@ function ProductsManagerContent() {
                                 type="button"
                                 onClick={() => handleRestore(p)}
                                 className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 text-xs font-semibold"
-                                title="மீட்டெடு"
+                                title={isTa ? "மீட்டெடு" : "Restore"}
                               >
                                 <RotateCcw className="w-3.5 h-3.5" />
-                                <span>மீட்டெடு</span>
+                                <span>{isTa ? "மீட்டெடு" : "Restore"}</span>
                               </button>
                               <button
                                 type="button"
                                 onClick={() => setPermanentDeleteTarget(p)}
                                 className="p-1.5 rounded-lg text-rose-600 hover:bg-rose-50 border border-rose-200"
-                                title="நிரந்தரமாக நீக்கு"
+                                title={isTa ? "நிரந்தரமாக நீக்கு" : "Delete permanently"}
                               >
                                 <Trash2 className="w-4 h-4" />
                               </button>
@@ -591,10 +608,18 @@ function ProductsManagerContent() {
             <div className="flex items-center justify-between border-b border-slate-100 pb-4">
               <div>
                 <h2 className="text-lg font-bold text-slate-900">
-                  {editingId ? "பொருளைத் திருத்து" : "புதிய கோழிக்கறி பொருள் சேர்க்க"}
+                  {editingId
+                    ? isTa
+                      ? "பொருளைத் திருத்து"
+                      : "Edit Product"
+                    : isTa
+                    ? "புதிய கோழிக்கறி பொருள் சேர்க்க"
+                    : "Add New Chicken Product"}
                 </h2>
                 <p className="text-xs text-slate-500">
-                  கறிக்கட்டு விவரங்கள், விலை, இருப்பு நிலை மற்றும் படங்களைச் சேமிக்கவும்.
+                  {isTa
+                    ? "கறிக்கட்டு விவரங்கள், விலை, இருப்பு நிலை மற்றும் படங்களைச் சேமிக்கவும்."
+                    : "Configure cut details, pricing, inventory availability, and photos."}
                 </p>
               </div>
               <button
@@ -616,21 +641,21 @@ function ProductsManagerContent() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                    பொருளின் பெயர் *
+                    {isTa ? "பொருளின் பெயர் *" : "Product Name *"}
                   </label>
                   <input
                     type="text"
                     required
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    placeholder="எ.கா: பண்ணை புதிய கறிக்கட் சிக்கன்"
+                    placeholder={isTa ? "எ.கா: பண்ணை புதிய கறிக்கட் சிக்கன்" : "e.g. Farm Fresh Curry Cut Chicken"}
                     className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50/50 text-sm focus:bg-white focus:ring-2 focus:ring-[#287A45] focus:outline-hidden"
                   />
                 </div>
 
                 <div>
                   <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                    பிரிவு *
+                    {isTa ? "பிரிவு *" : "Category *"}
                   </label>
                   <select
                     value={form.categoryId}
@@ -649,7 +674,7 @@ function ProductsManagerContent() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                    விலை (₹) *
+                    {isTa ? "விலை (₹) *" : "Price (₹) *"}
                   </label>
                   <input
                     type="number"
@@ -664,14 +689,14 @@ function ProductsManagerContent() {
 
                 <div>
                   <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                    அலகு (Unit) *
+                    {isTa ? "அலகு (Unit) *" : "Unit *"}
                   </label>
                   <input
                     type="text"
                     required
                     value={form.unit}
                     onChange={(e) => setForm({ ...form, unit: e.target.value })}
-                    placeholder="1 கிலோ, 500 கிராம், 6 முட்டைகள்"
+                    placeholder={isTa ? "1 கிலோ, 500 கிராம், 6 முட்டைகள்" : "1 kg, 500 g, 6 pcs"}
                     className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50/50 text-sm focus:bg-white focus:ring-2 focus:ring-[#287A45] focus:outline-hidden"
                   />
                 </div>
@@ -679,23 +704,31 @@ function ProductsManagerContent() {
 
               <div>
                 <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                  விளக்கம்
+                  {isTa ? "விளக்கம்" : "Description"}
                 </label>
                 <textarea
                   rows={2}
                   value={form.description}
                   onChange={(e) => setForm({ ...form, description: e.target.value })}
-                  placeholder="வீட்டுக் குழம்பு மற்றும் கிரேவிக்கு ஏற்ற சுத்தமான துண்டுகள்..."
+                  placeholder={
+                    isTa
+                      ? "வீட்டுக் குழம்பு மற்றும் கிரேவிக்கு ஏற்ற சுத்தமான துண்டுகள்..."
+                      : "Tender and hygienically cleaned cuts ideal for curry and gravy..."
+                  }
                   className="w-full px-3.5 py-2 rounded-xl border border-slate-200 bg-slate-50/50 text-sm focus:bg-white focus:ring-2 focus:ring-[#287A45] focus:outline-hidden"
                 />
               </div>
 
               {/* Main Image */}
               <ImagePickerInput
-                label="முக்கியப் புகைப்படம் *"
+                label={isTa ? "முக்கியப் புகைப்படம் *" : "Primary Photo *"}
                 value={form.image}
                 onChange={(img) => setForm({ ...form, image: img })}
-                helperText="தெளிவான இறைச்சிப் புகைப்படம் அல்லது PNG கட்அவுட் (அதிகபட்சம் 5MB)."
+                helperText={
+                  isTa
+                    ? "தெளிவான இறைச்சிப் புகைப்படம் அல்லது PNG கட்அவுட் (அதிகபட்சம் 5MB)."
+                    : "Clear product image or PNG cutout (maximum 5MB)."
+                }
                 category="products"
               />
 
@@ -703,7 +736,9 @@ function ProductsManagerContent() {
               <div className="space-y-2 pt-2 border-t border-slate-100">
                 <div className="flex items-center justify-between">
                   <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
-                    கூடுதல் புகைப்படங்கள் ({form.galleryImages.length})
+                    {isTa
+                      ? `கூடுதல் புகைப்படங்கள் (${form.galleryImages.length})`
+                      : `Additional Gallery Photos (${form.galleryImages.length})`}
                   </label>
                   <input
                     ref={extraFileRef}
@@ -718,7 +753,7 @@ function ProductsManagerContent() {
                     className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg border border-slate-200 bg-slate-50 text-xs font-semibold text-[#287A45] hover:bg-[#EDF7EE]"
                   >
                     <Upload className="w-3.5 h-3.5" />
-                    <span>படம் பதிவேற்று</span>
+                    <span>{isTa ? "படம் பதிவேற்று" : "Upload Photo"}</span>
                   </button>
                 </div>
 
@@ -735,7 +770,7 @@ function ProductsManagerContent() {
                             <button
                               type="button"
                               onClick={() => setAsMainImage(imgUrl)}
-                              title="முக்கிய படமாக அமை"
+                              title={isTa ? "முக்கிய படமாக அமை" : "Set as primary"}
                               className="text-[10px] bg-[#287A45] px-1.5 py-0.5 rounded font-bold"
                             >
                               Main
@@ -743,7 +778,7 @@ function ProductsManagerContent() {
                             <button
                               type="button"
                               onClick={() => removeGalleryImage(idx)}
-                              title="நீக்கு"
+                              title={isTa ? "நீக்கு" : "Remove"}
                               className="p-1 rounded bg-rose-600 text-white"
                             >
                               <X className="w-3 h-3" />
@@ -778,7 +813,7 @@ function ProductsManagerContent() {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-3 border-t border-slate-100">
                 <div>
                   <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                    இருப்பு நிலை
+                    {isTa ? "இருப்பு நிலை" : "Stock Status"}
                   </label>
                   <select
                     value={form.availability}
@@ -787,8 +822,12 @@ function ProductsManagerContent() {
                     }
                     className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white text-xs font-semibold text-slate-800"
                   >
-                    <option value="available">இருப்பில் உள்ளது (Available)</option>
-                    <option value="out_of_stock">இருப்பு இல்லை (Out of Stock)</option>
+                    <option value="available">
+                      {isTa ? "இருப்பில் உள்ளது (Available)" : "In Stock (Available)"}
+                    </option>
+                    <option value="out_of_stock">
+                      {isTa ? "இருப்பு இல்லை (Out of Stock)" : "Out of Stock"}
+                    </option>
                   </select>
                 </div>
 
@@ -801,7 +840,7 @@ function ProductsManagerContent() {
                     className="w-4 h-4 rounded text-[#287A45] focus:ring-[#287A45] border-slate-300"
                   />
                   <label htmlFor="featured-toggle" className="text-xs font-bold text-slate-700">
-                    முகப்பில் சிறப்பித்துக் காட்டு
+                    {isTa ? "முகப்பில் சிறப்பித்துக் காட்டு" : "Feature on Homepage"}
                   </label>
                 </div>
 
@@ -814,7 +853,7 @@ function ProductsManagerContent() {
                     className="w-4 h-4 rounded text-[#287A45] focus:ring-[#287A45] border-slate-300"
                   />
                   <label htmlFor="active-toggle" className="text-xs font-bold text-slate-700">
-                    கடை முகப்பில் நேரலையாகக் காட்டு
+                    {isTa ? "கடை முகப்பில் நேரலையாகக் காட்டு" : "Active in Storefront"}
                   </label>
                 </div>
               </div>
@@ -826,14 +865,24 @@ function ProductsManagerContent() {
                   onClick={() => setModalOpen(false)}
                   className="px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50"
                 >
-                  ரத்து செய்
+                  {isTa ? "ரத்து செய்" : "Cancel"}
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
                   className="px-5 py-2.5 rounded-xl bg-[#287A45] hover:bg-[#1E5F35] disabled:opacity-60 text-white text-xs font-semibold shadow-md shadow-[#287A45]/20"
                 >
-                  {submitting ? "சேமிக்கப்படுகிறது..." : editingId ? "மாற்றங்களைச் சேமி" : "பொருளைச் சேமி"}
+                  {submitting
+                    ? isTa
+                      ? "சேமிக்கப்படுகிறது..."
+                      : "Saving..."
+                    : editingId
+                    ? isTa
+                      ? "மாற்றங்களைச் சேமி"
+                      : "Save Changes"
+                    : isTa
+                    ? "பொருளைச் சேமி"
+                    : "Save Product"}
                 </button>
               </div>
             </form>
@@ -844,9 +893,13 @@ function ProductsManagerContent() {
       {/* Confirmation Dialog for Soft Delete */}
       <ConfirmDialog
         open={Boolean(deleteTarget)}
-        title="பொருளை குப்பைத் தொட்டிக்கு நகர்த்தவா?"
-        description={`"${deleteTarget?.name}" வாடிக்கையாளர் தளத்தில் இருந்து மறைக்கப்படும். குப்பைத் தொட்டி பிரிவில் இருந்து எப்போது வேண்டுமானாலும் மீட்டெடுக்கலாம்.`}
-        confirmLabel="குப்பைத் தொட்டிக்கு நகர்த்து"
+        title={isTa ? "பொருளை குப்பைத் தொட்டிக்கு நகர்த்தவா?" : "Move product to trash?"}
+        description={
+          isTa
+            ? `"${deleteTarget?.name}" வாடிக்கையாளர் தளத்தில் இருந்து மறைக்கப்படும். குப்பைத் தொட்டி பிரிவில் இருந்து எப்போது வேண்டுமானாலும் மீட்டெடுக்கலாம்.`
+            : `"${deleteTarget?.name}" will be hidden from customer storefront. You can restore it from the trash anytime.`
+        }
+        confirmLabel={isTa ? "குப்பைத் தொட்டிக்கு நகர்த்து" : "Move to Trash"}
         variant="danger"
         onConfirm={handleSoftDelete}
         onCancel={() => setDeleteTarget(null)}
@@ -855,9 +908,13 @@ function ProductsManagerContent() {
       {/* Confirmation Dialog for Permanent Delete */}
       <ConfirmDialog
         open={Boolean(permanentDeleteTarget)}
-        title="பொருளை நிரந்தரமாக நீக்கவா?"
-        description={`"${permanentDeleteTarget?.name}" தரவுத்தளத்தில் இருந்து நிரந்தரமாக நீக்கப்படும். இந்தச் செயலை மாற்றியமைக்க முடியாது.`}
-        confirmLabel="நிரந்தரமாக நீக்கு"
+        title={isTa ? "பொருளை நிரந்தரமாக நீக்கவா?" : "Permanently delete product?"}
+        description={
+          isTa
+            ? `"${permanentDeleteTarget?.name}" தரவுத்தளத்தில் இருந்து நிரந்தரமாக நீக்கப்படும். இந்தச் செயலை மாற்றியமைக்க முடியாது.`
+            : `"${permanentDeleteTarget?.name}" will be permanently removed from database. This action cannot be undone.`
+        }
+        confirmLabel={isTa ? "நிரந்தரமாக நீக்கு" : "Delete Permanently"}
         variant="danger"
         onConfirm={handlePermanentDelete}
         onCancel={() => setPermanentDeleteTarget(null)}
@@ -868,7 +925,7 @@ function ProductsManagerContent() {
 
 export default function AdminProductsPage() {
   return (
-    <Suspense fallback={<div className="p-8 text-center text-sm text-slate-500">பொருட்கள் பட்டியல் ஏற்றப்படுகிறது...</div>}>
+    <Suspense fallback={<div className="p-8 text-center text-sm text-slate-500">Loading products catalog...</div>}>
       <ProductsManagerContent />
     </Suspense>
   );

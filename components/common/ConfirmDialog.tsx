@@ -3,6 +3,7 @@
 import React from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { AlertTriangle, X } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface ConfirmDialogProps {
   open: boolean;
@@ -19,12 +20,16 @@ export function ConfirmDialog({
   open,
   title,
   description,
-  confirmLabel = "நீக்குவதை உறுதிசெய்",
-  cancelLabel = "ரத்து செய்",
+  confirmLabel,
+  cancelLabel,
   variant = "danger",
   onConfirm,
   onCancel,
 }: ConfirmDialogProps) {
+  const { language } = useLanguage();
+  const resolvedConfirm = confirmLabel || (language === "ta" ? "நீக்குவதை உறுதிசெய்" : "Confirm");
+  const resolvedCancel = cancelLabel || (language === "ta" ? "ரத்து செய்" : "Cancel");
+
   return (
     <AnimatePresence>
       {open && (
@@ -78,7 +83,7 @@ export function ConfirmDialog({
                 onClick={onCancel}
                 className="px-4 py-2 text-sm font-medium rounded-lg border border-[#C7E4CA] text-[#26352B] hover:bg-[#EDF7EE] transition-colors"
               >
-                {cancelLabel}
+                {resolvedCancel}
               </button>
               <button
                 type="button"
@@ -89,7 +94,7 @@ export function ConfirmDialog({
                     : "bg-[#287A45] hover:bg-[#1E5F35]"
                 }`}
               >
-                {confirmLabel}
+                {resolvedConfirm}
               </button>
             </div>
           </motion.div>

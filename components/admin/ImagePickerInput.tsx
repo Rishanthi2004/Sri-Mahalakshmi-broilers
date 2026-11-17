@@ -4,6 +4,7 @@ import React, { useRef, useState } from "react";
 import { Image as ImageIcon, Loader2, Upload, X } from "lucide-react";
 import { readFileAsDataUrl } from "@/services/storage";
 import { useMediaItems } from "@/services/use-store-data";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface ImagePickerInputProps {
   label: string;
@@ -21,6 +22,7 @@ export function ImagePickerInput({
 }: ImagePickerInputProps) {
   const fileRef = useRef<HTMLInputElement>(null);
   const { media } = useMediaItems();
+  const { language } = useLanguage();
   const [galleryOpen, setGalleryOpen] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
@@ -30,7 +32,11 @@ export function ImagePickerInput({
     if (!file) return;
 
     if (file.size > 5 * 1024 * 1024) {
-      setUploadError("படத்தின் அளவு 5 MB வரம்பை விட அதிகமாக உள்ளது.");
+      setUploadError(
+        language === "ta"
+          ? "படத்தின் அளவு 5 MB வரம்பை விட அதிகமாக உள்ளது."
+          : "Image size exceeds the 5 MB limit."
+      );
       if (fileRef.current) fileRef.current.value = "";
       return;
     }
@@ -42,7 +48,11 @@ export function ImagePickerInput({
       const dataUrl = await readFileAsDataUrl(file);
       onChange(dataUrl);
     } catch {
-      setUploadError("படத்தைப் படிக்க முடியவில்லை");
+      setUploadError(
+        language === "ta"
+          ? "படத்தைப் படிக்க முடியவில்லை"
+          : "Unable to read the selected image file."
+      );
     } finally {
       setIsUploading(false);
       if (fileRef.current) fileRef.current.value = "";
@@ -72,7 +82,11 @@ export function ImagePickerInput({
             type="text"
             value={value}
             onChange={(e) => onChange(e.target.value)}
-            placeholder="/images/... அல்லது /uploads/..."
+            placeholder={
+              language === "ta"
+                ? "/images/... அல்லது /uploads/..."
+                : "/images/... or /uploads/..."
+            }
             className="w-full px-3.5 py-2 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white text-xs sm:text-sm text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-[#287A45] focus:border-transparent transition-all"
           />
           <div className="flex flex-wrap items-center gap-2">
@@ -94,7 +108,15 @@ export function ImagePickerInput({
               ) : (
                 <Upload className="w-3.5 h-3.5" />
               )}
-              <span>{isUploading ? "பதிவேற்றப்படுகிறது..." : "கோப்பு பதிவேற்று (அதிகபட்சம் 5MB)"}</span>
+              <span>
+                {isUploading
+                  ? language === "ta"
+                    ? "பதிவேற்றப்படுகிறது..."
+                    : "Uploading..."
+                  : language === "ta"
+                  ? "கோப்பு பதிவேற்று (அதிகபட்சம் 5MB)"
+                  : "Upload File (max 5MB)"}
+              </span>
             </button>
 
             <button
@@ -103,7 +125,15 @@ export function ImagePickerInput({
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold transition-colors"
             >
               <ImageIcon className="w-3.5 h-3.5 text-[#287A45]" />
-              <span>{galleryOpen ? "நூலகத்தை மூடு" : "ஊடகத்திலிருந்து தேர்வு செய்"}</span>
+              <span>
+                {galleryOpen
+                  ? language === "ta"
+                    ? "நூலகத்தை மூடு"
+                    : "Close Library"
+                  : language === "ta"
+                  ? "ஊடகத்திலிருந்து தேர்வு செய்"
+                  : "Choose from Media"}
+              </span>
             </button>
 
             {value && (
@@ -113,7 +143,7 @@ export function ImagePickerInput({
                 className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-rose-600 hover:bg-rose-50 transition-colors"
               >
                 <X className="w-3.5 h-3.5" />
-                <span>நீக்கு</span>
+                <span>{language === "ta" ? "நீக்கு" : "Remove"}</span>
               </button>
             )}
           </div>

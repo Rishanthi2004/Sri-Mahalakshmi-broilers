@@ -16,21 +16,28 @@ import {
 import { AdminShell } from "@/components/admin/AdminShell";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { useToast } from "@/components/common/ToastProvider";
+import { useLanguage } from "@/context/LanguageContext";
 import { mediaService } from "@/services/media-enquiry-service";
 import { readFileAsDataUrl } from "@/services/storage";
 import { MediaCategory, MediaItem } from "@/types";
 
-const MEDIA_CATEGORIES: { id: "all" | MediaCategory; label: string }[] = [
-  { id: "all", label: "அனைத்து கோப்புகளும்" },
-  { id: "products", label: "பொருட்கள் புகைப்படங்கள்" },
-  { id: "banners", label: "பேனர்கள்" },
-  { id: "categories", label: "பிரிவுகள்" },
-  { id: "about", label: "எங்களைப் பற்றி & கடை" },
-  { id: "branding", label: "பிராண்டிங் & லோகோ" },
-];
-
 export default function AdminMediaPage() {
   const { showToast } = useToast();
+  const { language } = useLanguage();
+  const isTa = language === "ta";
+
+  const mediaCategories = useMemo(
+    () => [
+      { id: "all" as const, label: isTa ? "அனைத்து கோப்புகளும்" : "All Media" },
+      { id: "products" as const, label: isTa ? "பொருட்கள் புகைப்படங்கள்" : "Products" },
+      { id: "banners" as const, label: isTa ? "பேனர்கள்" : "Banners" },
+      { id: "categories" as const, label: isTa ? "பிரிவுகள்" : "Categories" },
+      { id: "about" as const, label: isTa ? "எங்களைப் பற்றி & கடை" : "About & Store" },
+      { id: "branding" as const, label: isTa ? "பிராண்டிங் & லோகோ" : "Branding & Logos" },
+    ],
+    [isTa]
+  );
+
   const [mediaList, setMediaList] = useState<MediaItem[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -73,7 +80,7 @@ export default function AdminMediaPage() {
     if (!file) return;
 
     if (file.size > 5 * 1024 * 1024) {
-      setUploadError("படத்தின் அளவு 5 MB வரம்பை விட அதிகமாக உள்ளது.");
+      setUploadError(isTa ? "படத்தின் அளவு 5 MB வரம்பை விட அதிகமாக உள்ளது." : "Image size exceeds the 5 MB limit.");
       return;
     }
 
@@ -86,9 +93,9 @@ export default function AdminMediaPage() {
       if (!newTitle) {
         setNewTitle(file.name.replace(/\.[^.]+$/, ""));
       }
-      showToast("புகைப்படம் வெற்றிகரமாகப் பதிவேற்றப்பட்டது", { type: "success" });
+      showToast(isTa ? "புகைப்படம் வெற்றிகரமாகப் பதிவேற்றப்பட்டது" : "Image uploaded successfully", { type: "success" });
     } catch {
-      setUploadError("படத்தைப் படிக்க முடியவில்லை.");
+      setUploadError(isTa ? "படத்தைப் படிக்க முடியவில்லை." : "Failed to read image file.");
     } finally {
       setIsUploading(false);
       if (uploadInputRef.current) uploadInputRef.current.value = "";
@@ -98,7 +105,7 @@ export default function AdminMediaPage() {
   const handleSaveModal = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!uploadedUrl || !newTitle.trim()) {
-      setUploadError("புகைப்படம் மற்றும் தலைப்பை உள்ளிடவும்.");
+      setUploadError(isTa ? "புகைப்படம் மற்றும் தலைப்பை உள்ளிடவும்." : "Please provide both an image and title.");
       return;
     }
 
@@ -107,7 +114,7 @@ export default function AdminMediaPage() {
       url: uploadedUrl,
       category: newCategory,
     });
-    showToast("ஊடகக் கோப்பு நூலகத்தில் சேர்க்கப்பட்டது");
+    showToast(isTa ? "ஊடகக் கோப்பு நூலகத்தில் சேர்க்கப்பட்டது" : "Media asset added to library");
 
     setUploadModal(false);
     setNewTitle("");
@@ -121,10 +128,10 @@ export default function AdminMediaPage() {
 
     try {
       mediaService.remove(deleteTarget.id);
-      showToast("கோப்பு நூலகத்திலிருந்து நீக்கப்பட்டது", { description: deleteTarget.title });
+      showToast(isTa ? "கோப்பு நூலகத்திலிருந்து நீக்கப்பட்டது" : "Asset removed from media library", { description: deleteTarget.title });
       loadMedia();
     } catch {
-      showToast("நீக்கும் செயல்பாடு தோல்வியடைந்தது", { type: "danger" });
+      showToast(isTa ? "நீக்கும் செயல்பாடு தோல்வியடைந்தது" : "Failed to delete media asset", { type: "danger" });
     } finally {
       setDeleteTarget(null);
     }
@@ -132,15 +139,19 @@ export default function AdminMediaPage() {
 
   return (
     <AdminShell
-      title="ஊடக நூலகம்"
-      subtitle="உயர்தர புகைப்படங்கள், பேனர்கள் மற்றும் லோகோ கோப்புகளைப் பதிவேற்றி நிர்வகித்தல்"
+      title={isTa ? "ஊடக நூலகம்" : "Media Library"}
+      subtitle={
+        isTa
+          ? "உயர்தர புகைப்படங்கள், பேனர்கள் மற்றும் லோகோ கோப்புகளைப் பதிவேற்றி நிர்வகித்தல்"
+          : "Upload and manage product photos, promotional banners, and branding assets"
+      }
       actions={
         <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={loadMedia}
             className="p-2 rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 shadow-2xs"
-            title="புதுப்பி"
+            title={isTa ? "புதுப்பி" : "Refresh"}
           >
             <RefreshCw className={`w-4 h-4 text-[#287A45] ${loading ? "animate-spin" : ""}`} />
           </button>
@@ -155,7 +166,7 @@ export default function AdminMediaPage() {
             className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#287A45] hover:bg-[#1E5F35] text-white text-xs sm:text-sm font-semibold shadow-md shadow-[#287A45]/25 transition-all"
           >
             <Upload className="w-4 h-4" />
-            <span>படம் பதிவேற்று (அதிகபட்சம் 5MB)</span>
+            <span>{isTa ? "படம் பதிவேற்று (அதிகபட்சம் 5MB)" : "Upload Asset (Max 5MB)"}</span>
           </button>
         </div>
       }
@@ -169,7 +180,9 @@ export default function AdminMediaPage() {
                 <AlertTriangle className="w-5 h-5" />
               </div>
               <div>
-                <p className="text-sm font-bold">நேரலை இணையதள பாதுகாப்பு எச்சரிக்கை</p>
+                <p className="text-sm font-bold">
+                  {isTa ? "நேரலை இணையதள பாதுகாப்பு எச்சரிக்கை" : "Live Storefront Protection Warning"}
+                </p>
                 <p className="text-xs text-amber-800 mt-1 leading-relaxed">
                   {protectionWarning}
                 </p>
@@ -187,7 +200,7 @@ export default function AdminMediaPage() {
 
         {/* Category Pills Filter */}
         <div className="flex flex-wrap items-center gap-2">
-          {MEDIA_CATEGORIES.map((cat) => {
+          {mediaCategories.map((cat) => {
             const active = filterCat === cat.id;
             return (
               <button
@@ -210,8 +223,12 @@ export default function AdminMediaPage() {
         {filtered.length === 0 ? (
           <div className="p-12 text-center bg-white rounded-2xl border border-slate-200">
             <ImageIcon className="w-10 h-10 text-slate-300 mx-auto mb-2" />
-            <p className="text-sm font-bold text-slate-800">இப்பிரிவில் ஊடகக் கோப்புகள் எதுவும் இல்லை</p>
-            <p className="text-xs text-slate-500 mt-1">உயர்தர JPG, PNG அல்லது WebP படங்களைப் பதிவேற்றவும்.</p>
+            <p className="text-sm font-bold text-slate-800">
+              {isTa ? "இப்பிரிவில் ஊடகக் கோப்புகள் எதுவும் இல்லை" : "No media assets found in this category"}
+            </p>
+            <p className="text-xs text-slate-500 mt-1">
+              {isTa ? "உயர்தர JPG, PNG அல்லது WebP படங்களைப் பதிவேற்றவும்." : "Upload high-resolution JPG, PNG, or WebP files."}
+            </p>
           </div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5">
@@ -232,7 +249,7 @@ export default function AdminMediaPage() {
                         type="button"
                         onClick={() => setPreviewItem(item)}
                         className="p-2 rounded-xl bg-white/90 text-slate-800 hover:bg-white text-xs font-semibold shadow-sm"
-                        title="முன்னோட்டம்"
+                        title={isTa ? "முன்னோட்டம்" : "Preview"}
                       >
                         <Eye className="w-4 h-4" />
                       </button>
@@ -243,7 +260,7 @@ export default function AdminMediaPage() {
                           setDeleteTarget(item);
                         }}
                         className="p-2 rounded-xl bg-rose-600 text-white hover:bg-rose-700 text-xs font-semibold shadow-sm"
-                        title="படத்தை நீக்கு"
+                        title={isTa ? "படத்தை நீக்கு" : "Delete Image"}
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -281,8 +298,14 @@ export default function AdminMediaPage() {
           <div className="relative z-10 w-full max-w-lg bg-white rounded-3xl border border-slate-200 p-6 sm:p-7 shadow-2xl">
             <div className="flex items-center justify-between border-b border-slate-100 pb-4">
               <div>
-                <h2 className="text-lg font-bold text-slate-900">ஊடகக் கோப்பைப் பதிவேற்றவும்</h2>
-                <p className="text-xs text-slate-500">5 MB வரையிலான JPG, PNG மற்றும் WebP படங்களை ஆதரிக்கிறது.</p>
+                <h2 className="text-lg font-bold text-slate-900">
+                  {isTa ? "ஊடகக் கோப்பைப் பதிவேற்றவும்" : "Upload Media Asset"}
+                </h2>
+                <p className="text-xs text-slate-500">
+                  {isTa
+                    ? "5 MB வரையிலான JPG, PNG மற்றும் WebP படங்களை ஆதரிக்கிறது."
+                    : "Supports JPG, PNG, and WebP images up to 5 MB."}
+                </p>
               </div>
               <button
                 type="button"
@@ -302,39 +325,39 @@ export default function AdminMediaPage() {
             <form onSubmit={handleSaveModal} className="mt-5 space-y-4">
               <div>
                 <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                  கோப்பின் தலைப்பு / பெயர் *
+                  {isTa ? "கோப்பின் தலைப்பு / பெயர் *" : "File Title / Label *"}
                 </label>
                 <input
                   type="text"
                   required
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
-                  placeholder="எ.கா: எலும்பில்லா சிக்கன் பிரஸ்ட் வெட்டு"
+                  placeholder={isTa ? "எ.கா: எலும்பில்லா சிக்கன் பிரஸ்ட் வெட்டு" : "e.g. Boneless Chicken Breast Cut"}
                   className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50/50 text-sm focus:bg-white focus:ring-2 focus:ring-[#287A45] focus:outline-hidden"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                  இலக்குப் பிரிவு
+                  {isTa ? "இலக்குப் பிரிவு" : "Target Category"}
                 </label>
                 <select
                   value={newCategory}
                   onChange={(e) => setNewCategory(e.target.value as MediaCategory)}
                   className="w-full px-3.5 py-2 rounded-xl border border-slate-200 bg-white text-xs font-semibold text-slate-800"
                 >
-                  <option value="products">பொருட்கள் (Products)</option>
-                  <option value="banners">பேனர்கள் (Banners)</option>
-                  <option value="categories">பிரிவுகள் (Categories)</option>
-                  <option value="about">எங்களைப் பற்றி &amp; கடை (About &amp; Shop)</option>
-                  <option value="branding">பிராண்டிங் &amp; லோகோ (Branding)</option>
+                  <option value="products">{isTa ? "பொருட்கள் (Products)" : "Products"}</option>
+                  <option value="banners">{isTa ? "பேனர்கள் (Banners)" : "Banners"}</option>
+                  <option value="categories">{isTa ? "பிரிவுகள் (Categories)" : "Categories"}</option>
+                  <option value="about">{isTa ? "எங்களைப் பற்றி & கடை (About & Shop)" : "About & Store"}</option>
+                  <option value="branding">{isTa ? "பிராண்டிங் & லோகோ (Branding)" : "Branding & Logos"}</option>
                 </select>
               </div>
 
               {/* Upload Drop Area */}
               <div>
                 <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                  படக் கோப்பைத் தேர்ந்தெடுக்கவும் (அதிகபட்சம் 5MB)
+                  {isTa ? "படக் கோப்பைத் தேர்ந்தெடுக்கவும் (அதிகபட்சம் 5MB)" : "Select Image File (Max 5MB)"}
                 </label>
                 <input
                   ref={uploadInputRef}
@@ -350,7 +373,7 @@ export default function AdminMediaPage() {
                   {isUploading ? (
                     <div className="flex flex-col items-center">
                       <Loader2 className="w-8 h-8 text-[#287A45] animate-spin mb-2" />
-                      <p className="text-xs font-bold text-slate-700">பதிவேற்றப்படுகிறது...</p>
+                      <p className="text-xs font-bold text-slate-700">{isTa ? "பதிவேற்றப்படுகிறது..." : "Uploading..."}</p>
                     </div>
                   ) : uploadedUrl ? (
                     <div className="flex flex-col items-center">
@@ -360,7 +383,7 @@ export default function AdminMediaPage() {
                         className="w-24 h-24 object-cover rounded-xl border border-slate-200 mb-2"
                       />
                       <span className="text-xs font-bold text-emerald-600 flex items-center gap-1">
-                        <FileCheck className="w-4 h-4" /> சேமிக்கத் தயார்
+                        <FileCheck className="w-4 h-4" /> {isTa ? "சேமிக்கத் தயார்" : "Ready to save"}
                       </span>
                     </div>
                   ) : (
@@ -369,10 +392,10 @@ export default function AdminMediaPage() {
                         <Upload className="w-6 h-6" />
                       </div>
                       <p className="text-xs font-bold text-slate-800">
-                        உங்கள் சாதனத்திலிருந்து கோப்பைத் தேர்ந்தெடுக்க கிளிக் செய்யவும்
+                        {isTa ? "உங்கள் சாதனத்திலிருந்து கோப்பைத் தேர்ந்தெடுக்க கிளிக் செய்யவும்" : "Click to select a file from your device"}
                       </p>
                       <p className="text-[11px] text-slate-400 mt-0.5">
-                        JPG, JPEG, PNG, அல்லது WebP (அதிகபட்சம் 5 MB)
+                        {isTa ? "JPG, JPEG, PNG, அல்லது WebP (அதிகபட்சம் 5 MB)" : "JPG, JPEG, PNG, or WebP (max 5 MB)"}
                       </p>
                     </div>
                   )}
@@ -385,14 +408,14 @@ export default function AdminMediaPage() {
                   onClick={() => setUploadModal(false)}
                   className="px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50"
                 >
-                  ரத்து செய்
+                  {isTa ? "ரத்து செய்" : "Cancel"}
                 </button>
                 <button
                   type="submit"
                   disabled={!uploadedUrl || isUploading}
                   className="px-5 py-2.5 rounded-xl bg-[#287A45] hover:bg-[#1E5F35] disabled:opacity-50 text-white text-xs font-semibold shadow-md shadow-[#287A45]/20"
                 >
-                  ஊடக நூலகத்தில் சேமி
+                  {isTa ? "ஊடக நூலகத்தில் சேமி" : "Save to Media Library"}
                 </button>
               </div>
             </form>
@@ -435,9 +458,13 @@ export default function AdminMediaPage() {
       {/* Delete Confirmation */}
       <ConfirmDialog
         open={Boolean(deleteTarget)}
-        title="ஊடகக் கோப்பை நீக்கவா?"
-        description={`"${deleteTarget?.title}" கோப்பை நிச்சயமாக நீக்க விரும்புகிறீர்களா? இது இணையதளத்தில் ஏதேனும் பகுதியில் பயன்பாட்டில் உள்ளதா என சரிபார்க்கப்பட்டு நீக்கப்படும்.`}
-        confirmLabel="நீக்குவதை உறுதிசெய்"
+        title={isTa ? "ஊடகக் கோப்பை நீக்கவா?" : "Delete Media Asset?"}
+        description={
+          isTa
+            ? `"${deleteTarget?.title}" கோப்பை நிச்சயமாக நீக்க விரும்புகிறீர்களா? இது இணையதளத்தில் ஏதேனும் பகுதியில் பயன்பாட்டில் உள்ளதா என சரிபார்க்கப்பட்டு நீக்கப்படும்.`
+            : `Are you sure you want to delete "${deleteTarget?.title}"? Please ensure it is not active on public pages before removing.`
+        }
+        confirmLabel={isTa ? "நீக்குவதை உறுதிசெய்" : "Confirm Delete"}
         variant="danger"
         onConfirm={handleDeleteAttempt}
         onCancel={() => setDeleteTarget(null)}

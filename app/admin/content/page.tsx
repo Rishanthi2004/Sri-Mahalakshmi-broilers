@@ -7,6 +7,7 @@ import { AdminShell } from "@/components/admin/AdminShell";
 import { ImagePickerInput } from "@/components/admin/ImagePickerInput";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { useToast } from "@/components/common/ToastProvider";
+import { useLanguage } from "@/context/LanguageContext";
 import { DEFAULT_WEBSITE_CONTENT } from "@/data/website-content";
 import { contentService } from "@/services/content-service";
 import { useProducts, useWebsiteContent } from "@/services/use-store-data";
@@ -20,20 +21,22 @@ type ContentTab =
   | "contact"
   | "branding";
 
-const TABS: { id: ContentTab; label: string }[] = [
-  { id: "hero", label: "முகப்பு பேனர் & தலைப்பு" },
-  { id: "featured", label: "சிறப்புப் பொருட்கள்" },
-  { id: "why", label: "எங்கள் சிறப்புகள் & அழைப்பு" },
-  { id: "about", label: "எங்களைப் பற்றி & உரிமையாளர்" },
-  { id: "contact", label: "தொடர்பு, நேரம் & சமூகம்" },
-  { id: "branding", label: "லோகோ & அடிக்குறிப்பு (Footer)" },
-];
-
 function WebsiteContentInner() {
   const searchParams = useSearchParams();
   const { content, reload } = useWebsiteContent();
   const { products } = useProducts();
   const { showToast } = useToast();
+  const { language } = useLanguage();
+  const isTa = language === "ta";
+
+  const tabs: { id: ContentTab; label: string }[] = [
+    { id: "hero", label: isTa ? "முகப்பு பேனர் & தலைப்பு" : "Hero Banner & Headline" },
+    { id: "featured", label: isTa ? "சிறப்புப் பொருட்கள்" : "Featured Products" },
+    { id: "why", label: isTa ? "எங்கள் சிறப்புகள் & அழைப்பு" : "Why Choose Us & CTA" },
+    { id: "about", label: isTa ? "எங்களைப் பற்றி & உரிமையாளர்" : "About Us & Founder" },
+    { id: "contact", label: isTa ? "தொடர்பு, நேரம் & சமூகம்" : "Contact, Hours & Social" },
+    { id: "branding", label: isTa ? "லோகோ & அடிக்குறிப்பு (Footer)" : "Branding & Footer" },
+  ];
 
   const [activeTab, setActiveTab] = useState<ContentTab>("hero");
   const [draft, setDraft] = useState<WebsiteContent>(content);
@@ -46,7 +49,7 @@ function WebsiteContentInner() {
 
   useEffect(() => {
     const paramTab = searchParams.get("tab") as ContentTab | null;
-    if (paramTab && TABS.some((t) => t.id === paramTab)) {
+    if (paramTab && ["hero", "featured", "why", "about", "contact", "branding"].includes(paramTab)) {
       setActiveTab(paramTab);
     }
   }, [searchParams]);
@@ -56,12 +59,14 @@ function WebsiteContentInner() {
     setSaving(true);
     try {
       contentService.update(draft);
-      showToast("வலைத்தள உள்ளடக்கம் சேமிக்கப்பட்டது", {
-        description: "வாடிக்கையாளர் தளத்தில் மாற்றங்கள் உடனடியாகத் தோன்றும்.",
+      showToast(isTa ? "வலைத்தள உள்ளடக்கம் சேமிக்கப்பட்டது" : "Website content saved successfully", {
+        description: isTa
+          ? "வாடிக்கையாளர் தளத்தில் மாற்றங்கள் உடனடியாகத் தோன்றும்."
+          : "Changes are now live on the public storefront.",
       });
       await reload();
     } catch {
-      showToast("பிழை ஏற்பட்டது", { type: "danger" });
+      showToast(isTa ? "பிழை ஏற்பட்டது" : "Failed to save content", { type: "danger" });
     } finally {
       setSaving(false);
     }
@@ -71,7 +76,7 @@ function WebsiteContentInner() {
     contentService.reset();
     setDraft(DEFAULT_WEBSITE_CONTENT);
     setResetOpen(false);
-    showToast("முன்னிருப்பு உள்ளடக்கத்திற்கு மீட்டமைக்கப்பட்டது", { type: "info" });
+    showToast(isTa ? "முன்னிருப்பு உள்ளடக்கத்திற்கு மீட்டமைக்கப்பட்டது" : "Reset to default website content", { type: "info" });
     await reload();
   };
 
@@ -89,8 +94,12 @@ function WebsiteContentInner() {
 
   return (
     <AdminShell
-      title="வலைத்தள உள்ளடக்கம் மேலாண்மை"
-      subtitle="முகப்பு உரை, சிறப்பு கறிக்கட்டுகள், எங்களைப் பற்றி, உரிமையாளர் சுயவிவரம் மற்றும் பிராண்டிங் ஆகியவற்றைத் திருத்துதல்"
+      title={isTa ? "வலைத்தள உள்ளடக்கம் மேலாண்மை" : "Website Content Management"}
+      subtitle={
+        isTa
+          ? "முகப்பு உரை, சிறப்பு கறிக்கட்டுகள், எங்களைப் பற்றி, உரிமையாளர் சுயவிவரம் மற்றும் பிராண்டிங் ஆகியவற்றைத் திருத்துதல்"
+          : "Customize homepage copy, featured chicken cuts, about us, founder profile, and branding"
+      }
       actions={
         <div className="flex items-center gap-2">
           <button
@@ -99,7 +108,7 @@ function WebsiteContentInner() {
             className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-xs sm:text-sm font-semibold text-slate-700 shadow-2xs"
           >
             <RotateCcw className="w-4 h-4" />
-            <span className="hidden sm:inline">முன்னிருப்புக்கு மாற்று</span>
+            <span className="hidden sm:inline">{isTa ? "முன்னிருப்புக்கு மாற்று" : "Reset to Defaults"}</span>
           </button>
           <button
             type="button"
@@ -108,7 +117,15 @@ function WebsiteContentInner() {
             className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#287A45] hover:bg-[#1E5F35] disabled:opacity-60 text-white text-xs sm:text-sm font-semibold shadow-md shadow-[#287A45]/25 transition-all"
           >
             <Save className="w-4 h-4" />
-            <span>{saving ? "சேமிக்கப்படுகிறது..." : "மாற்றங்களைச் சேமி"}</span>
+            <span>
+              {saving
+                ? isTa
+                  ? "சேமிக்கப்படுகிறது..."
+                  : "Saving..."
+                : isTa
+                ? "மாற்றங்களைச் சேமி"
+                : "Save Changes"}
+            </span>
           </button>
         </div>
       }
@@ -116,7 +133,7 @@ function WebsiteContentInner() {
       <form onSubmit={handleSave} className="space-y-6">
         {/* Tabs Bar */}
         <div className="bg-white rounded-2xl border border-slate-200/80 p-2 shadow-xs flex items-center gap-1.5 overflow-x-auto">
-          {TABS.map((tab) => (
+          {tabs.map((tab) => (
             <button
               key={tab.id}
               type="button"
@@ -137,12 +154,12 @@ function WebsiteContentInner() {
           {activeTab === "hero" && (
             <div className="space-y-5">
               <h2 className="text-base font-bold text-slate-900">
-                முகப்பு பேனர் &amp; முதன்மைத் தலைப்பு
+                {isTa ? "முகப்பு பேனர் & முதன்மைத் தலைப்பு" : "Hero Banner & Main Headline"}
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                    மேல் பேட்ஜ் உரை
+                    {isTa ? "மேல் பேட்ஜ் உரை" : "Top Badge Text"}
                   </label>
                   <input
                     type="text"
@@ -158,7 +175,7 @@ function WebsiteContentInner() {
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                    முதன்மை பொத்தான் பெயர்
+                    {isTa ? "முதன்மை பொத்தான் பெயர்" : "Primary Button Text"}
                   </label>
                   <input
                     type="text"
@@ -176,7 +193,7 @@ function WebsiteContentInner() {
 
               <div>
                 <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                  முதன்மைத் தலைப்பு
+                  {isTa ? "முதன்மைத் தலைப்பு" : "Main Headline"}
                 </label>
                 <input
                   type="text"
@@ -193,7 +210,7 @@ function WebsiteContentInner() {
 
               <div>
                 <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                  விளக்க உரை
+                  {isTa ? "விளக்க உரை" : "Subheadline / Description"}
                 </label>
                 <textarea
                   rows={3}
@@ -210,7 +227,7 @@ function WebsiteContentInner() {
 
               <div>
                 <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                  வாட்ஸ்அப் பொத்தான் பெயர்
+                  {isTa ? "வாட்ஸ்அப் பொத்தான் பெயர்" : "WhatsApp Button Text"}
                 </label>
                 <input
                   type="text"
@@ -226,7 +243,7 @@ function WebsiteContentInner() {
               </div>
 
               <ImagePickerInput
-                label="முகப்பு பேனர் புகைப்படம்"
+                label={isTa ? "முகப்பு பேனர் புகைப்படம்" : "Hero Banner Image"}
                 value={draft.hero.bannerImage}
                 onChange={(url) =>
                   setDraft({
@@ -234,7 +251,11 @@ function WebsiteContentInner() {
                     hero: { ...draft.hero, bannerImage: url },
                   })
                 }
-                helperText="அகலமான லேண்ட்ஸ்கேப் புகைப்படம் பரிந்துரைக்கப்படுகிறது (16:9 அல்லது 21:9)."
+                helperText={
+                  isTa
+                    ? "அகலமான லேண்ட்ஸ்கேப் புகைப்படம் பரிந்துரைக்கப்படுகிறது (16:9 அல்லது 21:9)."
+                    : "Wide landscape photo recommended (16:9 or 21:9)."
+                }
                 category="banners"
               />
             </div>
@@ -244,10 +265,12 @@ function WebsiteContentInner() {
             <div className="space-y-4">
               <div>
                 <h2 className="text-base font-bold text-slate-900">
-                  முகப்பில் காட்டப்படும் சிறப்புப் பொருட்கள்
+                  {isTa ? "முகப்பில் காட்டப்படும் சிறப்புப் பொருட்கள்" : "Featured Products on Homepage"}
                 </h2>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  முகப்பின் மிதக்கும் காட்சிப் பகுதியில் காட்டப்பட வேண்டிய பொருட்களைத் தேர்ந்தெடுக்கவும்.
+                  {isTa
+                    ? "முகப்பின் மிதக்கும் காட்சிப் பகுதியில் காட்டப்பட வேண்டிய பொருட்களைத் தேர்ந்தெடுக்கவும்."
+                    : "Select products to feature on the homepage cuts showcase."}
                 </p>
               </div>
 
@@ -300,10 +323,12 @@ function WebsiteContentInner() {
             <div className="space-y-6">
               <div>
                 <h2 className="text-base font-bold text-slate-900">
-                  எங்கள் சிறப்புகள் (4 தூண்கள்)
+                  {isTa ? "எங்கள் சிறப்புகள் (4 தூண்கள்)" : "Why Choose Us (4 Core Pillars)"}
                 </h2>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  வாடிக்கையாளர் முகப்புப் பக்கத்தில் தர உறுதிப்பாட்டு கட்டத்தில் தோன்றும்.
+                  {isTa
+                    ? "வாடிக்கையாளர் முகப்புப் பக்கத்தில் தர உறுதிப்பாட்டு கட்டத்தில் தோன்றும்."
+                    : "Displayed in the trust and commitment section of the homepage."}
                 </p>
               </div>
 
@@ -315,12 +340,12 @@ function WebsiteContentInner() {
                   >
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-bold text-[#287A45]">
-                        சிறப்பம்சம் #{idx + 1}
+                        {isTa ? `சிறப்பம்சம் #${idx + 1}` : `Core Pillar #${idx + 1}`}
                       </span>
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                        தலைப்பு
+                        {isTa ? "தலைப்பு" : "Headline"}
                       </label>
                       <input
                         type="text"
@@ -335,7 +360,7 @@ function WebsiteContentInner() {
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                        விளக்கம்
+                        {isTa ? "விளக்கம்" : "Description"}
                       </label>
                       <textarea
                         rows={2}
@@ -353,10 +378,12 @@ function WebsiteContentInner() {
               </div>
 
               <div className="pt-4 border-t border-slate-100 space-y-4">
-                <h3 className="text-sm font-bold text-slate-900">நடவடிக்கை அழைப்புப் பட்டி (Call to Action)</h3>
+                <h3 className="text-sm font-bold text-slate-900">
+                  {isTa ? "நடவடிக்கை அழைப்புப் பட்டி (Call to Action)" : "Call to Action (CTA) Strip"}
+                </h3>
                 <div>
                   <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                    தலைப்பு
+                    {isTa ? "தலைப்பு" : "Headline"}
                   </label>
                   <input
                     type="text"
@@ -372,7 +399,7 @@ function WebsiteContentInner() {
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                    விளக்கம்
+                    {isTa ? "விளக்கம்" : "Description"}
                   </label>
                   <textarea
                     rows={2}
@@ -388,7 +415,7 @@ function WebsiteContentInner() {
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                    பொத்தான் பெயர்
+                    {isTa ? "பொத்தான் பெயர்" : "Button Text"}
                   </label>
                   <input
                     type="text"
@@ -408,12 +435,14 @@ function WebsiteContentInner() {
 
           {activeTab === "about" && (
             <div className="space-y-5">
-              <h2 className="text-base font-bold text-slate-900">எங்களைப் பற்றி &amp; உரிமையாளர் சுயவிவரம்</h2>
+              <h2 className="text-base font-bold text-slate-900">
+                {isTa ? "எங்களைப் பற்றி & உரிமையாளர் சுயவிவரம்" : "About Us & Founder Profile"}
+              </h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                    அறிமுக பேட்ஜ்
+                    {isTa ? "அறிமுக பேட்ஜ்" : "Intro Badge"}
                   </label>
                   <input
                     type="text"
@@ -429,7 +458,7 @@ function WebsiteContentInner() {
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                    அனுபவ ஆண்டுகள்
+                    {isTa ? "அனுபவ ஆண்டுகள்" : "Experience Years"}
                   </label>
                   <input
                     type="text"
@@ -447,7 +476,7 @@ function WebsiteContentInner() {
 
               <div>
                 <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                  அறிமுகத் தலைப்பு
+                  {isTa ? "அறிமுகத் தலைப்பு" : "Intro Headline"}
                 </label>
                 <input
                   type="text"
@@ -464,7 +493,7 @@ function WebsiteContentInner() {
 
               <div>
                 <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                  அறிமுக விளக்கம்
+                  {isTa ? "அறிமுக விளக்கம்" : "Intro Description"}
                 </label>
                 <textarea
                   rows={3}
@@ -480,7 +509,7 @@ function WebsiteContentInner() {
               </div>
 
               <ImagePickerInput
-                label="கடை முகப்புப் புகைப்படம்"
+                label={isTa ? "கடை முகப்புப் புகைப்படம்" : "Storefront / Shop Photo"}
                 value={draft.about.shopImage}
                 onChange={(url) =>
                   setDraft({ ...draft, about: { ...draft.about, shopImage: url } })
@@ -489,11 +518,13 @@ function WebsiteContentInner() {
               />
 
               <div className="pt-4 border-t border-slate-100 space-y-4">
-                <h3 className="text-sm font-bold text-slate-900">உரிமையாளர் சுயவிவரத் தகவல்கள்</h3>
+                <h3 className="text-sm font-bold text-slate-900">
+                  {isTa ? "உரிமையாளர் சுயவிவரத் தகவல்கள்" : "Founder Profile Details"}
+                </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                      உரிமையாளர் பெயர்
+                      {isTa ? "உரிமையாளர் பெயர்" : "Founder / Owner Name"}
                     </label>
                     <input
                       type="text"
@@ -509,7 +540,7 @@ function WebsiteContentInner() {
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                      பதவி / பொறுப்பு
+                      {isTa ? "பதவி / பொறுப்பு" : "Designation / Role"}
                     </label>
                     <input
                       type="text"
@@ -527,7 +558,7 @@ function WebsiteContentInner() {
 
                 <div>
                   <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                    உரிமையாளர் வாழ்க்கைச் சுருக்கம்
+                    {isTa ? "உரிமையாளர் வாழ்க்கைச் சுருக்கம்" : "Founder Biography"}
                   </label>
                   <textarea
                     rows={3}
@@ -543,7 +574,7 @@ function WebsiteContentInner() {
                 </div>
 
                 <ImagePickerInput
-                  label="உரிமையாளர் உருவப்படம்"
+                  label={isTa ? "உரிமையாளர் உருவப்படம்" : "Founder Portrait Photo"}
                   value={draft.about.ownerPhoto}
                   onChange={(url) =>
                     setDraft({ ...draft, about: { ...draft.about, ownerPhoto: url } })
@@ -553,7 +584,9 @@ function WebsiteContentInner() {
 
                 <div>
                   <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                    நிறுவனர் அனுபவம் &amp; கிளைகள் (Founder Experience)
+                    {isTa
+                      ? "நிறுவனர் அனுபவம் & கிளைகள் (Founder Experience)"
+                      : "Founder Experience & Achievements"}
                   </label>
                   <input
                     type="text"
@@ -571,7 +604,9 @@ function WebsiteContentInner() {
 
                 <div>
                   <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                    நிறுவனரின் தொலைநோக்கு பார்வை (Founder Vision)
+                    {isTa
+                      ? "நிறுவனரின் தொலைநோக்கு பார்வை (Founder Vision)"
+                      : "Founder Vision Statement"}
                   </label>
                   <textarea
                     rows={2}
@@ -589,10 +624,12 @@ function WebsiteContentInner() {
               </div>
 
               <div className="pt-4 border-t border-slate-100 space-y-4">
-                <h3 className="text-sm font-bold text-slate-900">தரம், சுகாதாரம் மற்றும் வாடிக்கையாளர் திருப்தி</h3>
+                <h3 className="text-sm font-bold text-slate-900">
+                  {isTa ? "தரம், சுகாதாரம் மற்றும் வாடிக்கையாளர் திருப்தி" : "Quality, Hygiene & Customer Commitments"}
+                </h3>
                 <div>
                   <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                    தர உறுதிப்பாடு
+                    {isTa ? "தர உறுதிப்பாடு" : "Quality Commitment"}
                   </label>
                   <textarea
                     rows={2}
@@ -608,7 +645,7 @@ function WebsiteContentInner() {
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                    சுகாதார நடைமுறைகள்
+                    {isTa ? "சுகாதார நடைமுறைகள்" : "Hygiene Practices"}
                   </label>
                   <textarea
                     rows={2}
@@ -624,7 +661,7 @@ function WebsiteContentInner() {
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                    வாடிக்கையாளர் திருப்தி
+                    {isTa ? "வாடிக்கையாளர் திருப்தி" : "Customer Satisfaction"}
                   </label>
                   <textarea
                     rows={2}
@@ -644,12 +681,16 @@ function WebsiteContentInner() {
 
           {activeTab === "contact" && (
             <div className="space-y-5">
-              <h2 className="text-base font-bold text-slate-900">தொடர்பு விவரங்கள், வேலை நேரம் &amp; சமூக வலைத்தளங்கள்</h2>
+              <h2 className="text-base font-bold text-slate-900">
+                {isTa
+                  ? "தொடர்பு விவரங்கள், வேலை நேரம் & சமூக வலைத்தளங்கள்"
+                  : "Contact Details, Opening Hours & Social Channels"}
+              </h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                    தொலைபேசி எண்
+                    {isTa ? "தொலைபேசி எண்" : "Phone Number"}
                   </label>
                   <input
                     type="text"
@@ -665,7 +706,7 @@ function WebsiteContentInner() {
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                    வாட்ஸ்அப் எண் (நேரடி சாட்)
+                    {isTa ? "வாட்ஸ்அப் எண் (நேரடி சாட்)" : "WhatsApp Number (Direct Order Chat)"}
                   </label>
                   <input
                     type="text"
@@ -684,7 +725,7 @@ function WebsiteContentInner() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                    மின்னஞ்சல் முகவரி
+                    {isTa ? "மின்னஞ்சல் முகவரி" : "Email Address"}
                   </label>
                   <input
                     type="email"
@@ -700,7 +741,7 @@ function WebsiteContentInner() {
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                    கூகிள் மேப்ஸ் URL
+                    {isTa ? "கூகிள் மேப்ஸ் URL" : "Google Maps Store Location URL"}
                   </label>
                   <input
                     type="text"
@@ -718,7 +759,7 @@ function WebsiteContentInner() {
 
               <div>
                 <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                  கடையின் முழு முகவரி
+                  {isTa ? "கடையின் முழு முகவரி" : "Full Shop Address"}
                 </label>
                 <textarea
                   rows={2}
@@ -735,7 +776,9 @@ function WebsiteContentInner() {
 
               {/* Social Media Links */}
               <div className="pt-4 border-t border-slate-100 space-y-4">
-                <h3 className="text-sm font-bold text-slate-900">சமூக வலைத்தள பக்கங்கள்</h3>
+                <h3 className="text-sm font-bold text-slate-900">
+                  {isTa ? "சமூக வலைத்தள பக்கங்கள்" : "Social Media Links"}
+                </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div>
                     <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
@@ -792,12 +835,14 @@ function WebsiteContentInner() {
 
           {activeTab === "branding" && (
             <div className="space-y-5">
-              <h2 className="text-base font-bold text-slate-900">பிராண்டிங், லோகோ &amp; அடிக்குறிப்பு (Footer)</h2>
+              <h2 className="text-base font-bold text-slate-900">
+                {isTa ? "பிராண்டிங், லோகோ & அடிக்குறிப்பு (Footer)" : "Branding, Logo & Footer"}
+              </h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                    கடை / பிராண்ட் பெயர்
+                    {isTa ? "கடை / பிராண்ட் பெயர்" : "Shop / Brand Name"}
                   </label>
                   <input
                     type="text"
@@ -808,7 +853,7 @@ function WebsiteContentInner() {
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                    குறியீட்டு வாக்கியம் (Tagline)
+                    {isTa ? "குறியீட்டு வாக்கியம் (Tagline)" : "Tagline"}
                   </label>
                   <input
                     type="text"
@@ -820,10 +865,14 @@ function WebsiteContentInner() {
               </div>
 
               <ImagePickerInput
-                label="கடையின் லோகோ புகைப்படம்"
+                label={isTa ? "கடையின் லோகோ புகைப்படம்" : "Shop Logo"}
                 value={draft.logoUrl}
                 onChange={(url) => setDraft({ ...draft, logoUrl: url })}
-                helperText="சதுர வடிவ PNG அல்லது வெளிப்படையான பின்னணி கொண்ட SVG படம் சிறந்தது."
+                helperText={
+                  isTa
+                    ? "சதுர வடிவ PNG அல்லது வெளிப்படையான பின்னணி கொண்ட SVG படம் சிறந்தது."
+                    : "Square PNG or transparent SVG image recommended."
+                }
                 category="branding"
               />
 
@@ -835,10 +884,12 @@ function WebsiteContentInner() {
               />
 
               <div className="pt-4 border-t border-slate-100 space-y-4">
-                <h3 className="text-sm font-bold text-slate-900">அடிக்குறிப்பு உரை (Footer Text)</h3>
+                <h3 className="text-sm font-bold text-slate-900">
+                  {isTa ? "அடிக்குறிப்பு உரை (Footer Text)" : "Footer Text"}
+                </h3>
                 <div>
                   <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                    அடிக்குறிப்பு விளக்கம்
+                    {isTa ? "அடிக்குறிப்பு விளக்கம்" : "Footer Description"}
                   </label>
                   <textarea
                     rows={2}
@@ -854,7 +905,7 @@ function WebsiteContentInner() {
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                    பதிப்புரிமை வரிகள் (Copyright)
+                    {isTa ? "பதிப்புரிமை வரிகள் (Copyright)" : "Copyright Text"}
                   </label>
                   <input
                     type="text"
@@ -877,9 +928,13 @@ function WebsiteContentInner() {
       {/* Reset Confirmation */}
       <ConfirmDialog
         open={resetOpen}
-        title="முன்னிருப்பு உள்ளடக்கத்திற்கு மீட்டமைக்கவா?"
-        description="அனைத்து ஆரம்ப உரை, தலைப்புகள் மற்றும் அமைப்புகள் மீட்டமைக்கப்படும். உங்கள் தனிப்பயன் மாற்றங்கள் மாற்றப்படும்."
-        confirmLabel="முன்னிருப்புக்கு மாற்று"
+        title={isTa ? "முன்னிருப்பு உள்ளடக்கத்திற்கு மீட்டமைக்கவா?" : "Reset to default website content?"}
+        description={
+          isTa
+            ? "அனைத்து ஆரம்ப உரை, தலைப்புகள் மற்றும் அமைப்புகள் மீட்டமைக்கப்படும். உங்கள் தனிப்பயன் மாற்றங்கள் மாற்றப்படும்."
+            : "All text, headlines, and settings will be restored to original defaults. Custom changes will be overwritten."
+        }
+        confirmLabel={isTa ? "முன்னிருப்புக்கு மாற்று" : "Reset to Defaults"}
         variant="primary"
         onConfirm={handleReset}
         onCancel={() => setResetOpen(false)}
@@ -890,7 +945,7 @@ function WebsiteContentInner() {
 
 export default function AdminContentPage() {
   return (
-    <Suspense fallback={<div className="p-8 text-center text-sm text-slate-500">உள்ளடக்க பதிப்பான் ஏற்றப்படுகிறது...</div>}>
+    <Suspense fallback={<div className="p-8 text-center text-sm text-slate-500">Loading content editor...</div>}>
       <WebsiteContentInner />
     </Suspense>
   );

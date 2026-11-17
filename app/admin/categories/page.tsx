@@ -16,6 +16,7 @@ import { AdminShell } from "@/components/admin/AdminShell";
 import { ImagePickerInput } from "@/components/admin/ImagePickerInput";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { useToast } from "@/components/common/ToastProvider";
+import { useLanguage } from "@/context/LanguageContext";
 import { categoryService } from "@/services/category-service";
 import { productService } from "@/services/product-service";
 import { Category } from "@/types";
@@ -26,6 +27,9 @@ interface ExtendedCategory extends Category {
 
 export default function AdminCategoriesPage() {
   const { showToast } = useToast();
+  const { language } = useLanguage();
+  const isTa = language === "ta";
+
   const [categories, setCategories] = useState<ExtendedCategory[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -85,11 +89,11 @@ export default function AdminCategoriesPage() {
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) {
-      setError("பிரிவின் பெயரை உள்ளிடவும்.");
+      setError(isTa ? "பிரிவின் பெயரை உள்ளிடவும்." : "Please enter a category name.");
       return;
     }
     if (!image) {
-      setError("பிரிவுக்கான புகைப்படம் தேவை.");
+      setError(isTa ? "பிரிவுக்கான புகைப்படம் தேவை." : "Category image is required.");
       return;
     }
 
@@ -99,23 +103,23 @@ export default function AdminCategoriesPage() {
     try {
       const payload = {
         name: name.trim(),
-        description: description.trim() || "புதிய கோழிக்கறி பிரிவு கறிக்கட்டுகள்.",
+        description: description.trim() || (isTa ? "புதிய கோழிக்கறி பிரிவு கறிக்கட்டுகள்." : "Fresh poultry cuts and products."),
         image,
         isActive,
       };
 
       if (editing) {
         categoryService.update(editing.id, payload);
-        showToast("பிரிவு புதுப்பிக்கப்பட்டது", { description: name.trim() });
+        showToast(isTa ? "பிரிவு புதுப்பிக்கப்பட்டது" : "Category updated successfully", { description: name.trim() });
       } else {
         categoryService.create(payload);
-        showToast("புதிய பிரிவு உருவாக்கப்பட்டது", { description: name.trim() });
+        showToast(isTa ? "புதிய பிரிவு உருவாக்கப்பட்டது" : "New category created successfully", { description: name.trim() });
       }
 
       setModalOpen(false);
       loadCategories();
     } catch {
-      setError("பிரிவைச் சேமிப்பதில் பிழை ஏற்பட்டது.");
+      setError(isTa ? "பிரிவைச் சேமிப்பதில் பிழை ஏற்பட்டது." : "Failed to save category.");
     } finally {
       setSubmitting(false);
     }
@@ -125,7 +129,9 @@ export default function AdminCategoriesPage() {
     setDependencyError(null);
     if ((cat.productCount ?? 0) > 0) {
       setDependencyError(
-        `"${cat.name}" பிரிவை நீக்க முடியாது: இதில் ${cat.productCount} செயலில் உள்ள பொருட்கள் இணைக்கப்பட்டுள்ளன. முதலில் அப்பொருட்களை வேறு பிரிவுக்கு மாற்றவும் அல்லது நீக்கவும்.`
+        isTa
+          ? `"${cat.name}" பிரிவை நீக்க முடியாது: இதில் ${cat.productCount} செயலில் உள்ள பொருட்கள் இணைக்கப்பட்டுள்ளன. முதலில் அப்பொருட்களை வேறு பிரிவுக்கு மாற்றவும் அல்லது நீக்கவும்.`
+          : `Cannot delete "${cat.name}": ${cat.productCount} active products are linked to this category. Please reassign or delete those products first.`
       );
       return;
     }
@@ -136,10 +142,10 @@ export default function AdminCategoriesPage() {
     if (!deleteTarget) return;
     try {
       categoryService.remove(deleteTarget.id);
-      showToast("பிரிவு நீக்கப்பட்டது", { description: deleteTarget.name, type: "info" });
+      showToast(isTa ? "பிரிவு நீக்கப்பட்டது" : "Category deleted", { description: deleteTarget.name, type: "info" });
       loadCategories();
     } catch {
-      showToast("பிரிவை நீக்குவதில் பிழை", { type: "danger" });
+      showToast(isTa ? "பிரிவை நீக்குவதில் பிழை" : "Error deleting category", { type: "danger" });
     } finally {
       setDeleteTarget(null);
     }
@@ -151,21 +157,25 @@ export default function AdminCategoriesPage() {
 
     const current = categories[index];
     categoryService.move(current.id, direction);
-    showToast("பிரிவு வரிசை மாற்றப்பட்டது", { type: "info" });
+    showToast(isTa ? "பிரிவு வரிசை மாற்றப்பட்டது" : "Category order updated", { type: "info" });
     loadCategories();
   };
 
   return (
     <AdminShell
-      title="பிரிவுகள் மேலாண்மை"
-      subtitle="கடை முகப்புக்கான கோழிக்கறி மற்றும் முட்டை பிரிவுகளை ஒழுங்கமைத்தல்"
+      title={isTa ? "பிரிவுகள் மேலாண்மை" : "Category Management"}
+      subtitle={
+        isTa
+          ? "கடை முகப்புக்கான கோழிக்கறி மற்றும் முட்டை பிரிவுகளை ஒழுங்கமைத்தல்"
+          : "Organize poultry and egg categories for the customer storefront"
+      }
       actions={
         <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={loadCategories}
             className="p-2 rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 shadow-2xs"
-            title="புதுப்பி"
+            title={isTa ? "புதுப்பி" : "Refresh"}
           >
             <RefreshCw className={`w-4 h-4 text-[#287A45] ${loading ? "animate-spin" : ""}`} />
           </button>
@@ -175,7 +185,7 @@ export default function AdminCategoriesPage() {
             className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#287A45] hover:bg-[#1E5F35] text-white text-xs sm:text-sm font-semibold shadow-md shadow-[#287A45]/25 transition-all"
           >
             <Plus className="w-4 h-4" />
-            <span>புதிய பிரிவு சேர்க்க</span>
+            <span>{isTa ? "புதிய பிரிவு சேர்க்க" : "Add New Category"}</span>
           </button>
         </div>
       }
@@ -187,7 +197,7 @@ export default function AdminCategoriesPage() {
             <div className="flex items-start gap-2.5">
               <AlertCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
               <div>
-                <p className="text-sm font-bold">பிரிவு நீக்குவது தடுக்கப்பட்டது</p>
+                <p className="text-sm font-bold">{isTa ? "பிரிவு நீக்குவது தடுக்கப்பட்டது" : "Category Deletion Blocked"}</p>
                 <p className="text-xs text-amber-800 mt-0.5">{dependencyError}</p>
               </div>
             </div>
@@ -228,17 +238,21 @@ export default function AdminCategoriesPage() {
                         : "bg-slate-100 text-slate-500 border border-slate-200"
                     }`}
                   >
-                    {cat.isActive ? "செயலில்" : "மறைக்கப்பட்டது"}
+                    {cat.isActive ? (isTa ? "செயலில்" : "Active") : (isTa ? "மறைக்கப்பட்டது" : "Hidden")}
                   </span>
                 </div>
 
                 <p className="text-xs text-slate-600 leading-relaxed line-clamp-2">
-                  {cat.description || "விளக்கம் சேர்க்கப்படவில்லை."}
+                  {cat.description || (isTa ? "விளக்கம் சேர்க்கப்படவில்லை." : "No description provided.")}
                 </p>
 
                 <div className="mt-3 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700">
                   <Package className="w-3.5 h-3.5 text-[#287A45]" />
-                  <span>{cat.productCount ?? 0} பொருட்கள் இணைக்கப்பட்டுள்ளன</span>
+                  <span>
+                    {isTa
+                      ? `${cat.productCount ?? 0} பொருட்கள் இணைக்கப்பட்டுள்ளன`
+                      : `${cat.productCount ?? 0} products linked`}
+                  </span>
                 </div>
               </div>
 
@@ -250,7 +264,7 @@ export default function AdminCategoriesPage() {
                     disabled={idx === 0}
                     onClick={() => handleMove(idx, "up")}
                     className="p-1.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-30"
-                    title="மேலே நகர்த்து"
+                    title={isTa ? "மேலே நகர்த்து" : "Move up"}
                   >
                     <ArrowUp className="w-3.5 h-3.5" />
                   </button>
@@ -259,7 +273,7 @@ export default function AdminCategoriesPage() {
                     disabled={idx === categories.length - 1}
                     onClick={() => handleMove(idx, "down")}
                     className="p-1.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-30"
-                    title="கீழே நகர்த்து"
+                    title={isTa ? "கீழே நகர்த்து" : "Move down"}
                   >
                     <ArrowDown className="w-3.5 h-3.5" />
                   </button>
@@ -272,13 +286,13 @@ export default function AdminCategoriesPage() {
                     className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-[#EDF7EE] hover:text-[#287A45] hover:border-[#C7E4CA] transition-colors"
                   >
                     <Edit2 className="w-3.5 h-3.5" />
-                    <span>திருத்து</span>
+                    <span>{isTa ? "திருத்து" : "Edit"}</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => handleDeleteCheck(cat)}
                     className="p-1.5 rounded-lg border border-slate-200 text-rose-600 hover:bg-rose-50 hover:border-rose-200 transition-colors"
-                    title="பிரிவை நீக்கு"
+                    title={isTa ? "பிரிவை நீக்கு" : "Delete category"}
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -300,10 +314,18 @@ export default function AdminCategoriesPage() {
             <div className="flex items-center justify-between border-b border-slate-100 pb-4">
               <div>
                 <h2 className="text-lg font-bold text-slate-900">
-                  {editing ? "பிரிவைத் திருத்து" : "புதிய பிரிவு சேர்க்க"}
+                  {editing
+                    ? isTa
+                      ? "பிரிவைத் திருத்து"
+                      : "Edit Category"
+                    : isTa
+                    ? "புதிய பிரிவு சேர்க்க"
+                    : "Add New Category"}
                 </h2>
                 <p className="text-xs text-slate-500">
-                  கோழிக்கறி பிரிவு பெயர், விளக்கம், புகைப்படம் மற்றும் நிலையை உள்ளமைக்கவும்.
+                  {isTa
+                    ? "கோழிக்கறி பிரிவு பெயர், விளக்கம், புகைப்படம் மற்றும் நிலையை உள்ளமைக்கவும்."
+                    : "Configure category name, description, photo, and display status."}
                 </p>
               </div>
               <button
@@ -324,36 +346,40 @@ export default function AdminCategoriesPage() {
             <form onSubmit={handleSave} className="mt-5 space-y-4">
               <div>
                 <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                  பிரிவின் பெயர் *
+                  {isTa ? "பிரிவின் பெயர் *" : "Category Name *"}
                 </label>
                 <input
                   type="text"
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="எ.கா: சிக்கன் விங்ஸ், பண்ணை முட்டைகள்"
+                  placeholder={isTa ? "எ.கா: சிக்கன் விங்ஸ், பண்ணை முட்டைகள்" : "e.g. Chicken Wings, Farm Eggs"}
                   className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50/50 text-sm focus:bg-white focus:ring-2 focus:ring-[#287A45] focus:outline-hidden"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                  விளக்கம்
+                  {isTa ? "விளக்கம்" : "Description"}
                 </label>
                 <textarea
                   rows={2}
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  placeholder="வாடிக்கையாளர்களுக்கான சுருக்கமான விளக்கம்..."
+                  placeholder={
+                    isTa
+                      ? "வாடிக்கையாளர்களுக்கான சுருக்கமான விளக்கம்..."
+                      : "Brief description for customers..."
+                  }
                   className="w-full px-3.5 py-2 rounded-xl border border-slate-200 bg-slate-50/50 text-sm focus:bg-white focus:ring-2 focus:ring-[#287A45] focus:outline-hidden"
                 />
               </div>
 
               <ImagePickerInput
-                label="பிரிவுக்கான பிரதிநிதித்துவ புகைப்படம் *"
+                label={isTa ? "பிரிவுக்கான பிரதிநிதித்துவ புகைப்படம் *" : "Category Featured Photo *"}
                 value={image}
                 onChange={setImage}
-                helperText="பிரிவு அட்டைக்கான புகைப்படம் அல்லது PNG கட்அவுட்."
+                helperText={isTa ? "பிரிவு அட்டைக்கான புகைப்படம் அல்லது PNG கட்அவுட்." : "Image or PNG cutout for category card display."}
                 category="categories"
               />
 
@@ -366,7 +392,7 @@ export default function AdminCategoriesPage() {
                   className="w-4 h-4 rounded text-[#287A45] focus:ring-[#287A45] border-slate-300"
                 />
                 <label htmlFor="cat-active-toggle" className="text-xs font-bold text-slate-700">
-                  இப்பிரிவை இணையதளத்தில் செயலில் காட்டவும்
+                  {isTa ? "இப்பிரிவை இணையதளத்தில் செயலில் காட்டவும்" : "Display this category actively on storefront"}
                 </label>
               </div>
 
@@ -376,14 +402,24 @@ export default function AdminCategoriesPage() {
                   onClick={() => setModalOpen(false)}
                   className="px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50"
                 >
-                  ரத்து செய்
+                  {isTa ? "ரத்து செய்" : "Cancel"}
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
                   className="px-5 py-2.5 rounded-xl bg-[#287A45] hover:bg-[#1E5F35] disabled:opacity-60 text-white text-xs font-semibold shadow-md shadow-[#287A45]/20"
                 >
-                  {submitting ? "சேமிக்கப்படுகிறது..." : editing ? "மாற்றங்களைச் சேமி" : "பிரிவை உருவாக்கு"}
+                  {submitting
+                    ? isTa
+                      ? "சேமிக்கப்படுகிறது..."
+                      : "Saving..."
+                    : editing
+                    ? isTa
+                      ? "மாற்றங்களைச் சேமி"
+                      : "Save Changes"
+                    : isTa
+                    ? "பிரிவை உருவாக்கு"
+                    : "Create Category"}
                 </button>
               </div>
             </form>
@@ -394,9 +430,13 @@ export default function AdminCategoriesPage() {
       {/* Delete Confirmation */}
       <ConfirmDialog
         open={Boolean(deleteTarget)}
-        title="பிரிவை நீக்கவா?"
-        description={`"${deleteTarget?.name}" பிரிவை நிச்சயமாக நீக்க விரும்புகிறீர்களா? இது நிரந்தரமாக நீக்கப்படும்.`}
-        confirmLabel="நீக்குவதை உறுதிசெய்"
+        title={isTa ? "பிரிவை நீக்கவா?" : "Delete Category?"}
+        description={
+          isTa
+            ? `"${deleteTarget?.name}" பிரிவை நிச்சயமாக நீக்க விரும்புகிறீர்களா? இது நிரந்தரமாக நீக்கப்படும்.`
+            : `Are you sure you want to delete "${deleteTarget?.name}"? This will be permanently removed.`
+        }
+        confirmLabel={isTa ? "நீக்குவதை உறுதிசெய்" : "Confirm Delete"}
         variant="danger"
         onConfirm={handleConfirmDelete}
         onCancel={() => setDeleteTarget(null)}

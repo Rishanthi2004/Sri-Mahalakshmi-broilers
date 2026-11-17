@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { useToast } from "@/components/common/ToastProvider";
+import { useLanguage } from "@/context/LanguageContext";
 import { authService } from "@/services/auth-service";
 import { bannerService } from "@/services/banner-service";
 import { categoryService } from "@/services/category-service";
@@ -55,6 +56,7 @@ interface DashboardStats {
 
 export default function AdminDashboardPage() {
   const { showToast } = useToast();
+  const { language } = useLanguage();
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<AdminUser | null>(null);
@@ -94,13 +96,13 @@ export default function AdminDashboardPage() {
         price: p.price,
         unit: p.unit,
         image: p.image,
-        categoryName: catMap.get(p.categoryId) || "கோழிக்கறி",
+        categoryName: catMap.get(p.categoryId) || (language === "ta" ? "கோழிக்கறி" : "Chicken"),
       })),
     };
 
     setStats(newStats);
     setLoading(false);
-  }, []);
+  }, [language]);
 
   useEffect(() => {
     setUser(authService.getSession());
@@ -110,46 +112,53 @@ export default function AdminDashboardPage() {
   const handleRefresh = () => {
     setLoading(true);
     calculateDemoStats();
-    showToast("புள்ளிவிவரங்கள் புதுப்பிக்கப்பட்டன", { type: "info" });
+    showToast(
+      language === "ta" ? "புள்ளிவிவரங்கள் புதுப்பிக்கப்பட்டன" : "Dashboard statistics refreshed",
+      { type: "info" }
+    );
   };
 
   const isStaff = user?.role === "staff_admin";
 
   const statCards = [
     {
-      label: "மொத்த பொருட்கள்",
+      label: language === "ta" ? "மொத்த பொருட்கள்" : "Total Products",
       value: stats?.totalProducts ?? 0,
       icon: Package,
       accent: "bg-[#EDF7EE] text-[#287A45] border-[#C7E4CA]",
     },
     {
-      label: "செயலில் உள்ளவை",
+      label: language === "ta" ? "செயலில் உள்ளவை" : "Active Cuts",
       value: stats?.activeProducts ?? 0,
       icon: CheckCircle2,
       accent: "bg-emerald-50 text-emerald-600 border-emerald-100",
     },
     {
-      label: "செயலற்றவை",
+      label: language === "ta" ? "செயலற்றவை" : "Inactive Cuts",
       value: stats?.inactiveProducts ?? 0,
       icon: PauseCircle,
       accent: "bg-slate-100 text-slate-600 border-slate-200",
     },
     {
-      label: "மொத்த பிரிவுகள்",
+      label: language === "ta" ? "மொத்த பிரிவுகள்" : "Total Categories",
       value: stats?.totalCategories ?? 0,
       icon: FolderTree,
       accent: "bg-[#EDF7EE] text-[#287A45] border-[#C7E4CA]",
     },
     {
-      label: "இருப்பில் இல்லாதவை",
+      label: language === "ta" ? "இருப்பில் இல்லாதவை" : "Out of Stock",
       value: stats?.outOfStock ?? 0,
       icon: AlertTriangle,
       accent: "bg-rose-50 text-rose-600 border-rose-200",
     },
     {
-      label: "மொத்த விசாரணைகள்",
+      label: language === "ta" ? "மொத்த விசாரணைகள்" : "Customer Enquiries",
       value: stats?.totalEnquiries ?? 0,
-      badge: stats?.newEnquiries ? `${stats.newEnquiries} புதியது` : undefined,
+      badge: stats?.newEnquiries
+        ? language === "ta"
+          ? `${stats.newEnquiries} புதியது`
+          : `${stats.newEnquiries} New`
+        : undefined,
       icon: MessageSquareText,
       accent: "bg-blue-50 text-blue-600 border-blue-100",
     },
@@ -157,33 +166,48 @@ export default function AdminDashboardPage() {
 
   const adminQuickActions = [
     {
-      label: "புதிய பொருள் சேர்க்க",
-      description: "புதிய கறிக்கட்டு, நெஞ்சுக்கறி அல்லது முட்டை வகை உருவாக்கவும்",
+      label: language === "ta" ? "புதிய பொருள் சேர்க்க" : "Add New Cut",
+      description:
+        language === "ta"
+          ? "புதிய கறிக்கட்டு, நெஞ்சுக்கறி அல்லது முட்டை வகை உருவாக்கவும்"
+          : "Create fresh chicken cut, boneless, curry cut or eggs",
       href: "/admin/products?new=1",
       icon: Plus,
       primary: true,
     },
     {
-      label: "பொருட்கள் மேலாண்மை",
-      description: "விலைகள், இருப்பு நிலை மற்றும் படங்களை மாற்றவும்",
+      label: language === "ta" ? "பொருட்கள் மேலாண்மை" : "Manage Products",
+      description:
+        language === "ta"
+          ? "விலைகள், இருப்பு நிலை மற்றும் படங்களை மாற்றவும்"
+          : "Update prices, daily stock availability, and photos",
       href: "/admin/products",
       icon: Package,
     },
     {
-      label: "பேனர் பதிவேற்ற",
-      description: "முகப்பு விளம்பர பேனர்களை சேர்க்க அல்லது மாற்றவும்",
+      label: language === "ta" ? "பேனர் பதிவேற்ற" : "Hero Banners",
+      description:
+        language === "ta"
+          ? "முகப்பு விளம்பர பேனர்களை சேர்க்க அல்லது மாற்றவும்"
+          : "Manage homepage hero banners, promos, and offers",
       href: "/admin/banners",
       icon: Sparkles,
     },
     {
-      label: "கடை அமைப்புகள்",
-      description: "தொலைபேசி, வாட்ஸ்அப் மற்றும் வேலை நேரத்தை மாற்றவும்",
+      label: language === "ta" ? "கடை அமைப்புகள்" : "Store Settings",
+      description:
+        language === "ta"
+          ? "தொலைபேசி, வாட்ஸ்அப் மற்றும் வேலை நேரத்தை மாற்றவும்"
+          : "Update phone numbers, WhatsApp, address, and timings",
       href: "/admin/settings",
       icon: Settings,
     },
     {
-      label: "பிரிவுகளை நிர்வகிக்க",
-      description: "கோழிக்கறி மற்றும் முட்டை பிரிவுகளை ஒழுங்கமைக்கவும்",
+      label: language === "ta" ? "பிரிவுகளை நிர்வகிக்க" : "Categories",
+      description:
+        language === "ta"
+          ? "கோழிக்கறி மற்றும் முட்டை பிரிவுகளை ஒழுங்கமைக்கவும்"
+          : "Organize poultry classifications and egg categories",
       href: "/admin/categories",
       icon: FolderTree,
     },
@@ -191,33 +215,48 @@ export default function AdminDashboardPage() {
 
   const staffQuickActions = [
     {
-      label: "புதிய பொருள் சேர்க்க",
-      description: "புதிய கறிக்கட்டு, நெஞ்சுக்கறி அல்லது முட்டை வகை உருவாக்கவும்",
+      label: language === "ta" ? "புதிய பொருள் சேர்க்க" : "Add New Cut",
+      description:
+        language === "ta"
+          ? "புதிய கறிக்கட்டு, நெஞ்சுக்கறி அல்லது முட்டை வகை உருவாக்கவும்"
+          : "Create fresh chicken cut, boneless, curry cut or eggs",
       href: "/admin/products?new=1",
       icon: Plus,
       primary: true,
     },
     {
-      label: "பொருட்கள் மேலாண்மை",
-      description: "விலைகள், இருப்பு நிலை மற்றும் படங்களை மாற்றவும்",
+      label: language === "ta" ? "பொருட்கள் மேலாண்மை" : "Manage Products",
+      description:
+        language === "ta"
+          ? "விலைகள், இருப்பு நிலை மற்றும் படங்களை மாற்றவும்"
+          : "Update prices, daily stock availability, and photos",
       href: "/admin/products",
       icon: Package,
     },
     {
-      label: "விசாரணைகளைக் காண்க",
-      description: "வாடிக்கையாளர் செய்திகள் மற்றும் வாட்ஸ்அப் தொடர்புகள்",
+      label: language === "ta" ? "விசாரணைகளைக் காண்க" : "View Enquiries",
+      description:
+        language === "ta"
+          ? "வாடிக்கையாளர் செய்திகள் மற்றும் வாட்ஸ்அப் தொடர்புகள்"
+          : "Customer inquiries, orders, and WhatsApp messages",
       href: "/admin/enquiries",
       icon: MessageSquareText,
     },
     {
-      label: "ஊடக நூலகம்",
-      description: "பொருட்கள் மற்றும் கடையின் புகைப்படங்களை பதிவேற்றவும்",
+      label: language === "ta" ? "ஊடக நூலகம்" : "Media Library",
+      description:
+        language === "ta"
+          ? "பொருட்கள் மற்றும் கடையின் புகைப்படங்களை பதிவேற்றவும்"
+          : "Upload fresh poultry product and store photography",
       href: "/admin/media",
       icon: ImageIcon,
     },
     {
-      label: "பிரிவுகளை நிர்வகிக்க",
-      description: "கோழிக்கறி மற்றும் முட்டை பிரிவுகளை ஒழுங்கமைக்கவும்",
+      label: language === "ta" ? "பிரிவுகளை நிர்வகிக்க" : "Categories",
+      description:
+        language === "ta"
+          ? "கோழிக்கறி மற்றும் முட்டை பிரிவுகளை ஒழுங்கமைக்கவும்"
+          : "Organize poultry classifications and egg categories",
       href: "/admin/categories",
       icon: FolderTree,
     },
@@ -227,11 +266,23 @@ export default function AdminDashboardPage() {
 
   return (
     <AdminShell
-      title={isStaff ? "பணியாளர் கட்டுப்பாட்டு அறை (Staff Dashboard)" : "முதன்மை கட்டுப்பாட்டு அறை (Admin Dashboard)"}
+      title={
+        isStaff
+          ? language === "ta"
+            ? "பணியாளர் கட்டுப்பாட்டு அறை (Staff Dashboard)"
+            : "Staff Dashboard"
+          : language === "ta"
+          ? "முதன்மை கட்டுப்பாட்டு அறை (Admin Dashboard)"
+          : "Admin Operations Dashboard"
+      }
       subtitle={
         isStaff
-          ? "சரக்கு இருப்பு நிலவரம், பொருட்கள் மேலாண்மை மற்றும் வாடிக்கையாளர் விசாரணைகள்"
-          : "நேரலை விற்பனை புள்ளிவிவரங்கள், சரக்கு இருப்பு மற்றும் கடை மேலாண்மை"
+          ? language === "ta"
+            ? "சரக்கு இருப்பு நிலவரம், பொருட்கள் மேலாண்மை மற்றும் வாடிக்கையாளர் விசாரணைகள்"
+            : "Inventory levels, stock management, and customer inquiries"
+          : language === "ta"
+          ? "நேரலை விற்பனை புள்ளிவிவரங்கள், சரக்கு இருப்பு மற்றும் கடை மேலாண்மை"
+          : "Live operations overview, daily inventory status, and shortcuts"
       }
       actions={
         <button
@@ -241,7 +292,7 @@ export default function AdminDashboardPage() {
           className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border border-slate-200 bg-white text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors shadow-2xs cursor-pointer"
         >
           <RefreshCw className={`w-3.5 h-3.5 text-[#287A45] ${loading ? "animate-spin" : ""}`} />
-          <span>புள்ளிவிவரங்களை புதுப்பி</span>
+          <span>{language === "ta" ? "புள்ளிவிவரங்களை புதுப்பி" : "Refresh Stats"}</span>
         </button>
       }
     >
@@ -280,10 +331,17 @@ export default function AdminDashboardPage() {
         <div className="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-xs">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-sm font-bold text-slate-900 uppercase tracking-wider">
-              விரைவுச் செயல்பாடுகள் {isStaff && "(பணியாளர்)"}
+              {language === "ta" ? "விரைவுச் செயல்பாடுகள்" : "Quick Actions"}{" "}
+              {isStaff && (language === "ta" ? "(பணியாளர்)" : "(Staff)")}
             </h2>
             <span className="text-xs text-slate-400">
-              {isStaff ? "பணியாளர் அனுமதியுள்ள செயல்பாடுகள்" : "அனைத்து நிர்வாக குறுக்குவழிகள்"}
+              {isStaff
+                ? language === "ta"
+                  ? "பணியாளர் அனுமதியுள்ள செயல்பாடுகள்"
+                  : "Staff authorized actions"
+                : language === "ta"
+                ? "அனைத்து நிர்வாக குறுக்குவழிகள்"
+                : "All administration shortcuts"}
             </span>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
@@ -331,7 +389,7 @@ export default function AdminDashboardPage() {
                         : "text-[#287A45] group-hover:translate-x-0.5 transition-transform"
                     }`}
                   >
-                    <span>தொடர</span>
+                    <span>{language === "ta" ? "தொடர" : "Open"}</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </div>
                 </Link>
@@ -349,22 +407,30 @@ export default function AdminDashboardPage() {
                 <div className="w-7 h-7 rounded-lg bg-rose-50 border border-rose-200 text-rose-600 flex items-center justify-center">
                   <AlertTriangle className="w-3.5 h-3.5" />
                 </div>
-                <h3 className="text-sm font-bold text-slate-900">இருப்பில் இல்லாதவை எச்சரிக்கை</h3>
+                <h3 className="text-sm font-bold text-slate-900">
+                  {language === "ta" ? "இருப்பில் இல்லாதவை எச்சரிக்கை" : "Out of Stock Alerts"}
+                </h3>
               </div>
               <Link
                 href="/admin/products?availability=out_of_stock"
                 className="text-xs font-semibold text-[#287A45] hover:text-[#1E5F35]"
               >
-                பொருட்கள் பக்கத்தில் காண்க
+                {language === "ta" ? "பொருட்கள் பக்கத்தில் காண்க" : "View on Products"}
               </Link>
             </div>
 
             {(!stats?.outOfStockItems || stats.outOfStockItems.length === 0) ? (
               <div className="p-8 text-center bg-slate-50/50 rounded-xl border border-dashed border-slate-200 my-auto">
                 <CheckCircle2 className="w-8 h-8 text-emerald-500 mx-auto mb-2" />
-                <p className="text-xs font-bold text-slate-700">அனைத்துப் பொருட்களும் தற்போது இருப்பில் உள்ளன!</p>
+                <p className="text-xs font-bold text-slate-700">
+                  {language === "ta"
+                    ? "அனைத்துப் பொருட்களும் தற்போது இருப்பில் உள்ளன!"
+                    : "All cuts and eggs are currently in stock!"}
+                </p>
                 <p className="text-[11px] text-slate-500 mt-0.5">
-                  வாடிக்கையாளர்கள் அனைத்து கறிக்கட்டுகளையும் தடையின்றி ஆர்டர் செய்யலாம்.
+                  {language === "ta"
+                    ? "வாடிக்கையாளர்கள் அனைத்து கறிக்கட்டுகளையும் தடையின்றி ஆர்டர் செய்யலாம்."
+                    : "Customers can place orders across all cuts without interruption."}
                 </p>
               </div>
             ) : (
@@ -391,7 +457,7 @@ export default function AdminDashboardPage() {
                       href="/admin/products"
                       className="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-[11px] font-semibold text-[#287A45] hover:bg-[#EDF7EE] shrink-0"
                     >
-                      இருப்பை மாற்று
+                      {language === "ta" ? "இருப்பை மாற்று" : "Update Stock"}
                     </Link>
                   </div>
                 ))}
@@ -406,22 +472,30 @@ export default function AdminDashboardPage() {
                 <div className="w-7 h-7 rounded-lg bg-blue-50 border border-blue-200 text-blue-600 flex items-center justify-center">
                   <MessageSquareText className="w-3.5 h-3.5" />
                 </div>
-                <h3 className="text-sm font-bold text-slate-900">சமீபத்திய வாடிக்கையாளர் விசாரணைகள்</h3>
+                <h3 className="text-sm font-bold text-slate-900">
+                  {language === "ta" ? "சமீபத்திய வாடிக்கையாளர் விசாரணைகள்" : "Recent Customer Enquiries"}
+                </h3>
               </div>
               <Link
                 href="/admin/enquiries"
                 className="text-xs font-semibold text-[#287A45] hover:text-[#1E5F35]"
               >
-                அனைத்தையும் பார்க்க ({stats?.totalEnquiries ?? 0})
+                {language === "ta"
+                  ? `அனைத்தையும் பார்க்க (${stats?.totalEnquiries ?? 0})`
+                  : `View All (${stats?.totalEnquiries ?? 0})`}
               </Link>
             </div>
 
             {(!stats?.recentEnquiries || stats.recentEnquiries.length === 0) ? (
               <div className="p-8 text-center bg-slate-50/50 rounded-xl border border-dashed border-slate-200 my-auto">
                 <MessageSquareText className="w-8 h-8 text-slate-400 mx-auto mb-2" />
-                <p className="text-xs font-bold text-slate-700">விசாரணைகள் எதுவும் இதுவரை வரவில்லை.</p>
+                <p className="text-xs font-bold text-slate-700">
+                  {language === "ta" ? "விசாரணைகள் எதுவும் இதுவரை வரவில்லை." : "No enquiries received yet."}
+                </p>
                 <p className="text-[11px] text-slate-500 mt-0.5">
-                  தொடர்பு பக்கம் வழியாக வாடிக்கையாளர்கள் அனுப்பும் செய்திகள் இங்கு தோன்றும்.
+                  {language === "ta"
+                    ? "தொடர்பு பக்கம் வழியாக வாடிக்கையாளர்கள் அனுப்பும் செய்திகள் இங்கு தோன்றும்."
+                    : "Customer inquiries submitted on the public website will appear here."}
                 </p>
               </div>
             ) : (
@@ -446,10 +520,16 @@ export default function AdminDashboardPage() {
                           }`}
                         >
                           {enq.status === "new"
-                            ? "புதியது"
+                            ? language === "ta"
+                              ? "புதியது"
+                              : "New"
                             : enq.status === "contacted"
-                            ? "தொடர்புகொள்ளப்பட்டது"
-                            : "தீர்க்கப்பட்டது"}
+                            ? language === "ta"
+                              ? "தொடர்புகொள்ளப்பட்டது"
+                              : "Contacted"
+                            : language === "ta"
+                            ? "தீர்க்கப்பட்டது"
+                            : "Resolved"}
                         </span>
                       </div>
                       <p className="text-[11px] text-slate-500 truncate mt-0.5">{enq.message}</p>
