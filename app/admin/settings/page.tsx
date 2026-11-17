@@ -282,7 +282,7 @@ export default function AdminSettingsPage() {
                   contact: { ...draft.contact, googleMapsUrl: e.target.value },
                 })
               }
-              placeholder="https://maps.google.com/?q=..."
+              placeholder="https://maps.app.goo.gl/XxPAKsCELkcUWtJn8"
               className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-mono focus:ring-2 focus:ring-[#287A45] focus:outline-hidden"
             />
           </div>

@@ -163,11 +163,18 @@ export function PublicFooter() {
                   {content.contact.email}
                 </a>
               </li>
-              <li className="flex items-start gap-2">
-                <MapPin className="w-3.5 h-3.5 text-[#287A45] shrink-0 mt-0.5" />
-                <span className="leading-snug line-clamp-2">
-                  {language === "ta" ? t("contactStoreAddress") : content.contact.address}
-                </span>
+              <li>
+                <a
+                  href={content.contact.googleMapsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-start gap-2 hover:text-[#287A45] transition-colors group"
+                >
+                  <MapPin className="w-3.5 h-3.5 text-[#287A45] shrink-0 mt-0.5 group-hover:scale-110 transition-transform" />
+                  <span className="leading-snug line-clamp-2 underline-offset-2 group-hover:underline">
+                    {language === "ta" ? t("contactStoreAddress") : content.contact.address}
+                  </span>
+                </a>
               </li>
             </ul>
           </div>

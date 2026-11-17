@@ -90,9 +90,9 @@ export const DEFAULT_WEBSITE_CONTENT: WebsiteContent = {
     email: "contact@srimahalakshmibroilers.com",
     address: "EB Colony Bus stop, Paramathi Road, Namakkal",
     addressTa: "ஈ.பி. காலனி பேருந்து நிறுத்தம், பரமத்தி சாலை, நாமக்கல்",
-    googleMapsUrl: "https://maps.google.com/?q=EB+Colony+Bus+stop+Paramathi+Road+Namakkal",
+    googleMapsUrl: "https://maps.app.goo.gl/XxPAKsCELkcUWtJn8",
     googleMapsEmbedPlaceholder:
-      "EB Colony Bus stop, Paramathi Road, Namakkal — Customer parking available.",
+      "Sri Mahalakshmi broilers, EB Colony Bus stop, Paramathi Road, Namakkal — Customer parking available.",
     openingHours: [
       { day: "Monday – Saturday", hours: "5:00 AM – 11:00 PM" },
       { day: "Sunday", hours: "3:00 AM – 8:00 PM" },

@@ -279,9 +279,18 @@ export default function ContactPage() {
             {/* Google Maps Landmark Preview Card */}
             <AnimatedCard delay={0.05} hoverLift={false}>
               <div className="bg-white rounded-2xl border border-[#C7E4CA] overflow-hidden shadow-xs hover:shadow-md transition-shadow">
-                <div className="bg-[#EDF7EE] p-4 flex flex-col items-center justify-center text-center border-b border-[#C7E4CA]">
-                  <div className="w-10 h-10 rounded-full bg-white border border-[#C7E4CA] text-[#287A45] flex items-center justify-center mb-2 shadow-xs">
-                    <MapPin className="w-5 h-5" />
+                <div className="relative w-full h-48 sm:h-56 bg-[#EDF7EE] border-b border-[#C7E4CA]">
+                  <iframe
+                    title="Sri Mahalakshmi Broilers Location Map"
+                    src="https://maps.google.com/maps?q=11.2170194,78.1522853&hl=en&z=17&output=embed"
+                    className="w-full h-full border-0"
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                  />
+                </div>
+                <div className="p-4 flex flex-col items-center justify-center text-center bg-white">
+                  <div className="w-9 h-9 rounded-full bg-[#EDF7EE] border border-[#C7E4CA] text-[#287A45] flex items-center justify-center mb-1.5 shadow-2xs">
+                    <MapPin className="w-4 h-4" />
                   </div>
                   <p className="text-xs sm:text-sm font-bold text-[#26352B]">
                     {language === "ta" ? "கடை அமைவிடம் & வழித்தடம்" : "Store Location & Directions"}
@@ -293,10 +302,10 @@ export default function ContactPage() {
                     href={content.contact.googleMapsUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="mt-3 inline-flex items-center gap-1 px-3.5 py-1.5 rounded-lg bg-[#287A45] hover:bg-[#1E5F35] text-white text-xs font-semibold transition-colors shadow-xs"
+                    className="mt-3 inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#287A45] hover:bg-[#1E5F35] text-white text-xs font-semibold transition-all shadow-xs active:scale-95 cursor-pointer"
                   >
-                    <span>{language === "ta" ? "வரைபடத்தில் திறக்க" : "Open in Google Maps"}</span>
-                    <ExternalLink className="w-3 h-3" />
+                    <span>{language === "ta" ? "கூகுள் மேப்பில் திறக்க" : "Open in Google Maps"}</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
                   </a>
                 </div>
               </div>
