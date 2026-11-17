@@ -28,9 +28,9 @@ export function PublicFooter() {
           {/* Brand */}
           <div className="space-y-3">
             <BrandLogo
-              shopName={language === "ta" ? "ஸ்ரீ மகாலட்சுமி" : (content.shopNameEn || "Sri Mahalakshmi")}
+              shopName="ஸ்ரீ மகாலட்சுமி"
               logoUrl={content.logoUrl}
-              subtitle={language === "ta" ? "பிராய்லர்ஸ்" : "Broilers"}
+              subtitle="பிராய்லர்ஸ்"
               size="sm"
             />
             <p className="text-xs sm:text-sm text-[#516357] leading-relaxed line-clamp-3 sm:line-clamp-none">

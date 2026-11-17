@@ -2,7 +2,7 @@ import { WebsiteContent } from "@/types";
 
 export const DEFAULT_WEBSITE_CONTENT: WebsiteContent = {
   shopName: "ஸ்ரீ மகாலட்சுமி பிராய்லர்ஸ்",
-  shopNameEn: "Sri Mahalakshmi Broilers",
+  shopNameEn: "ஸ்ரீ மகாலட்சுமி பிராய்லர்ஸ்",
   tagline: "Daily Fresh, Hygienically Cut Farm Chicken & Eggs",
   logoUrl: "/images/logo.png",
   faviconUrl: "/images/logo.png",

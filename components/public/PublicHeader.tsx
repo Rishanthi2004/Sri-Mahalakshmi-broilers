@@ -57,12 +57,12 @@ export function PublicHeader() {
               )}
             </button>
 
-            {/* Logo & Brand */}
+            {/* Logo & Brand - Always in Tamil for both English and Tamil */}
             <Link href="/" className="shrink-0 min-w-0" onClick={() => setMobileOpen(false)}>
               <BrandLogo
-                shopName={language === "ta" ? "ஸ்ரீ மகாலட்சுமி" : (content.shopNameEn || "Sri Mahalakshmi")}
+                shopName="ஸ்ரீ மகாலட்சுமி"
                 logoUrl={content.logoUrl}
-                subtitle={language === "ta" ? "பிராய்லர்ஸ்" : "Broilers"}
+                subtitle="பிராய்லர்ஸ்"
               />
             </Link>
           </div>

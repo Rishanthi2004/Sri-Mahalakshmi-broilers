@@ -219,7 +219,7 @@ export function AdminShell({
           />
           <div className="min-w-0">
             <span className="text-sm font-bold text-slate-900 block truncate">
-              {content.shopName || "Sri Mahalakshmi Broilers"}
+              {content.shopName || "ஸ்ரீ மகாலட்சுமி பிராய்லர்ஸ்"}
             </span>
             <span className="text-[11px] font-bold text-[#287A45] uppercase tracking-wider block">
               {isSuperAdmin

@@ -47,10 +47,7 @@ export default function HomePage() {
       ? selectedFeatured.slice(0, 7)
       : activeProducts.filter((p) => p.isFeatured).slice(0, 7);
 
-  const shopDisplayName =
-    language === "ta"
-      ? (content?.shopName || "ஸ்ரீ மகாலட்சுமி பிராய்லர்ஸ்")
-      : (content?.shopNameEn || "Sri Mahalakshmi Broilers");
+  const shopDisplayName = "ஸ்ரீ மகாலட்சுமி பிராய்லர்ஸ்";
 
   const ctaWhatsAppMessage =
     language === "ta"
