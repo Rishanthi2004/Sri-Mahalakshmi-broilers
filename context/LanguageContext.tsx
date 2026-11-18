@@ -107,17 +107,17 @@ export const TRANSLATIONS = {
     aboutIntroTitle: "தூய்மை மற்றும் நம்பிக்கையின் அடிப்படையில் உருவான பகுதி கோழி அங்காடி",
     aboutIntroDesc:
       "ஸ்ரீ மகாலட்சுமி பிராய்லர்ஸ் ஒரு எளிய வாக்குறுதியுடன் தொடங்கப்பட்டது: ஒவ்வொரு குடும்பத்திற்கும் மருத்துவமனை அளவிலான தூய்மை, வெளிப்படையான கொள்முதல் மற்றும் உண்மையான கவனிப்புடன் கோழிக்கறி கிடைக்க வேண்டும்.",
-    aboutBusinessTitle: "2011 முதல் பண்ணையிலிருந்து நேரடியாக வாடிக்கையாளர்களுக்கு",
+    aboutBusinessTitle: "20+ ஆண்டுகளாக பண்ணையிலிருந்து நேரடியாக வாடிக்கையாளர்களுக்கு",
     aboutBusinessBody:
       "இயற்கையான தானிய உணவு மற்றும் ஆண்டிபயாடிக் இல்லாத நெறிமுறைகளைப் பின்பற்றும் சான்றளிக்கப்பட்ட பிராந்திய பண்ணைகளுடன் நாங்கள் நேரடியாக இணைந்துள்ளோம். தினசரி அதிகாலையில் கோழிகள் வரவழைக்கப்பட்டு, தரப் பரிசோதனைக்குப் பின் குளிரூட்டப்பட்ட அறையில் சுகாதாரமாக தயார் செய்யப்படுகின்றன.",
     aboutOwnerBio:
-      "சுகாதாரமான கோழிக்கறி சில்லறை வர்த்தகம் மற்றும் கோல்ட்-செயின் உணவு கையாளுதலில் 15 ஆண்டுகளுக்கும் மேலான அனுபவம் கொண்ட ராஜேஷ், அவசர நெரிசல் நிறைந்த சந்தைகளுக்கு மாற்றாக சுத்தமான, வெளிப்படையான, வாடிக்கையாளரை முதன்மையாகக் கொண்ட ஸ்ரீ மகாலட்சுமி பிராய்லர்ஸ் அங்காடியை நிறுவினார்.",
+      "கோழிப்பண்ணைத் துறையில் 20 ஆண்டுகளுக்கும் மேலான அனுபவத்துடனும், 20-க்கும் மேற்பட்ட கிளைகளின் விரிவான வலையமைப்புடனும் திரு. பரமசிவம் மாசநாயக்கர் நம்பிக்கை மற்றும் தரத்தின் அடிப்படையில் ஸ்ரீ மகாலட்சுமி பிராய்லர்ஸ் அங்காடியை நிறுவினார்.",
     aboutQualityCommitmentText:
       "எடை போடுவதற்கு முன்பே ஒவ்வொரு துண்டும் பரிசோதிக்கப்படுகிறது. அதிகப்படியான தோல், எலும்பு விளிம்புகள் மற்றும் தேவையற்ற கொழுப்புகளை நீக்கி, நீங்கள் செலுத்தும் பணத்திற்கு முழுமையான சதைப்பற்றான புதிய கறியை மட்டுமே வழங்குகிறோம்.",
     aboutHygieneText:
       "எங்கள் ஸ்டெயின்லெஸ் ஸ்டீல் வெட்டும் மேஜைகள் இரண்டு மணி நேரத்திற்கு ஒருமுறை கிருமிநாசினி கொண்டு தூய்மைப்படுத்தப்படுகின்றன. ஊழியர்கள் அனைவரும் தலைக்கவசம், ஏப்ரன் மற்றும் கையுறைகளை அணிகின்றனர்.",
     aboutSatisfactionText:
-      "வார weekdays நாட்களில் சமைக்க 250 கிராம் பொடியாக வெட்டிய கீமாவாக இருந்தாலும், குடும்ப விசேஷங்களுக்கு 10 கிலோ கறிக்கட்டாக இருந்தாலும், ஒவ்வொரு ஆர்டரும் ஒரே உயர்ந்த தரத்துடன் கவனிக்கப்படுகிறது.",
+      "வார நாட்களில் சமைக்க 250 கிராம் பொடியாக வெட்டிய கீமாவாக இருந்தாலும், குடும்ப விசேஷங்களுக்கு 10 கிலோ கறிக்கட்டாக இருந்தாலும், ஒவ்வொரு ஆர்டரும் ஒரே உயர்ந்த தரத்துடன் கவனிக்கப்படுகிறது.",
 
     // Meet Our Founder & Profile
     meetOurFounder: "எங்கள் நிறுவனரைச் சந்தியுங்கள்",
@@ -317,11 +317,11 @@ export const TRANSLATIONS = {
     aboutIntroTitle: "A Neighborhood Poultry Butcher Built on Cleanliness & Trust",
     aboutIntroDesc:
       "Sri Mahalakshmi Broilers was founded on a simple promise: providing every family with hospital-grade cleanliness, transparent sourcing, and genuine care in every cut.",
-    aboutBusinessTitle: "Direct Farm Sourcing to Kitchens Since 2011",
+    aboutBusinessTitle: "Over 20 Years of Direct Farm Sourcing to Kitchens",
     aboutBusinessBody:
       "We partner directly with certified regional farms following natural grain feed and antibiotic-free standards. Birds arrive early morning, undergo strict quality checks, and are prepped hygienically in chilled rooms.",
     aboutOwnerBio:
-      "With over 15 years of hands-on expertise in hygienic poultry butchery and cold-chain standards, Rajesh founded Sri Mahalakshmi Broilers as a pristine, transparent alternative to crowded markets.",
+      "With over 20 years of hands-on expertise in hygienic poultry farming and a growing network of 20+ retail outlets, Paramasivam Masanaicker founded Sri Mahalakshmi Broilers on trust and uncompromising quality.",
     aboutQualityCommitmentText:
       "Every cut is inspected prior to weighing. Excess skin, bone splinters, and unwanted fat are trimmed away cleanly so you pay only for prime, usable meat.",
     aboutHygieneText:

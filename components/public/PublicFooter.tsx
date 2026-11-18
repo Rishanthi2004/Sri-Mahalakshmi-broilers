@@ -23,7 +23,7 @@ export function PublicFooter() {
 
   return (
     <footer className="bg-white border-t border-[#C7E4CA] text-[#26352B]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-20 sm:py-12">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
           {/* Brand */}
           <div className="space-y-3">
@@ -180,7 +180,7 @@ export function PublicFooter() {
           </div>
 
           {/* Opening Hours */}
-          <div className="hidden sm:block">
+          <div>
             <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[#26352B] mb-2.5 sm:mb-3">
               {t("workingHours")}
             </h3>

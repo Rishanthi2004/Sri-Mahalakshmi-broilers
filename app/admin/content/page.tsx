@@ -58,7 +58,7 @@ function WebsiteContentInner() {
     e.preventDefault();
     setSaving(true);
     try {
-      contentService.update(draft);
+      await contentService.save(draft);
       showToast(isTa ? "வலைத்தள உள்ளடக்கம் சேமிக்கப்பட்டது" : "Website content saved successfully", {
         description: isTa
           ? "வாடிக்கையாளர் தளத்தில் மாற்றங்கள் உடனடியாகத் தோன்றும்."
@@ -73,11 +73,18 @@ function WebsiteContentInner() {
   };
 
   const handleReset = async () => {
-    contentService.reset();
-    setDraft(DEFAULT_WEBSITE_CONTENT);
-    setResetOpen(false);
-    showToast(isTa ? "முன்னிருப்பு உள்ளடக்கத்திற்கு மீட்டமைக்கப்பட்டது" : "Reset to default website content", { type: "info" });
-    await reload();
+    setSaving(true);
+    try {
+      await contentService.resetToDefault();
+      setDraft(DEFAULT_WEBSITE_CONTENT);
+      setResetOpen(false);
+      showToast(isTa ? "முன்னிருப்பு உள்ளடக்கத்திற்கு மீட்டமைக்கப்பட்டது" : "Reset to default website content", { type: "info" });
+      await reload();
+    } catch {
+      showToast(isTa ? "மீட்டமைப்பதில் பிழை ஏற்பட்டது" : "Failed to reset content", { type: "danger" });
+    } finally {
+      setSaving(false);
+    }
   };
 
   const toggleFeaturedProduct = (id: string) => {

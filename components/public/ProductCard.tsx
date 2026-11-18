@@ -59,13 +59,14 @@ export function ProductCard({
       }}
       whileTap={{ scale: 0.985 }}
       transition={{ duration: 0.25, ease: "easeOut" }}
-      className="group bg-white rounded-xl border border-[#C7E4CA] hover:border-[#287A45]/60 shadow-sm transition-colors overflow-hidden flex flex-col h-full cursor-pointer select-none"
+      className="group bg-white rounded-xl border border-[#C7E4CA] hover:border-[#287A45]/60 shadow-sm transition-colors overflow-hidden flex flex-col h-full select-none"
     >
       {/* Floating Image Showcase */}
       <div className="relative aspect-square sm:aspect-[4/3] w-full overflow-hidden bg-gradient-to-b from-[#F4FAF5] to-white flex items-center justify-center p-3 sm:p-4">
         <img
           src={product.image || "/images/float-curry-cut.png"}
           alt={displayName}
+          loading="lazy"
           onError={(e) => {
             (e.target as HTMLImageElement).src = "/images/float-curry-cut.png";
           }}
@@ -82,8 +83,12 @@ export function ProductCard({
         </div>
         <div className="absolute top-2 right-2">
           {isAvailable ? (
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#DDF3DF]/95 text-[#287A45] text-[10px] sm:text-[11px] font-semibold shadow-xs">
-              <CheckCircle2 className="w-3 h-3" />
+            <span
+              title={t("inStock")}
+              aria-label={t("inStock")}
+              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#DDF3DF]/95 text-[#287A45] text-[10px] sm:text-[11px] font-semibold shadow-xs"
+            >
+              <CheckCircle2 className="w-3 h-3" aria-hidden="true" />
               <span className="hidden sm:inline">{t("inStock")}</span>
             </span>
           ) : (
@@ -120,7 +125,7 @@ export function ProductCard({
               className="inline-flex items-center gap-1.5 px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl bg-[#25D366] hover:bg-[#20ba59] text-white text-[11px] sm:text-xs font-semibold shadow-xs transition-colors shrink-0"
             >
               <WhatsAppIcon className="w-4 h-4 rounded" />
-              <span>WhatsApp</span>
+              <span>{language === "ta" ? "வாட்ஸ்அப்" : "WhatsApp"}</span>
             </a>
           ) : (
             <button

@@ -189,7 +189,7 @@ export default function FounderProfilePage() {
       </section>
 
       {/* Main Founder Profile Container */}
-      <main className="py-6 sm:py-12 bg-[#DDF3DF]">
+      <div className="py-6 sm:py-12 bg-[#DDF3DF]">
         <div className="max-w-5xl mx-auto px-3 sm:px-6 lg:px-8 space-y-6 sm:space-y-10">
 
           {/* Primary Founder Profile Showcase Card */}
@@ -489,12 +489,14 @@ export default function FounderProfilePage() {
             </Link>
 
             <span>
-              © 2026 Sri Mahalakshmi Broilers • Paramathi Road, Namakkal
+              {language === "ta"
+                ? "ஸ்ரீ மகாலட்சுமி பிராய்லர்ஸ் • பரமத்தி சாலை, நாமக்கல்"
+                : "Sri Mahalakshmi Broilers • Paramathi Road, Namakkal"}
             </span>
           </div>
 
         </div>
-      </main>
+      </div>
 
       {/* Share Founder Profile Modal */}
       <ShareFounderModal

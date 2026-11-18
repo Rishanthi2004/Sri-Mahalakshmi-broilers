@@ -99,9 +99,9 @@ export const DEFAULT_WEBSITE_CONTENT: WebsiteContent = {
     ],
   },
   socialLinks: {
-    facebook: "https://facebook.com",
-    instagram: "https://instagram.com",
-    youtube: "https://youtube.com",
+    facebook: "",
+    instagram: "",
+    youtube: "",
   },
   footer: {
     description:

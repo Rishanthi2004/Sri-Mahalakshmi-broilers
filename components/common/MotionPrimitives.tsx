@@ -52,7 +52,7 @@ export function AnimatedCard({
             }
           : undefined
       }
-      whileTap={{ scale: 0.98 }}
+      whileTap={hoverLift ? { scale: 0.98 } : undefined}
       transition={{ duration: 0.4, delay, ease: [0.25, 0.8, 0.25, 1] }}
       className={className}
       {...props}

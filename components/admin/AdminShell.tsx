@@ -54,14 +54,6 @@ const ALL_NAV_ITEMS = [
   { href: "/admin/settings", label: "அமைப்புகள்", icon: Settings, adminOnly: true },
 ];
 
-const DEFAULT_SUPERADMIN_SESSION: AdminUser = {
-  id: "demo-super-admin",
-  name: DEMO_CREDENTIALS.superAdmin.name,
-  email: DEMO_CREDENTIALS.superAdmin.username,
-  role: "super_admin",
-  isActive: true,
-};
-
 interface AdminShellProps {
   title: string;
   subtitle?: string;
@@ -134,11 +126,9 @@ export function AdminShell({
       setUser(session);
       setChecked(true);
     } else {
-      // Default to Super Admin demo session if not set so user never gets blocked
-      setUser(DEFAULT_SUPERADMIN_SESSION);
-      setChecked(true);
+      router.replace("/admin/login");
     }
-  }, []);
+  }, [router]);
 
   const handleLogout = async () => {
     await authService.logout();
@@ -164,7 +154,7 @@ export function AdminShell({
     );
   };
 
-  if (!checked) {
+  if (!checked || !user) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
         <div className="bg-white rounded-2xl border border-emerald-100 p-8 shadow-sm text-center max-w-sm w-full">

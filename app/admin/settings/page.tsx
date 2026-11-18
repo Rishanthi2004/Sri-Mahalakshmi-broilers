@@ -66,7 +66,7 @@ export default function AdminSettingsPage() {
 
     setSaving(true);
     try {
-      contentService.update(draft);
+      await contentService.save(draft);
       showToast(isTa ? "அமைப்புகள் வெற்றிகரமாக சேமிக்கப்பட்டன" : "Settings saved successfully", {
         description: isTa
           ? "தொடர்பு விவரங்கள், வேலை நேரம் மற்றும் வாட்ஸ்அப் ஆர்டர் எண் புதுப்பிக்கப்பட்டது."
@@ -81,11 +81,18 @@ export default function AdminSettingsPage() {
   };
 
   const handleReset = async () => {
-    contentService.reset();
-    setDraft(DEFAULT_WEBSITE_CONTENT);
-    setResetOpen(false);
-    showToast(isTa ? "அமைப்புகள் இயல்பு நிலைக்கு மீட்டமைக்கப்பட்டன" : "Settings reset to defaults", { type: "info" });
-    await reload();
+    setSaving(true);
+    try {
+      await contentService.resetToDefault();
+      setDraft(DEFAULT_WEBSITE_CONTENT);
+      setResetOpen(false);
+      showToast(isTa ? "அமைப்புகள் இயல்பு நிலைக்கு மீட்டமைக்கப்பட்டன" : "Settings reset to defaults", { type: "info" });
+      await reload();
+    } catch {
+      showToast(isTa ? "மீட்டமைப்பதில் பிழை ஏற்பட்டது" : "Failed to reset settings", { type: "danger" });
+    } finally {
+      setSaving(false);
+    }
   };
 
   const cleanWhatsapp = draft.contact.whatsappNumber.replace(/[^0-9]/g, "");

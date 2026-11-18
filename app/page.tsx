@@ -47,7 +47,7 @@ export default function HomePage() {
       ? selectedFeatured.slice(0, 7)
       : activeProducts.filter((p) => p.isFeatured).slice(0, 7);
 
-  const shopDisplayName = "ஸ்ரீ மகாலட்சுமி பிராய்லர்ஸ்";
+  const shopDisplayName = content?.shopName || "ஸ்ரீ மகாலட்சுமி பிராய்லர்ஸ்";
 
   const ctaWhatsAppMessage =
     language === "ta"
@@ -60,12 +60,28 @@ export default function HomePage() {
   );
 
   const getWhyItem = (idx: number, item: WhyChooseUsItem) => {
+    if (language === "en" && item.title && item.description) {
+      return { title: item.title, description: item.description };
+    }
     if (idx === 0) return { title: t("whyFreshTitle"), description: t("whyFreshDesc") };
     if (idx === 1) return { title: t("whyHygieneTitle"), description: t("whyHygieneDesc") };
     if (idx === 2) return { title: t("whyServiceTitle"), description: t("whyServiceDesc") };
     if (idx === 3) return { title: t("whyTrustTitle"), description: t("whyTrustDesc") };
     return { title: item.title, description: item.description };
   };
+
+  const ctaHeadline =
+    language === "en" && content?.ctaBanner?.headline
+      ? content.ctaBanner.headline
+      : t("ctaHeadline");
+  const ctaDesc =
+    language === "en" && content?.ctaBanner?.description
+      ? content.ctaBanner.description
+      : t("ctaDesc");
+  const ctaButton =
+    language === "en" && content?.ctaBanner?.buttonText
+      ? content.ctaBanner.buttonText
+      : t("ctaButton");
 
   return (
     <PublicShell>
@@ -101,7 +117,7 @@ export default function HomePage() {
               const localized = getWhyItem(idx, item);
               return (
                 <AnimatedCard key={item.id} delay={idx * 0.05} className="h-full">
-                  <div className="bg-white rounded-xl sm:rounded-2xl border border-[#C7E4CA] hover:border-[#287A45]/50 p-3.5 sm:p-5 shadow-xs hover:shadow-md transition-all h-full flex flex-col justify-between cursor-pointer select-none">
+                  <div className="bg-white rounded-xl sm:rounded-2xl border border-[#C7E4CA] hover:border-[#287A45]/50 p-3.5 sm:p-5 shadow-xs hover:shadow-md transition-all h-full flex flex-col justify-between select-none">
                     <div>
                       <div className="w-8 h-8 sm:w-11 sm:h-11 rounded-lg bg-[#DDF3DF] flex items-center justify-center mb-2.5 sm:mb-3">
                         {WHY_ICONS[item.iconName] || <Sparkles className="w-5 h-5 text-[#287A45]" />}
@@ -128,10 +144,10 @@ export default function HomePage() {
             <div className="bg-[#287A45] rounded-2xl p-5 sm:p-8 lg:p-10 text-white shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6">
               <div className="max-w-xl space-y-1.5">
                 <h2 className="text-lg sm:text-2xl font-bold tracking-tight leading-snug">
-                  {t("ctaHeadline")}
+                  {ctaHeadline}
                 </h2>
                 <p className="text-xs sm:text-sm text-white/90 leading-relaxed">
-                  {t("ctaDesc")}
+                  {ctaDesc}
                 </p>
               </div>
               <a
@@ -141,7 +157,7 @@ export default function HomePage() {
                 className="inline-flex items-center justify-center gap-2 px-5 py-2.5 sm:py-3.5 rounded-xl bg-white text-[#287A45] hover:bg-[#EDF7EE] font-bold text-xs sm:text-sm shadow-sm transition-all duration-200 shrink-0 w-full sm:w-auto"
               >
                 <WhatsAppIcon className="w-5 h-5 rounded" />
-                <span>{t("ctaButton")}</span>
+                <span>{ctaButton}</span>
               </a>
             </div>
           </FadeInSection>

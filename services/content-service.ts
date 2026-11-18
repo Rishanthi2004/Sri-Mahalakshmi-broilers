@@ -15,9 +15,26 @@ export const contentService = {
     return next;
   },
 
+  async save(next: WebsiteContent): Promise<WebsiteContent> {
+    const res = await fetch("/api/content", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(next),
+    });
+    if (!res.ok) {
+      throw new Error("Failed to save website content to server");
+    }
+    writeStorage(STORAGE_KEYS.CONTENT, next);
+    return next;
+  },
+
   reset(): WebsiteContent {
     writeStorage(STORAGE_KEYS.CONTENT, DEFAULT_WEBSITE_CONTENT);
     return DEFAULT_WEBSITE_CONTENT;
+  },
+
+  async resetToDefault(): Promise<WebsiteContent> {
+    return this.save(DEFAULT_WEBSITE_CONTENT);
   },
 
   buildWhatsAppUrl(whatsappNumber: string, message: string): string {

@@ -39,6 +39,7 @@ export function ProductShowcase({
   // Up to 7 items (matching the 7 floating cuts)
   const showcaseItems = products.slice(0, 7);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
     if (activeIndex >= showcaseItems.length && showcaseItems.length > 0) {
@@ -46,14 +47,14 @@ export function ProductShowcase({
     }
   }, [activeIndex, showcaseItems.length]);
 
-  // Auto-run cuts rotation smoothly every 3 seconds without freezing
+  // Auto-run cuts rotation every 4s; pauses on hover/focus and resets after manual selection
   useEffect(() => {
-    if (showcaseItems.length <= 1) return;
-    const timer = setInterval(() => {
+    if (showcaseItems.length <= 1 || isPaused) return;
+    const timer = setTimeout(() => {
       setActiveIndex((prev) => (prev + 1) % showcaseItems.length);
-    }, 3000);
-    return () => clearInterval(timer);
-  }, [showcaseItems.length]);
+    }, 4000);
+    return () => clearTimeout(timer);
+  }, [activeIndex, isPaused, showcaseItems.length]);
 
   if (showcaseItems.length === 0) return null;
 
@@ -77,7 +78,13 @@ export function ProductShowcase({
   return (
     <section className="py-6 sm:py-12 lg:py-16 bg-white border-y border-[#C7E4CA]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="rounded-2xl bg-gradient-to-br from-[#F5FAF6] via-white to-[#EAF6ED] border border-[#C7E4CA] shadow-sm p-4 sm:p-8 lg:p-10">
+        <div
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+          onFocus={() => setIsPaused(true)}
+          onBlur={() => setIsPaused(false)}
+          className="rounded-2xl bg-gradient-to-br from-[#F5FAF6] via-white to-[#EAF6ED] border border-[#C7E4CA] shadow-sm p-4 sm:p-8 lg:p-10"
+        >
           
           {/* Main Showcase Stage */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-8 items-center">
@@ -285,8 +292,12 @@ export function ProductShowcase({
                     {/* Floating mini item */}
                     <div className="w-14 h-12 sm:w-16 sm:h-14 flex items-center justify-center relative">
                       <img
-                        src={item.image}
+                        src={item.image || "/images/float-curry-cut.png"}
                         alt={itemName}
+                        loading="lazy"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = "/images/float-curry-cut.png";
+                        }}
                         className={`max-w-full max-h-full object-contain filter drop-shadow-[0_4px_6px_rgba(0,0,0,0.12)] transition-transform duration-200 ${
                           active ? "scale-110 -translate-y-0.5" : "group-hover:scale-105"
                         }`}

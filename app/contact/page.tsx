@@ -65,18 +65,18 @@ export default function ContactPage() {
 
     setIsSubmitting(true);
     try {
-      try {
-        await fetch("/api/enquiries", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            customerName: customerName.trim(),
-            phoneNumber: phoneNumber.trim(),
-            message: message.trim(),
-          }),
-        });
-      } catch (err) {
-        console.warn("API route submit warning, falling back to local storage", err);
+      const res = await fetch("/api/enquiries", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          customerName: customerName.trim(),
+          phoneNumber: phoneNumber.trim(),
+          message: message.trim(),
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error("Server failed to record enquiry");
       }
 
       enquiryService.submit({
@@ -94,9 +94,14 @@ export default function ContactPage() {
         type: "success",
       });
     } catch {
-      showToast(language === "ta" ? "செய்தி அனுப்புவதில் பிழை ஏற்பட்டது" : "Failed to submit enquiry", {
-        type: "danger",
-      });
+      showToast(
+        language === "ta"
+          ? "செய்தி அனுப்புவதில் பிழை ஏற்பட்டது. தயவுசெய்து வாட்ஸ்அப் அல்லது தொலைபேசி மூலம் தொடர்பு கொள்ளவும்."
+          : "Failed to submit enquiry. Please try again or contact us via WhatsApp.",
+        {
+          type: "danger",
+        }
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -118,7 +123,7 @@ export default function ContactPage() {
           </p>
 
           {/* Quick Action Buttons directly in header on mobile */}
-          <div className="mt-3 flex sm:hidden grid-cols-3 gap-2">
+          <div className="mt-3 grid sm:hidden grid-cols-3 gap-2">
             <a
               href={`tel:${content.contact.phone.replace(/\s+/g, "")}`}
               className="flex-1 inline-flex items-center justify-center gap-1 px-3 py-2 rounded-lg bg-[#287A45] text-white text-xs font-semibold"
@@ -210,7 +215,9 @@ export default function ContactPage() {
                         {t("contactAddressLabel")}
                       </span>
                       <p className="font-medium text-[#26352B] leading-snug">
-                        {t("contactStoreAddress")}
+                        {language === "ta"
+                          ? content.contact.addressTa || t("contactStoreAddress")
+                          : content.contact.address || t("contactStoreAddress")}
                       </p>
                     </div>
                   </div>
@@ -282,7 +289,7 @@ export default function ContactPage() {
                 <div className="relative w-full h-48 sm:h-56 bg-[#EDF7EE] border-b border-[#C7E4CA]">
                   <iframe
                     title="Sri Mahalakshmi Broilers Location Map"
-                    src="https://maps.google.com/maps?q=11.2170194,78.1522853&hl=en&z=17&output=embed"
+                    src={`https://maps.google.com/maps?q=11.2170194,78.1522853&hl=${language}&z=17&output=embed`}
                     className="w-full h-full border-0"
                     loading="lazy"
                     referrerPolicy="no-referrer-when-downgrade"
@@ -420,8 +427,8 @@ export default function ContactPage() {
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
                     <p className="text-[11px] text-[#516357]">
                       {language === "ta"
-                        ? "டெமோ முறை: நிர்வாக மையம் → விசாரணைகளில் பதிவு செய்யப்படும்."
-                        : "Demo Mode: Automatically recorded in Admin Portal → Enquiries."}
+                        ? "கடை நேரங்களில் எங்கள் குழு விரைவாக உங்களைத் தொடர்பு கொள்ளும்."
+                        : "Our team responds promptly during store working hours."}
                     </p>
                     <button
                       type="submit"

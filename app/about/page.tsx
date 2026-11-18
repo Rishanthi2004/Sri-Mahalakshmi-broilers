@@ -19,13 +19,20 @@ export default function AboutPage() {
   const { about } = content;
   const { language, t } = useLanguage();
 
-  const introTitle = t("aboutIntroTitle");
-  const introDescription = t("aboutIntroDesc");
-  const businessInfoTitle = t("aboutBusinessTitle");
-  const businessInfoBody = t("aboutBusinessBody");
-  const qualityCommitment = t("aboutQualityCommitmentText");
-  const hygienePractices = t("aboutHygieneText");
-  const customerSatisfaction = t("aboutSatisfactionText");
+  const introTitle =
+    language === "en" && about.introTitle ? about.introTitle : t("aboutIntroTitle");
+  const introDescription =
+    language === "en" && about.introDescription ? about.introDescription : t("aboutIntroDesc");
+  const businessInfoTitle =
+    language === "en" && about.businessInfoTitle ? about.businessInfoTitle : t("aboutBusinessTitle");
+  const businessInfoBody =
+    language === "en" && about.businessInfoBody ? about.businessInfoBody : t("aboutBusinessBody");
+  const qualityCommitment =
+    language === "en" && about.qualityCommitment ? about.qualityCommitment : t("aboutQualityCommitmentText");
+  const hygienePractices =
+    language === "en" && about.hygienePractices ? about.hygienePractices : t("aboutHygieneText");
+  const customerSatisfaction =
+    language === "en" && about.customerSatisfaction ? about.customerSatisfaction : t("aboutSatisfactionText");
 
   return (
     <PublicShell>
@@ -78,7 +85,12 @@ export default function AboutPage() {
               <div className="rounded-2xl overflow-hidden border border-[#C7E4CA] shadow-xs bg-[#EDF7EE] aspect-[4/3]">
                 <img
                   src={about.shopImage}
-                  alt={`${content.shopName} கடை முகப்பு`}
+                  alt={
+                    language === "ta"
+                      ? `${content.shopName} கடை முகப்பு`
+                      : `${content.shopName} Storefront`
+                  }
+                  loading="lazy"
                   className="w-full h-full object-cover object-top"
                 />
               </div>
@@ -144,7 +156,7 @@ export default function AboutPage() {
           {/* 3 Editorial Pillars with animated interactive hover */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-5">
             <AnimatedCard delay={0.03}>
-              <div className="bg-white rounded-xl border border-[#C7E4CA] hover:border-[#287A45]/50 p-4 sm:p-6 shadow-xs hover:shadow-md transition-all h-full cursor-pointer select-none">
+              <div className="bg-white rounded-xl border border-[#C7E4CA] hover:border-[#287A45]/50 p-4 sm:p-6 shadow-xs hover:shadow-md transition-all h-full select-none">
                 <div className="w-9 h-9 rounded-lg bg-[#DDF3DF] text-[#287A45] flex items-center justify-center mb-2.5">
                   <Award className="w-5 h-5" />
                 </div>
@@ -156,7 +168,7 @@ export default function AboutPage() {
             </AnimatedCard>
 
             <AnimatedCard delay={0.06}>
-              <div className="bg-white rounded-xl border border-[#C7E4CA] hover:border-[#287A45]/50 p-4 sm:p-6 shadow-xs hover:shadow-md transition-all h-full cursor-pointer select-none">
+              <div className="bg-white rounded-xl border border-[#C7E4CA] hover:border-[#287A45]/50 p-4 sm:p-6 shadow-xs hover:shadow-md transition-all h-full select-none">
                 <div className="w-9 h-9 rounded-lg bg-[#DDF3DF] text-[#287A45] flex items-center justify-center mb-2.5">
                   <ShieldCheck className="w-5 h-5" />
                 </div>
@@ -168,7 +180,7 @@ export default function AboutPage() {
             </AnimatedCard>
 
             <AnimatedCard delay={0.09}>
-              <div className="bg-white rounded-xl border border-[#C7E4CA] hover:border-[#287A45]/50 p-4 sm:p-6 shadow-xs hover:shadow-md transition-all h-full cursor-pointer select-none">
+              <div className="bg-white rounded-xl border border-[#C7E4CA] hover:border-[#287A45]/50 p-4 sm:p-6 shadow-xs hover:shadow-md transition-all h-full select-none">
                 <div className="w-9 h-9 rounded-lg bg-[#DDF3DF] text-[#287A45] flex items-center justify-center mb-2.5">
                   <HeartHandshake className="w-5 h-5" />
                 </div>

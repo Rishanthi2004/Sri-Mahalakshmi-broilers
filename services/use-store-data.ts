@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { DEFAULT_BANNERS } from "@/data/banners";
 import { DEFAULT_CATEGORIES } from "@/data/categories";
 import { DEFAULT_ENQUIRIES, DEFAULT_MEDIA } from "@/data/enquiries";
@@ -55,12 +55,14 @@ export function useProducts() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
+  const hasLoadedRef = useRef(false);
 
   const reload = useCallback(async () => {
     // 1. Instant optimistic load from client cache
     const cached = productService.getAll();
     if (cached && cached.length > 0) {
       setProducts(cached.filter((p) => !p.isDeleted));
+      hasLoadedRef.current = true;
       setReady(true);
     }
 
@@ -81,14 +83,15 @@ export function useProducts() {
       }
     } catch (err: unknown) {
       console.warn("Products API live fetch warning, using cached catalog:", err);
-      if (!ready && (!cached || cached.length === 0)) {
+      if (!hasLoadedRef.current && (!cached || cached.length === 0)) {
         setError((err as Error).message || "Failed to load products");
       }
     } finally {
       setLoading(false);
+      hasLoadedRef.current = true;
       setReady(true);
     }
-  }, [ready]);
+  }, []);
 
   useEffect(() => {
     reload();
